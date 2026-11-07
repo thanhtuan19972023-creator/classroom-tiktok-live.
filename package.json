@@ -1,0 +1,7 @@
+{
+  "name": "classroom-tiktok-live-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static classroom TikTok LIVE quiz with secure Vercel ElevenLabs TTS backend"
+}
