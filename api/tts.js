@@ -16,9 +16,9 @@ export default async function handler(req, res){
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method === 'GET') return res.status(200).json({ready:Boolean(process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_VOICE_ID)});
+  if (req.method === 'GET') return res.status(200).json({ready:Boolean(process.env.ELEVENLABS_API_KEY),voice:'Tuyết - miền Nam',model:process.env.ELEVENLABS_MODEL_ID || 'eleven_flash_v2_5'});
   if (req.method !== 'POST') return res.status(405).json({error:'Method not allowed'});
-  if (!process.env.ELEVENLABS_API_KEY || !process.env.ELEVENLABS_VOICE_ID)
+  if (!process.env.ELEVENLABS_API_KEY)
     return res.status(503).json({error:'AI voice has not been configured'});
   let body = req.body || {};
   if (typeof body === 'string') {try {body = JSON.parse(body)} catch {return res.status(400).json({error:'Invalid JSON'})}}
@@ -33,9 +33,11 @@ export default async function handler(req, res){
   record.count++;windows.set(ip,record);
   if (record.count > 12) return res.status(429).json({error:'Rate limit reached'});
   const model = process.env.ELEVENLABS_MODEL_ID || 'eleven_flash_v2_5';
+  // Tuyet - Southern Vietnamese Storyteller (public ElevenLabs library voice).
+  const voiceId = process.env.ELEVENLABS_VOICE_ID || 'xjyQliDr4k3i3iSr1wSb';
   try{
     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' +
-      encodeURIComponent(process.env.ELEVENLABS_VOICE_ID) + '?output_format=mp3_44100_128', {
+      encodeURIComponent(voiceId) + '?output_format=mp3_44100_128', {
       method:'POST',
       headers:{'xi-api-key':process.env.ELEVENLABS_API_KEY,'Content-Type':'application/json'},
       body:JSON.stringify({
