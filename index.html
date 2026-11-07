@@ -347,7 +347,7 @@ async function aiSpeak(text,after){
   const endpoint=aiUrl();
   if(!endpoint){
     voiceState('⚠️ Chưa nhập địa chỉ máy chủ AI. Hãy triển khai trên Vercel rồi nhập đường dẫn vào ô bên dưới.');
-    if(speechAvailable){$('ttsEngine').value='browser';say(text,after)}
+    status('Chưa cấu hình máy chủ giọng Tuyết. Chọn Kiểm tra giọng AI để xem lỗi.',true);
     return;
   }
   const serial=++aiSerial;
@@ -359,7 +359,7 @@ async function aiSpeak(text,after){
       voiceState('✨ AI đang tạo giọng: '+part.slice(0,40));
       const reply=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({text:part}),signal:aiAbort.signal});
-      if(!reply.ok)throw new Error('Máy chủ giọng AI chưa sẵn sàng ('+reply.status+')');
+      if(!reply.ok){let msg='Máy chủ AI lỗi '+reply.status;try{const info=await reply.json();msg=info.error||msg}catch(e){}throw new Error(msg)}
       const bytes=await reply.arrayBuffer();
       if(serial!==aiSerial)return;
       if(!aiAudioContext)unlockAIAudio();
@@ -380,8 +380,7 @@ async function aiSpeak(text,after){
     if(serial===aiSerial&&after)after();
   }catch(e){
     if(serial!==aiSerial)return;
-    voiceState('⚠️ '+(e?.message||'Không phát được giọng AI')+'. Dùng giọng Safari để dự phòng.');
-    if(speechAvailable){$('ttsEngine').value='browser';say(text,after)}
+    const issue=e?.message||'Không phát được giọng AI';voiceState('⚠️ Giọng Tuyết chưa phát được: '+issue);status('Giọng Tuyết: '+issue,true);if(after)after();
   }
 }
 
@@ -609,8 +608,8 @@ $('testVoiceBtn').onclick=()=>speakFromTap('Xin chào cả lớp thân yêu! Hô
       const response=await fetch(endpoint,{method:'GET'});
       const data=await response.json();
       if(!response.ok)throw new Error('Lỗi '+response.status);
-      voiceState(data.ready?'✅ Máy chủ giọng Tuyết đã kết nối. Chạm Nghe thử giọng để phát.':'⚠️ Máy chủ chạy nhưng chưa có khóa ElevenLabs trong Vercel.');
-    }catch(e){voiceState('⚠️ Không kết nối được máy chủ. Kiểm tra URL Vercel và cấu hình CORS.')}
+      voiceState(data.ready?'✅ Máy chủ có API Key. Chạm NGHE THỬ GIỌNG để xác nhận giọng Tuyết có phát được.':'⚠️ Máy chủ chạy nhưng chưa thấy ELEVENLABS_API_KEY trong Vercel.');
+    }catch(e){voiceState('⚠️ Không kiểm tra được /api/tts: '+(e?.message||'Lỗi mạng')+'. Nếu là 404: API chưa được deploy. Nếu 500: xem Vercel Function Logs.')}
   };
 })();
 renderStudents();voiceState();loadVietnameseVoices();if(speechAvailable)window.speechSynthesis.onvoiceschanged=loadVietnameseVoices;newQuestion();
