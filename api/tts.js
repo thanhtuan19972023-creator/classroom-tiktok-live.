@@ -49,9 +49,15 @@ export default async function handler(req, res){
       signal:AbortSignal.timeout(15000)
     });
     if(!response.ok){
-      const details=await response.text();
-      console.error('TTS provider error',response.status,details.slice(0,160));
-      return res.status(response.status===429?429:502).json({error:'Voice provider unavailable'});
+      const code=response.status;
+      console.error('ElevenLabs TTS status',code);
+      let message='ElevenLabs chưa tạo được giọng đọc';
+      if(code===401)message='ElevenLabs từ chối API Key (401). Kiểm tra khóa API trong Vercel';
+      else if(code===403)message='API Key không có quyền Text to Speech hoặc giọng chưa được cấp phép (403)';
+      else if(code===404)message='Không tìm thấy giọng Tuyết. Hãy thêm giọng vào My Voices và cập nhật VOICE_ID (404)';
+      else if(code===422)message='Voice ID hoặc model ElevenLabs chưa tương thích (422)';
+      else if(code===429)message='Hết credits hoặc vượt giới hạn gọi ElevenLabs (429)';
+      return res.status(code===429?429:502).json({error:message,provider_status:code});
     }
     const audio=Buffer.from(await response.arrayBuffer());
     if(audio.length > 4000000) return res.status(502).json({error:'Audio too large'});
