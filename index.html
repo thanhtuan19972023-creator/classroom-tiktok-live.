@@ -485,7 +485,7 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
   <h2>📡 Kết nối TikTok LIVE thật</h2>
   <p><strong>Chỉ dùng iPhone:</strong> Máy chủ Render nhận bình luận, quà tặng và tên người xem thật. Game sẽ tự chấm A/B/C/D, cảm ơn người tặng quà, đọc Top 5 sau khi hết giờ.</p>
   <p><a href="https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2Fthanhtuan19972023-creator%2Fclassroom-tiktok-live." target="_blank" rel="noopener noreferrer">☁️ Tạo máy chủ Render miễn phí từ GitHub</a> — chỉ cần làm một lần. Ở Render, đặt <strong>TIKTOK_USERNAME</strong> bằng tên TikTok của bạn (không cần mật khẩu).</p>
-  <div class="field"><label for="liveBridgeUrl">🌐 Địa chỉ máy chủ Render</label><input id="liveBridgeUrl" type="url" inputmode="url" placeholder="https://...onrender.com" autocapitalize="none" autocomplete="url" spellcheck="false"></div>
+  <div class="field"><label for="liveBridgeUrl">🌐 Địa chỉ máy chủ Render</label><input id="liveBridgeUrl" type="url" inputmode="url" value="https://classroom-12a-live-bridge.onrender.com" placeholder="https://classroom-12a-live-bridge.onrender.com" autocapitalize="none" autocomplete="url" spellcheck="false"></div>
   <div class="actions"><button class="gold" id="liveBridgeConnect" type="button">📶 Kết nối LIVE thật</button><button class="secondary" id="liveBridgeDisconnect" type="button">⏹ Ngắt kết nối</button></div>
   <div class="field"><label style="display:flex;align-items:center;gap:6px"><input id="liveAutoJoin" type="checkbox"> Tự cho người vừa vào LIVE ngồi vào lớp (không đọc tên liên tục)</label></div>
   <p class="status" role="status" id="liveBridgeStatus">🔴 Chưa kết nối LIVE thật. Trò chơi đang dùng chế độ mô phỏng.</p>
@@ -1591,9 +1591,14 @@ async function liveBridgePoll(){
  }finally{liveBridgeBusy=false}
 }
 function liveBridgeStart(){
- const url=document.getElementById('liveBridgeUrl').value;
- try{liveBridgeBase=liveBridgeNormalUrl(url)}catch(error){
-   liveBridgeUi('🔴 '+String(error?.message||'URL không hợp lệ'));return
+ const field=document.getElementById('liveBridgeUrl');
+ const url=field.value.trim()||'https://classroom-12a-live-bridge.onrender.com';
+ try{
+   liveBridgeBase=liveBridgeNormalUrl(url);
+   field.value=liveBridgeBase;
+ }catch(error){
+   liveBridgeUi('🔴 Địa chỉ máy chủ không hợp lệ. Hãy dán https://classroom-12a-live-bridge.onrender.com');
+   return;
  }
  liveBridgeActive=true;liveBridgeInstance='';liveBridgeCursor=0;
  try{localStorage.setItem('classroom12a_live_bridge_url',liveBridgeBase)}catch(e){}
@@ -1620,7 +1625,12 @@ try{
  // other devices automatically receive real TikTok events too.
  const saved=localStorage.getItem('classroom12a_live_bridge_url');
  const defaultBridge='https://classroom-12a-live-bridge.onrender.com';
- document.getElementById('liveBridgeUrl').value=saved||defaultBridge;
+ let selected=defaultBridge;
+ if(saved){
+   try{selected=liveBridgeNormalUrl(saved)}
+   catch(e){localStorage.removeItem('classroom12a_live_bridge_url')}
+ }
+ document.getElementById('liveBridgeUrl').value=selected;
  liveBridgeStart();
 }catch(e){liveBridgeUi('🔴 Không thể tự kết nối. Nhấn Kết nối LIVE thật để thử lại.')}
 
