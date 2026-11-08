@@ -1518,13 +1518,14 @@ function cancelQuizReading(){
 }
 function beginQuestionReading(){
   if(!current||locked||readingQuiz||tick)return;
-  warmCountdownWarning();
   const question=current,serial=++quizReadSerial;
-  // Open the answer window when the teacher starts reading, not after TTS finishes.
-  window.__liveQuestionStartedAt=Date.now();
+  // Answers are counted ONLY after narration finishes and the timer begins.
+  // A real TikTok comment received during the narration is visible but cannot score.
+  window.__liveQuestionStartedAt=0;
+  unlockAIAudio();
   readingQuiz=true;$('startBtn').disabled=true;
   $('timer').textContent='🔊';
-  status((neuralActive()?'Giọng review phim AI':aiActive()?'Cô Duyên':'Cô giáo')+' đang đọc câu hỏi và bốn lựa chọn. Đồng hồ chạy sau khi đọc xong.');
+  status('Đang đọc luật chơi, câu hỏi và các lựa chọn. Đáp án chỉ tính khi đồng hồ bắt đầu đếm.');
   let doneAlready=false;
   const done=()=>{
     if(doneAlready||serial!==quizReadSerial||current!==question||locked)return;
@@ -1537,7 +1538,10 @@ function beginQuestionReading(){
   // Final backstop if iOS never reports speech completion; never freeze on the speaker icon.
   quizReadWatch=setTimeout(()=>{if(serial===quizReadSerial){stopSpeaking();done()}},60000);
   if(!aiActive()&&!neuralActive()&&!speechAvailable){done();return}
-  speakFromTap(fullQuestionNarration(),done);
+  const greet=pendingVisitorInvitation ? 'Chào mừng các bạn mới đến với lớp học 12A. Mời các em vào lớp, ngồi ngay ngắn và trả lời câu hỏi nhé! ' : '';
+  pendingVisitorInvitation=false;
+  const instruction='Các bạn chú ý! Đáp án chỉ được tính sau khi đọc xong câu hỏi và đồng hồ bắt đầu đếm ngược. ';
+  speakFromTap(greet+instruction+fullQuestionNarration(),done);
 }
 function liveLog(kind,text){
   let item=document.createElement('li');item.textContent=kind+' '+text;
@@ -1579,6 +1583,26 @@ function ensureStudent(name,points,identityKey=''){
 // The countdown warning is synthesized and decoded ahead of time so it plays
 // at five seconds without waiting for a fresh internet request during LIVE.
 const countdownWarningText='Sắp hết thời gian rồi các em ơi, lẹ lẹ!';
+let lastWarningBeepSecond=-1;
+function playCountdownBeep(remaining){
+  try{
+    if(!aiAudioContext)unlockAIAudio();
+    const ctx=aiAudioContext;
+    if(!ctx)return;
+    if(ctx.state!=='running')void ctx.resume().catch(()=>{});
+    const now=ctx.currentTime;
+    // Two quick electronic beeps ("tít tắt") per second; 1s is higher.
+    [0,.16].forEach((delay,i)=>{
+      const osc=ctx.createOscillator(),volume=ctx.createGain(),at=now+delay;
+      osc.type='sine';osc.frequency.setValueAtTime(remaining===1?1100:(i?760:940),at);
+      volume.gain.setValueAtTime(.0001,at);
+      volume.gain.exponentialRampToValueAtTime(.18,at+.009);
+      volume.gain.exponentialRampToValueAtTime(.0001,at+.12);
+      osc.connect(volume);volume.connect(ctx.destination);
+      osc.start(at);osc.stop(at+.125);
+    });
+  }catch(e){console.warn('Countdown beep not available',e)}
+}
 const countdownWarningBuffers=new Map();
 let countdownWarningPlayed=false,countdownWarningSource=null,countdownWarningRound=0;
 function countdownWarningCacheKey(){
@@ -1633,31 +1657,12 @@ function browserCountdownWarning(){
   }catch(e){}
 }
 function announceCountdownWarning(){
-  if(countdownWarningPlayed||locked||!tick||seconds<=0)return;
+  if(countdownWarningPlayed||locked||seconds<=0)return;
   countdownWarningPlayed=true;
-  $('boardHint').textContent='⏰ Sắp hết giờ! Trả lời nhanh A, B, C hoặc D!';
+  $('boardHint').textContent='🔴 CÒN 5 GIÂY! Bình luận A, B, C hoặc D ngay!';
   $('timer').classList.add('time-warning');
-  if(!voiceEnabled)return;
-  const key=countdownWarningCacheKey();
-  if(!key){browserCountdownWarning();return}
-  const round=countdownWarningRound;
-  const pending=countdownWarningBuffers.get(key);
-  if(!pending){browserCountdownWarning();return}
-  pending.then(buffer=>{
-    if(round!==countdownWarningRound||locked||!tick||!voiceEnabled||seconds<=0)return;
-    if(!buffer){browserCountdownWarning();return}
-    try{
-      if(aiAudioContext.state!=='running')aiAudioContext.resume().catch(()=>{});
-      const source=aiAudioContext.createBufferSource();
-      source.buffer=buffer;source.connect(aiAudioContext.destination);
-      countdownWarningSource=source;
-      source.onended=()=>{
-        if(countdownWarningSource===source)countdownWarningSource=null;
-        try{source.disconnect()}catch(e){}
-      };
-      source.start(0);
-    }catch(e){browserCountdownWarning()}
-  });
+  // Do not start another TTS sentence at the five-second mark. Two-tone
+  // beeps from playCountdownBeep replace speech and never cancel the quiz.
 }
 
 const pendingGiftGreetings=[];
@@ -1677,10 +1682,22 @@ function notify(kind,text,spoken,readAloud=true){
   }
   status(window.__classroomRealEvent?'TikTok LIVE thật: '+text:'Mô phỏng: '+text+'. Chưa kết nối TikTok LIVE thật.');
 }
+let pendingVisitorInvitation=false,lastVisitorNotice=0;
+function onLiveVisitor(name,identityKey=''){
+  // TikTok sends a huge MEMBER event stream. Welcome the group once at the
+  // start of an upcoming question, never interrupt the question or Top 5.
+  if(document.getElementById('liveAutoJoin')?.checked)ensureStudent(name,0,identityKey);
+  if(Date.now()-lastVisitorNotice>=45000){
+    lastVisitorNotice=Date.now();
+    pendingVisitorInvitation=true;
+    liveLog('👋','Có học sinh mới ghé LIVE. Sẽ mời vào lớp trước câu hỏi tiếp theo.');
+  }
+}
 function onJoin(name,identityKey=''){
   name=String(name||'Học sinh mới').trim().slice(0,25)||'Học sinh mới';
   ensureStudent(name,0,identityKey);
-  notify('👋',name+' vừa vào lớp','Chào mừng bạn '+name+' đã vào lớp học của chúng ta!');
+  notify('👋',name+' vừa vào lớp',
+    'Chào mừng em '+spokenStudentName(name)+' đến với lớp học 12A. Mời em vào lớp, ngồi ngay ngắn và trả lời câu hỏi nhé!');
 }
 function onGift(name,giftName,identityKey=''){
   name=String(name||'Học sinh mới').trim().slice(0,25)||'Học sinh mới';
@@ -1700,7 +1717,7 @@ function onComment(name,comment,identityKey=''){
   const match=normalized.match(/^(?:(?:EM\s+)?(?:CHON|DAP\s*AN|TRA\s*LOI|CAU\s*TRA\s*LOI)\s*[:\-]?\s*)?([ABCD])(?:[.!?]|\s+(?:NHE|A|NHA|OI|LA\s+DUNG))?$/);
   if(!match){notify('💬',name+': '+comment,'Bạn '+name+' bình luận: '+comment);return}
   const letter=match[1];
-  if(!current||locked){notify('💬',name+': '+comment,'Bạn '+name+' bình luận đáp án '+letter+' nhưng câu hỏi đã kết thúc.');return}
+  if(!current||locked||(!tick&&!roundGraceActive)){notify('💬',name+': '+comment,'Bình luận '+letter+' chưa được tính. Đợi đồng hồ bắt đầu đếm giờ.');return}
   const student=ensureStudent(name,0,identityKey);
   // Deduplicate against the actual seated student, not a nickname/userId
   // that can vary between the JOIN, COMMENT and GIFT events.
@@ -1743,7 +1760,7 @@ window.classroomLiveEvent=function(event){
   window.__classroomRealEvent=true;
   try{
     if(event.type==='join'){
-      if(document.getElementById('liveAutoJoin')?.checked)onJoin(displayName,id);
+      onLiveVisitor(displayName,id);
     }else if(event.type==='gift')onGift(displayName,event.giftName,id);
     else if(event.type==='comment'||event.type==='answer'){
       const receivedAt=Number(event.receivedAt)||Date.now();
@@ -1757,7 +1774,7 @@ window.classroomLiveEvent=function(event){
       // Seat a real player who answered A-D even if the question was not
       // opened yet; only awarding points requires an open question.
       if(/^[ABCD]$/i.test(raw))ensureStudent(who,0,id);
-      if(!current||locked||!window.__liveQuestionStartedAt||(!tick&&!readingQuiz&&!roundGraceActive)){
+      if(!current||locked||!window.__liveQuestionStartedAt||(!tick&&!roundGraceActive)){
         showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Mới nhất: '+who+' — '+raw+'. Câu hỏi chưa bắt đầu, chưa chấm.');
         return;
       }
@@ -2028,7 +2045,6 @@ function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQu
  if(!current||locked)return;
  stopCountdownWarning();
  clearInterval(tick);
- warmCountdownWarning();
  if(!window.__liveQuestionStartedAt)window.__liveQuestionStartedAt=Date.now();
  seconds=Math.max(1,Number($('duration').value)||20);
  const deadline=Date.now()+seconds*1000;
@@ -2036,12 +2052,19 @@ function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQu
  $('timer').textContent=seconds;
  $('timer').classList.add('running');
  $('timer').classList.remove('time-warning');
- status('Đang đếm ngược '+seconds+' giây...');
+ lastWarningBeepSecond=-1;
+ status('Đang đếm ngược '+seconds+' giây. Bắt đầu tính đáp án TikTok!');
  const update=()=>{
    if(locked){clearInterval(tick);tick=null;return}
    seconds=Math.max(0,Math.ceil((deadline-Date.now())/1000));
    $('timer').textContent=seconds;
-   if(seconds>0&&seconds<=5)announceCountdownWarning();
+   if(seconds>0&&seconds<=5){
+     announceCountdownWarning();
+     if(seconds!==lastWarningBeepSecond){
+       lastWarningBeepSecond=seconds;
+       playCountdownBeep(seconds);
+     }
+   }
    if(seconds<=0){
      clearInterval(tick);tick=null;
      if(!roundGraceActive){
