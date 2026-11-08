@@ -567,36 +567,47 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 }
 
 
-/* Top 5: pin to the left wall above the teacher's head, leaving HUD untouched. */
-#stage .class-rank{
-  top:16.0%;left:2.1%;width:15.5%;height:18.2%;
-  padding:.32cqw .35cqw;overflow:hidden;
-}
+/* One full-width Top 5 panel. Cover the leaderboard baked into the uploaded
+   classroom photo, while remaining just above the teacher's hair. */
+#stage .class-rank,
 body #stage.stage-exact .class-rank,
 body.live-safe #stage.stage-exact .class-rank{
-  top:16.0%;left:2.1%;width:15.5%;height:18.2%;
-  padding:.32cqw .35cqw;overflow:hidden;
+  top:19.1%;left:2.5%;width:24.8%;height:18.6%;
+  padding:.45cqw .58cqw;
+  overflow:hidden;z-index:23;
+  background:#fff9f0;
+  border:.28cqw solid #f45aa3;
+  border-radius:1.15cqw;
+  box-shadow:0 0 0 .27cqw #fff7ed,0 .3cqw .65cqw #a44c8080;
 }
 #stage .class-rank strong,
 body #stage.stage-exact .class-rank strong{
-  display:block;white-space:nowrap;overflow:hidden;text-overflow:clip;
-  font-size:clamp(7px,1.35cqw,15px);line-height:1.12;
-  margin-bottom:.14cqw;padding:.22cqw .08cqw;
+  display:block;white-space:nowrap;overflow:hidden;
+  font-size:clamp(9px,1.5cqw,19px);line-height:1.15;
+  margin-bottom:.22cqw;padding:.29cqw .13cqw;
 }
 #stage #miniLeaderboard,
 body #stage.stage-exact #miniLeaderboard,
 body.live-safe #stage.stage-exact #miniLeaderboard{
-  display:grid;gap:.12cqw;margin-top:.12cqw;
-  font-size:clamp(7px,1.28cqw,14px);
-  line-height:1.14;
+  display:grid;gap:.12cqw;margin-top:.13cqw;
+  font-size:clamp(9px,1.48cqw,17px);
+  line-height:1.09;
 }
 #stage #miniLeaderboard>div{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:.16cqw;min-height:2.28cqw;padding:.12cqw 0;
-  white-space:nowrap;overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;column-gap:.28cqw;
+  min-height:2.65cqw;padding:.12cqw .03cqw;
+  overflow:visible;border-bottom:1px solid #e7d0d7;
 }
-#stage #miniLeaderboard b{display:block;min-width:0;max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#stage #miniLeaderboard em{flex:none;white-space:nowrap;font-size:.96em}
+#stage #miniLeaderboard b{
+  display:block;min-width:0;max-width:none;
+  white-space:normal;overflow-wrap:anywhere;word-break:normal;
+  line-height:1.06;
+}
+#stage #miniLeaderboard em{
+  min-width:0;white-space:nowrap;flex:none;
+  text-align:right;font-size:.82em;
+}
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
 <div id="livePresentation">
 <div id="liveLaunchBar"><button type="button" id="launchLiveFullscreen">⛶ MỞ LIVE TOÀN MÀN HÌNH – ẨN THANH WEB</button><small>Nhấn nút này trước khi chia sẻ màn hình lên TikTok. Android Chrome hỗ trợ chế độ toàn màn hình.</small></div>
