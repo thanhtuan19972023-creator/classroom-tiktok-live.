@@ -16,6 +16,8 @@ let currentConnection = null, reconnectTimer = null, lastError = '';
 let connectedSince = null, lastEventAt = null, roomId = null;
 let restartingConnection=false, roomProbeInFlight=false, lastManualRestart=0;
 let lastRoomProbeError='', lastRoomCheckedAt=0;
+// Provider account-hour limits must not trigger rapid reconnect loops.
+let rateLimitUntil=0, nextRetryAt=0, consecutiveFailures=0;
 
 function trim(value, max=120) { return String(value ?? '').trim().slice(0,max); }
 function displayUser(evt) {
@@ -49,19 +51,36 @@ function info() {
     username:username ? '@'+username : null, state, connected:state==='connected',
     roomId, connectedSince, lastEventAt, lastError, cursor:lastId,
     checkingNewRoom:roomProbeInFlight, lastRoomCheckedAt, lastRoomProbeError,
+    rateLimitUntil, nextRetryAt,
     time:Date.now()
   };
 }
+function providerRateLimited(error=''){
+  return /rate[_\\s-]*limit|too many connections|retry.after|429\\b/i.test(String(error||''));
+}
+function noteConnectionFailure(error=''){
+  consecutiveFailures=Math.min(7,consecutiveFailures+1);
+  if(providerRateLimited(error)){
+    // The upstream error explicitly states rate_limit_account_hour.
+    // Leave the provider alone for an hour rather than hammering its connection API.
+    rateLimitUntil=Math.max(rateLimitUntil,Date.now()+60*60*1000);
+    console.warn('TikTok connection rate limited; backing off until',new Date(rateLimitUntil).toISOString());
+  }
+}
 function planReconnect(waitMs=30000) {
   if(!username || reconnectTimer || restartingConnection)return;
-  reconnectTimer=setTimeout(()=>{reconnectTimer=null;void connectLive()},waitMs);
+  const now=Date.now();
+  const backoff=Math.min(10*60*1000,30000*Math.pow(2,Math.min(consecutiveFailures-1,5)));
+  const delay=Math.max(30000,waitMs,backoff,rateLimitUntil>now?rateLimitUntil-now:0);
+  nextRetryAt=now+delay;
+  reconnectTimer=setTimeout(()=>{reconnectTimer=null;nextRetryAt=0;void connectLive()},delay);
   reconnectTimer.unref?.();
 }
 // TikTok creates a NEW room ID every time the creator starts a new LIVE.
 // Reset an old socket before binding to the new room, even if the old socket
 // never sent a DISCONNECTED event.
 async function restartConnection(reason='refresh TikTok room'){
-  if(!username||restartingConnection)return false;
+  if(!username||restartingConnection||Date.now()<rateLimitUntil)return false;
   restartingConnection=true;
   if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}
   const old=currentConnection;
@@ -106,7 +125,8 @@ const liveRoomMonitor=setInterval(()=>{void monitorLiveRoom()},60000);
 liveRoomMonitor.unref?.();
 async function connectLive() {
   if(!username || restartingConnection || state==='connecting' || state==='connected')return;
-  state='connecting';lastError='';
+  if(Date.now()<rateLimitUntil){planReconnect(rateLimitUntil-Date.now());return;}
+  state='connecting';lastError='';nextRetryAt=0;
   // A fresh socket is used for each retry. Only messages received after connection count.
   const conn=new TikTokLiveConnection(username,{
     processInitialData:false,
@@ -141,19 +161,22 @@ async function connectLive() {
   conn.on(ControlEvent.ERROR,err=>{
     if(currentConnection!==conn)return;
     lastError=trim(err?.message||err,240);
+    if(providerRateLimited(lastError))rateLimitUntil=Math.max(rateLimitUntil,Date.now()+60*60*1000);
     console.warn('TikTok connection reported an error:',lastError);
   });
   conn.on(ControlEvent.DISCONNECTED,()=>{
     if(currentConnection!==conn)return;
     state='disconnected';roomId=null;connectedSince=null;
+    noteConnectionFailure(lastError);
     planReconnect(15000);
   });
   try{
     const connected=await conn.connect();
     if(currentConnection!==conn){try{await conn.disconnect()}catch{}return;}
     if(!conn.isConnected){
-      state='disconnected';planReconnect(15000);return;
+      state='disconnected';noteConnectionFailure(lastError);planReconnect(15000);return;
     }
+    consecutiveFailures=0;rateLimitUntil=0;nextRetryAt=0;
     state='connected';roomId=trim(connected?.roomId||conn.roomId||'',80);
     connectedSince=Date.now();lastError='';lastRoomProbeError='';
     console.log('Connected to public TikTok LIVE @'+username);
@@ -163,6 +186,7 @@ async function connectLive() {
     state=/offline|not.live|user.offline|room.is.not.live/i.test(lastError)?'offline':'error';
     roomId=null;connectedSince=null;
     console.warn('TikTok LIVE connection not ready:',lastError);
+    noteConnectionFailure(lastError);
     planReconnect(state==='offline'?35000:45000);
   }
 }
@@ -290,6 +314,11 @@ function handler(req,res){
     }
     if(!username){
       res.writeHead(503,headers);res.end('{"error":"TIKTOK_USERNAME not configured"}');return
+    }
+    if(Date.now()<rateLimitUntil){
+      res.writeHead(429,headers);
+      res.end(JSON.stringify({error:'TikTok đang giới hạn kết nối. Máy chủ sẽ tự thử lại sau.',retryAfterSeconds:Math.ceil((rateLimitUntil-Date.now())/1000)}));
+      return
     }
     if(Date.now()-lastManualRestart<30000){
       res.writeHead(429,headers);res.end('{"error":"Reconnect cooldown active"}');return
