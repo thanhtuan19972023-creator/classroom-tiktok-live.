@@ -56,7 +56,7 @@ function info() {
   };
 }
 function providerRateLimited(error=''){
-  return /rate[_\\s-]*limit|too many connections|retry.after|429\\b/i.test(String(error||''));
+  return /rate[_ -]*limit|too many connections|retry.after|429/i.test(String(error||''));
 }
 function noteConnectionFailure(error=''){
   consecutiveFailures=Math.min(7,consecutiveFailures+1);
@@ -176,6 +176,7 @@ async function connectLive() {
     if(!conn.isConnected){
       state='disconnected';noteConnectionFailure(lastError);planReconnect(15000);return;
     }
+    if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null;}
     consecutiveFailures=0;rateLimitUntil=0;nextRetryAt=0;
     state='connected';roomId=trim(connected?.roomId||conn.roomId||'',80);
     connectedSince=Date.now();lastError='';lastRoomProbeError='';
