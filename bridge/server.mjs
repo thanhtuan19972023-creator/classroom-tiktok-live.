@@ -10,7 +10,7 @@ const port = Number(process.env.PORT || 10000);
 const instanceId = randomUUID();
 const eventHistory = [];
 const recentMessageIds = new Map();
-const maxEvents = 350;
+const maxEvents = 1000; // Keep extra recent events during TikTok LIVE bursts.
 let lastId = 0, state = username ? 'starting' : 'not_configured';
 let currentConnection = null, reconnectTimer = null, lastError = '';
 let connectedSince = null, lastEventAt = null, roomId = null;
@@ -229,7 +229,9 @@ function handler(req,res){
   if(url.pathname==='/api/events'){
     const since=Math.max(0,Number(url.searchParams.get('after'))||0);
     const limit=Math.min(100,Math.max(1,Number(url.searchParams.get('limit'))||60));
-    const events=eventHistory.filter(event=>event.id>since).slice(-limit);
+    // Return the OLDEST unread events first. Taking the newest 100 was
+    // silently dropping early correct answers when a wave of viewers joined.
+    const events=eventHistory.filter(event=>event.id>since).slice(0,limit);
     res.writeHead(200,headers);res.end(JSON.stringify({
       instanceId,cursor:lastId,state,connected:state==='connected',events
     }));return;
