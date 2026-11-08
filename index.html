@@ -417,8 +417,28 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 #stage.stage-exact .photo-seat-name.active{background:#fff2c3;border-color:#f9b735}
 #referencePickerBtn,#referenceResetBtn{white-space:normal}
 
+
+/* In exact-photo mode the photograph remains untouched. Only the palm is
+   masked out and re-painted from the same user's chosen source pixels.
+   The hand retains original face/skin rendering and waves naturally. */
+#photoTeacherBoardRepair,#photoTeacherHand{display:none;position:absolute;pointer-events:none;user-select:none}
+#stage.stage-exact #photoTeacherBoardRepair{display:block;z-index:16;object-fit:fill}
+#stage.stage-exact #photoTeacherHand{
+ display:block;z-index:17;object-fit:fill;
+ transform-origin:6% 87%;will-change:transform;
+ animation:photoTeacherWave 3.25s ease-in-out infinite;
+}
+@keyframes photoTeacherWave{
+ 0%,100%{transform:rotate(0deg) translateY(0)}
+ 22%{transform:rotate(-3deg) translateY(-.1cqw)}
+ 48%{transform:rotate(3deg) translateY(.07cqw)}
+ 73%{transform:rotate(-1.8deg) translateY(-.06cqw)}
+}
+@media (prefers-reduced-motion: reduce){
+ #stage.stage-exact #photoTeacherHand{animation:none}
+}
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
-<main id="stage" aria-label="Lớp học vui vẻ 12A"><img id="exactReferenceImage" alt="" aria-hidden="true"><div id="photoSeatLabels" aria-hidden="true"></div>
+<main id="stage" aria-label="Lớp học vui vẻ 12A"><img id="exactReferenceImage" alt="" aria-hidden="true"><img id="photoTeacherBoardRepair" alt="" aria-hidden="true"><img id="photoTeacherHand" alt="" aria-hidden="true"><div id="photoSeatLabels" aria-hidden="true"></div>
 <div class="ref-backdrop" aria-hidden="true"><div class="ref-books leftbooks">📚</div><div class="ref-books rightbooks">📚</div><div class="ref-window"></div><div class="ref-blossoms blossom-one">🌸🌸🌸</div><div class="ref-blossoms blossom-two">🌸🌸</div><div class="ref-plants leftplant">🌿</div><div class="ref-plants rightplant">🌿</div><div class="ref-globe">🌎</div><div class="ref-flowerpot">🌸</div></div>
 <div class="ref-title" aria-label="Lớp học vui vẻ 12A"><div class="ref-cap">🎓</div><strong>🏫 LỚP HỌC VUI VẺ <span>• 12A</span></strong></div>
 <div class="ref-subtitle">💗 Đố vui kiến thức · Học mà chơi · Chơi mà học 💗</div>
@@ -1159,6 +1179,53 @@ async function referenceDeleteBlob(){
    tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)
  });db.close();
 }
+
+/* Give the original teacher a live hand gesture without replacing or blurring
+   the original full-resolution classroom, pupils, or teacher's face.
+   This is calculated locally from the uploaded 12A reference image. */
+function buildLiveTeacherHand(referenceImage){
+ const repairEl=document.getElementById('photoTeacherBoardRepair');
+ const handEl=document.getElementById('photoTeacherHand');
+ const scaleX=referenceImage.naturalWidth/1199,scaleY=referenceImage.naturalHeight/1312;
+ const left=343,top=634,w=116,h=76;
+ if(!Number.isFinite(scaleX)||scaleX<=0||Math.abs(scaleX-scaleY)>.07){
+   repairEl.style.display='none';handEl.style.display='none';return;
+ }
+ // Outline follows the real open palm (not a drawn replacement hand).
+ const outline=[
+   [347,705],[348,699],[353,682],[367,662],[383,650],
+   [402,640],[409,639],[410,645],[396,658],[387,666],
+   [411,660],[441,660],[451,665],[452,669],[444,675],
+   [420,684],[399,694],[370,702],[354,708]
+ ];
+ function makeCanvas(){const c=document.createElement('canvas');c.width=w*2;c.height=h*2;return c}
+ function clipPalm(ctx){
+   ctx.beginPath();
+   outline.forEach(([x,y],i)=>{
+     const px=(x-left)*2,py=(y-top)*2;
+     if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+   });
+   ctx.closePath();
+ }
+ // The skin uses the original pixels, not AI recreation or a compressed sprite.
+ const hand=makeCanvas(),hc=hand.getContext('2d',{willReadFrequently:false});
+ hc.save();clipPalm(hc);hc.clip();
+ hc.drawImage(referenceImage,left*scaleX,top*scaleY,w*scaleX,h*scaleY,0,0,w*2,h*2);
+ hc.restore();
+ // Replace the stationary hand with matching chalkboard shading so movement
+ // doesn't leave a second frozen hand underneath.
+ const repair=makeCanvas(),rc=repair.getContext('2d');
+ rc.save();clipPalm(rc);rc.clip();
+ const bg=rc.createLinearGradient(0,0,w*2,0);
+ bg.addColorStop(0,'#174d3f');bg.addColorStop(.55,'#1b5442');bg.addColorStop(1,'#215947');
+ rc.fillStyle=bg;rc.fillRect(0,0,w*2,h*2);rc.restore();
+ const metrics={left:(left/1199*100)+'%',top:(top/1312*100)+'%',
+   width:(w/1199*100)+'%',height:(h/1312*100)+'%'};
+ for(const el of [repairEl,handEl])Object.assign(el.style,metrics);
+ repairEl.src=repair.toDataURL('image/png');
+ handEl.src=hand.toDataURL('image/png');
+}
+
 function referenceShowBlob(blob){
  if(originalReferenceObjectUrl)URL.revokeObjectURL(originalReferenceObjectUrl);
  originalReferenceObjectUrl=URL.createObjectURL(blob);
@@ -1169,6 +1236,7 @@ function referenceShowBlob(blob){
      status('Ảnh này không đúng tỷ lệ mẫu. Hãy chọn ảnh lớp học 12A gốc (1199 × 1312).',true);
      return;
    }
+   buildLiveTeacherHand(img);
    $('stage').classList.add('stage-exact');
    $('referenceResetBtn').hidden=false;
    renderPhotoSeatLabels();
