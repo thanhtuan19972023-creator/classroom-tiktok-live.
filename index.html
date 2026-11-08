@@ -536,8 +536,8 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
   <p id="realRoundStats" class="voice-note" role="status" style="margin:8px 0;font-weight:750">✅ Câu hiện tại: 0 người trả lời đúng · Top 0</p>
   <small>Khi mở phiên LIVE mới, game tự kiểm tra và tìm lại phòng TikTok. Nếu chưa nhận bình luận, bấm “Kết nối LIVE thật” một lần để yêu cầu Render bỏ phòng cũ và tìm phòng mới. Khi LIVE, hãy giữ trang game hiển thị trên màn hình Android.</small>
 </section>
-<section class="panel"><h2>📣 Tương tác lớp học (mô phỏng)</h2><div class="field"><label for="viewer">Tên hiển thị TikTok (mô phỏng)</label><input id="viewer" maxlength="25" placeholder="Ví dụ: Duyên Nguyễn"></div><div class="field"><label for="commentText">Bình luận</label><input id="commentText" maxlength="150" placeholder="Ví dụ: B hoặc chọn B"></div><div class="actions"><button class="secondary" id="joinBtn">👋 Vào lớp</button><button class="gold" id="giftBtn">🎁 Tặng quà</button><button id="commentBtn">💬 Bình luận</button><button class="secondary" id="removeBtn">🪑 Xóa học sinh cuối</button></div><p>Game đọc tên người vào lớp, người tặng quà và tên + nội dung bình luận. Quà cộng 10 điểm (không cộng số câu đúng). Chỉ bình luận đáp án đúng mới tăng số câu đúng trên bảng Top 10. Điểm: hạng nhất +10, nhì +5, ba +2, từ thứ tư +0; tặng quà +10.</p><p class="voice-note"><strong>Chế độ mô phỏng:</strong> Các nút ở đây dùng để thử giọng đọc. GitHub Pages chưa tự nhận lượt vào LIVE, quà hoặc bình luận TikTok thật.</p><ul id="liveLog" class="live-log" aria-live="polite"></ul></section>
-<section class="panel"><h2>🏆 Top 10 học sinh theo điểm</h2><p>Xếp theo tổng điểm trả lời nhanh và quà tặng. Mỗi người chỉ được tính một lượt cho mỗi câu. Bình luận thử bằng A, B, C, D hoặc “chọn B” trong lúc câu hỏi đang mở.</p><div id="correctLeaderboard" class="correct-leaderboard" aria-live="polite"><p>Chưa có ai trả lời đúng.</p></div><div class="actions" style="margin-top:12px"><button type="button" id="resetRankingBtn" class="secondary">↻ Reset bảng xếp hạng</button></div><p class="mini">Chỉ đặt lại điểm và số câu trả lời đúng; vẫn giữ học sinh, câu hỏi và chủ đề đã chọn.</p></section>
+<section class="panel"><h2>📣 Tương tác lớp học (mô phỏng)</h2><div class="field"><label for="viewer">Tên hiển thị TikTok (mô phỏng)</label><input id="viewer" maxlength="25" placeholder="Ví dụ: Duyên Nguyễn"></div><div class="field"><label for="commentText">Bình luận</label><input id="commentText" maxlength="150" placeholder="Ví dụ: B hoặc chọn B"></div><div class="actions"><button class="secondary" id="joinBtn">👋 Vào lớp</button><button class="gold" id="giftBtn">🎁 Tặng quà</button><button id="commentBtn">💬 Bình luận</button><button class="secondary" id="removeBtn">🪑 Xóa học sinh cuối</button></div><p>Game đọc tên người vào lớp, người tặng quà và tên + nội dung bình luận. Quà cộng 10 điểm (không cộng số câu đúng). Chỉ bình luận đáp án đúng mới tăng số câu đúng trên bảng Top 10. Điểm: hạng nhất +10, nhì +5, ba +2, từ thứ tư +0; tặng quà +10; trả lời sai −1 điểm.</p><p class="voice-note"><strong>Chế độ mô phỏng:</strong> Các nút ở đây dùng để thử giọng đọc. GitHub Pages chưa tự nhận lượt vào LIVE, quà hoặc bình luận TikTok thật.</p><ul id="liveLog" class="live-log" aria-live="polite"></ul></section>
+<section class="panel"><h2>🏆 Top 10 học sinh theo điểm</h2><p>Xếp theo tổng điểm trả lời nhanh và quà tặng, trừ 1 điểm nếu trả lời sai. Mỗi người chỉ được tính một lượt cho mỗi câu. Bình luận thử bằng A, B, C, D hoặc “chọn B” trong lúc câu hỏi đang mở.</p><div id="correctLeaderboard" class="correct-leaderboard" aria-live="polite"><p>Chưa có ai trả lời đúng.</p></div><div class="actions" style="margin-top:12px"><button type="button" id="resetRankingBtn" class="secondary">↻ Reset bảng xếp hạng</button></div><p class="mini">Chỉ đặt lại điểm và số câu trả lời đúng; vẫn giữ học sinh, câu hỏi và chủ đề đã chọn.</p></section>
 <section class="panel"><h2>📝 Quản lý câu hỏi <span id="bankCount" class="count"></span></h2><p>Có sẵn hơn 100 câu lịch sử, văn học, khoa học, địa lý. Bạn có thể thêm câu hỏi riêng, dữ liệu được lưu trên trình duyệt này.</p><div class="actions"><button id="addBtn">＋ Thêm câu hỏi</button><button class="secondary" id="resetBtn">↻ Làm lại trò chơi</button></div></section><p class="footer">Classroom TikTok LIVE · Bản trò chơi độc lập cho iPhone · Không có kết nối TikTok API</p></div>
 <div id="addModal" class="modal hide"><article><h3>➕ Thêm câu hỏi</h3><div class="field"><label>Câu hỏi</label><textarea id="newQuestion" placeholder="Viết câu hỏi..."></textarea></div><div class="field"><label>Đáp án đúng</label><input id="newAnswer" placeholder="Ví dụ: Hà Nội"></div><div class="field"><label>Chủ đề</label><select id="newCategory"><option>Khoa học</option><option>Lịch sử</option><option>Văn học</option><option>Địa lý</option></select></div><p class="mini">Các lựa chọn sai sẽ được tự động lấy từ những câu hỏi cùng chủ đề.</p><div class="actions"><button id="saveQuestion">Lưu câu hỏi</button><button class="secondary" id="cancelQuestion">Hủy</button></div></article></div>
 <script>
@@ -1572,7 +1572,7 @@ function beginQuestionReading(){
       'Chào mừng '+namedVisitors.map(n=>'em '+n).join(' và ')+' đến với lớp học 12A. Mời các em vào lớp, ngồi ngay ngắn và trả lời câu hỏi nhé! ' :
       'Chào mừng các bạn mới đến với lớp học 12A. Mời các em vào lớp, ngồi ngay ngắn và trả lời câu hỏi nhé! ') : '';
   pendingVisitorInvitation=false;
-  const instruction='Các bạn chú ý! Đáp án chỉ được tính sau khi đọc xong câu hỏi và đồng hồ bắt đầu đếm ngược. ';
+  const instruction='Các bạn chú ý! Đáp án chỉ được tính sau khi đọc xong câu hỏi và đồng hồ bắt đầu đếm ngược. Nếu trả lời sai sẽ bị trừ 1 điểm. ';
   speakFromTap(greet+instruction+fullQuestionNarration(),done);
 }
 function liveLog(kind,text){
@@ -1775,7 +1775,12 @@ function onComment(name,comment,identityKey=''){
     // Do not pronounce each correct name immediately: announce Top 5 together after the timer.
     notify('✅',name+' trả lời đúng '+letter+' · hạng '+rank+' · +'+earned+' điểm','',false);
   }else{
-    notify('❌',name+' trả lời '+letter+' · chưa đúng','Bạn '+name+' bình luận đáp án '+letter+'. Cảm ơn bạn đã tham gia!');
+    // One scored answer per student per question, including wrong replies.
+    // Negative scores are intentional and persist across game reloads.
+    student.points-=1;
+    saveCorrectRank();renderStudents();
+    notify('❌',name+' trả lời '+letter+' · sai −1 điểm',
+      'Bạn '+spokenStudentName(name)+' trả lời chưa đúng, bị trừ 1 điểm.',false);
   }
 }
 // Count comments received from TikTok separately from answers awarded points.
@@ -1838,8 +1843,8 @@ try{const saved=JSON.parse(localStorage.getItem('classroom_correct_v5')||'[]');i
   let person=key?students.find(s=>s.tiktokId===key):students.find(s=>!s.tiktokId&&s.name.toLocaleLowerCase('vi')===name.toLocaleLowerCase('vi'));
   if(!person){person={name,points:0,correct:0,id:Date.now()+Math.random(),tiktokId:key||null};students.push(person)}
   person.correct=correct;person.points=Number.isFinite(Number(entry.points))&&entry.points!==undefined?
-    Math.max(0,Math.min(100000000,Number(entry.points))):correct*10;}}catch(e){}
-function saveCorrectRank(){try{localStorage.setItem('classroom_correct_v5',JSON.stringify(students.filter(s=>s.correct>0||s.points>0).map(s=>({name:s.name,correct:s.correct,points:s.points,tiktokId:s.tiktokId||null}))))}catch(e){}}
+    Math.max(-100000000,Math.min(100000000,Number(entry.points))):correct*10;}}catch(e){}
+function saveCorrectRank(){try{localStorage.setItem('classroom_correct_v5',JSON.stringify(students.filter(s=>s.correct>0||s.points!==0).map(s=>({name:s.name,correct:s.correct,points:s.points,tiktokId:s.tiktokId||null}))))}catch(e){}}
 const ALL_SUBJECTS=['Lịch sử','Văn học','Khoa học','Địa lý','Toán học','Tiếng Nhật'];
 const CATEGORY_STORE='classroom12a_checked_topics_v1';
 function activeSubjects(){return [...document.querySelectorAll('#categoryGroup .category-check:checked')].map(el=>el.value)}
@@ -1900,7 +1905,7 @@ function renderStudents(){
   const view=students.slice(0,totalSeats); // Seats never shift when another viewer joins.
   while(view.length<totalSeats)view.push({name:'',points:0,id:'empty'+view.length,empty:true});
   $('studentCount').textContent=students.length;
-  $('totalScore').textContent=students.reduce((sum,p)=>sum+Math.max(0,Number(p.points)||0),0);
+  $('totalScore').textContent=students.reduce((sum,p)=>sum+(Number(p.points)||0),0);
   renderPhotoSeatLabels();
   $('students').replaceChildren();
   view.forEach((s,i)=>{
@@ -1910,7 +1915,7 @@ function renderStudents(){
     el.querySelector('.kid').style.animationDelay=(-(i*.23))+'s';
     $('students').appendChild(el);
   });
-  const ranked=students.filter(s=>Number(s.correct)>0||Number(s.points)>0).slice().sort((a,b)=>(b.points-a.points)||(b.correct-a.correct)||a.name.localeCompare(b.name,'vi')).slice(0,10);
+  const ranked=students.filter(s=>Number(s.correct)>0||Number(s.points)!==0).slice().sort((a,b)=>(b.points-a.points)||(b.correct-a.correct)||a.name.localeCompare(b.name,'vi')).slice(0,10);
   const full=$('correctLeaderboard');if(full){full.replaceChildren();if(!ranked.length){const msg=document.createElement('p');msg.textContent='Chưa có ai trả lời đúng. Hãy thử bình luận A, B, C hoặc D.';full.appendChild(msg)}
     ranked.forEach((s,i)=>{const row=document.createElement('div'),place=document.createElement('span'),name=document.createElement('strong'),correct=document.createElement('em');
       row.className='rank-row';place.className='rank-medal';place.textContent=['🥇','🥈','🥉'][i]||String(i+1);name.textContent=s.name;correct.textContent=s.correct+' câu đúng · '+s.points+' điểm';row.append(place,name,correct);full.appendChild(row)})}
