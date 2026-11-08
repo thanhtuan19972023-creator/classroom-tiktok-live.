@@ -1093,25 +1093,26 @@ function unlockAIAudio(){
 // If paid AI credits run out, automatically keep the classroom talking with
 // the free Vietnamese speech engine built into Android/iOS browsers.
 function switchToBrowserVoice(text,after,reason=''){
+  // The mobile speech engine sometimes reads Vietnamese/Japanese using an
+  // unrelated default voice. Never silently change to that poor fallback.
   const quota=reason==='quota',neural=reason==='neural';
-  const message=quota
-    ?'⚠️ ElevenLabs hết credits. Đã tự chuyển sang giọng tiếng Việt miễn phí trên điện thoại.'
-    :neural
-      ?'⚠️ Giọng review phim AI tạm không kết nối được. Đã chuyển sang giọng tiếng Việt trên điện thoại.'
-      :'⚠️ Máy chủ giọng Duyên không phát được. Đã chuyển sang giọng tiếng Việt trên điện thoại.';
-  $('ttsEngine').value='browser';
-  voiceEnabled=true;
   const note=$('voiceFallbackNote');
-  if(note){
-    note.hidden=false;
-    note.textContent=message+(quota
-      ?' Để dùng lại Duyên, cần có credits ElevenLabs. Bạn có thể chọn giọng review phim AI miễn phí trong danh sách.'
-      :neural?' Có thể thử lại giọng Neural khi dịch vụ phục hồi; giọng điện thoại vẫn dùng miễn phí.'
-      :' Có thể chọn giọng review phim AI miễn phí ở mục Nguồn giọng.');
+  if(neural){
+    const message='⚠️ Giọng review phim AI tạm gián đoạn. Đã bỏ qua đoạn đọc lỗi, KHÔNG tự đổi sang giọng dự phòng đọc sai. Bạn có thể thử lại ở câu tiếp theo.';
+    if(note){note.hidden=false;note.textContent=message}
+    voiceState(message);
+    if(typeof after==='function')after();
+    return;
   }
+  // If ElevenLabs runs out of credits, use the existing free Neural speaker
+  // rather than falling back to the wrong local handset voice.
+  $('ttsEngine').value='edge-male';
+  voiceEnabled=true;
+  const message=quota?'⚠️ Duyên AI hết credits; đã chuyển sang giọng review phim AI miễn phí.':
+    '⚠️ Duyên AI gặp lỗi; đang dùng giọng review phim AI miễn phí.';
+  if(note){note.hidden=false;note.textContent=message+' Nếu nguồn miễn phí tạm lỗi, trò chơi vẫn chạy mà không tự đọc bằng giọng sai.'}
   voiceState(message);
-  if(speechAvailable)say(text,after);
-  else if(typeof after==='function')after();
+  say(text,after);
 }
 
 // Switch to a native Japanese voice for Japanese words; keep Vietnamese
@@ -1142,13 +1143,18 @@ function multilingualSpeechParts(text){
 }
 function speakJapaneseOnDevice(text){
   return new Promise(resolve=>{
-    if(!speechAvailable){resolve();return}
-    const utterance=new SpeechSynthesisUtterance(String(text).slice(0,350));
-    utterance.lang='ja-JP';utterance.rate=.94;utterance.pitch=1;utterance.volume=1;
+    if(!speechAvailable){resolve(false);return}
     const preferred=window.speechSynthesis.getVoices().find(v=>/^ja([-_]|$)/i.test(v.lang));
-    if(preferred)utterance.voice=preferred;
+    if(!preferred){
+      // Never pronounce Japanese through English/Vietnamese as an "automatic" substitute.
+      voiceState('⚠️ Máy này chưa có giọng tiếng Nhật. Tạm bỏ qua từ Nhật thay vì đọc sai.');
+      resolve(false);return
+    }
+    const utterance=new SpeechSynthesisUtterance(String(text).slice(0,350));
+    utterance.lang='ja-JP';utterance.voice=preferred;
+    utterance.rate=.94;utterance.pitch=1;utterance.volume=1;
     let settled=false;
-    const finish=()=>{if(settled)return;settled=true;clearTimeout(timeout);resolve()};
+    const finish=()=>{if(settled)return;settled=true;clearTimeout(timeout);resolve(true)};
     const timeout=setTimeout(finish,13000);
     utterance.onend=finish;utterance.onerror=finish;
     try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}
@@ -1291,9 +1297,24 @@ function speechParts(text){
 }
 function processSpeech(){
   if(!voiceEnabled||!speechAvailable||activeSpeech||!speechQueue.length)return;
-  const item=speechQueue.shift(),token=speechSerial,utterance=new SpeechSynthesisUtterance(item.text);
-  utterance.lang='vi-VN';const style=speechStyle();utterance.rate=style.rate;utterance.pitch=style.pitch;utterance.volume=1;
-  const chosen=vietnameseVoice();if(chosen)utterance.voice=chosen;
+  const item=speechQueue.shift(),token=speechSerial;
+  const lang=item.language==='ja'?'ja-JP':'vi-VN';
+  const chosen=lang==='ja-JP'
+    ?window.speechSynthesis.getVoices().find(v=>/^ja([-_]|$)/i.test(v.lang))
+    :vietnameseVoice();
+  if(!chosen){
+    voiceState(lang==='ja-JP'
+      ?'⚠️ Chưa có giọng tiếng Nhật đúng chuẩn trên điện thoại, đã bỏ qua đoạn tiếng Nhật.'
+      :'⚠️ Điện thoại chưa cài giọng tiếng Việt. Không tự đọc bằng giọng nước khác.');
+    // Continue to the next language segment, never switch to another locale.
+    if(typeof item.after==='function')item.after();
+    processSpeech();return;
+  }
+  const utterance=new SpeechSynthesisUtterance(item.text);
+  utterance.lang=lang;utterance.voice=chosen;
+  const style=speechStyle();
+  utterance.rate=lang==='ja-JP'?.92:style.rate;
+  utterance.pitch=lang==='ja-JP'?1:style.pitch;utterance.volume=1;
   activeSpeech=utterance;
   let started=false,finished=false;
   const done=(error)=>{
@@ -1321,9 +1342,12 @@ function processSpeech(){
 function say(text,after){
   if(aiActive()||neuralActive()){if(voiceEnabled)aiSpeak(text,after);else if(after)after();return}
   if(!voiceEnabled||!speechAvailable){if(after)after();return}
-  const parts=speechParts(text).slice(0,12);
-  if(speechQueue.length>16)speechQueue.splice(0,speechQueue.length-12);
-  parts.forEach((part,i)=>speechQueue.push({text:part,after:i===parts.length-1?after:null}));
+  const parts=multilingualSpeechParts(text).slice(0,30);
+  if(speechQueue.length>30)speechQueue.splice(0,speechQueue.length-24);
+  parts.forEach((part,i)=>speechQueue.push({
+    text:part.text,language:part.language,after:i===parts.length-1?after:null
+  }));
+  if(!parts.length){if(after)after();return}
   processSpeech();
 }
 function enableSpeech(){
@@ -1458,10 +1482,12 @@ function stopCountdownWarning(){
 }
 function browserCountdownWarning(){
   if(!voiceEnabled||!speechAvailable)return;
+  const v=vietnameseVoice();
+  if(!v)return; // Never speak Vietnamese with the wrong system voice.
   try{
     const utterance=new SpeechSynthesisUtterance(countdownWarningText);
     utterance.lang='vi-VN';
-    const v=vietnameseVoice();if(v)utterance.voice=v;
+    utterance.voice=v;
     utterance.rate=1.08;utterance.pitch=1.12;utterance.volume=1;
     window.speechSynthesis.cancel();
     window.speechSynthesis.resume();
