@@ -444,6 +444,23 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
  content:'●';position:absolute;left:4%;color:#40cf31;font-size:.9em;line-height:1
 }
 #stage.stage-exact .photo-seat-name.active{background:#fff2c3;border-color:#f9b735}
+/* Empty illustrated seats are permanent: adding viewers only replaces names. */
+#stage.stage-exact .photo-seat-portrait{
+ position:absolute;transform:translate(-50%,-100%);width:13.8%;height:9.1%;
+ display:flex;align-items:flex-end;justify-content:center;
+ z-index:1;pointer-events:none;filter:drop-shadow(0 .35cqw .35cqw #38252f88)
+}
+#stage.stage-exact .photo-seat-portrait:before{
+ content:'';position:absolute;inset:8% 11% 1%;
+ background:linear-gradient(180deg,#f8ddc5 0%,#f5c1b3 58%,#c4a3b2 100%);
+ border-radius:48% 48% 22% 22%;opacity:.95
+}
+#stage.stage-exact .photo-seat-portrait svg{
+ display:block;width:100%;height:100%;position:relative;z-index:1;
+ overflow:visible
+}
+#stage.stage-exact .photo-seat-portrait.third-row{height:8.9%}
+#stage.stage-exact .photo-seat-name{z-index:2}
 #referencePickerBtn,#referenceResetBtn{white-space:normal}
 
 
@@ -1498,14 +1515,30 @@ function liveLog(kind,text){
   while($('liveLog').children.length>12)$('liveLog').lastElementChild.remove();
 }
 function visibleName(){return $('viewer').value.trim().slice(0,25)||'Học sinh mới'}
+function studentNameKey(name){
+  return String(name||'').normalize('NFKC').replace(/[\u200b-\u200f\uFEFF]/g,'')
+    .trim().replace(/\s+/g,' ').toLocaleLowerCase('vi');
+}
+function studentIdentityKey(key){
+  return String(key??'').trim().replace(/^@/,'').toLowerCase().slice(0,100);
+}
 function ensureStudent(name,points,identityKey=''){
-  const key=String(identityKey||'').trim().slice(0,100);
-  let student=key ? students.find(s=>s.tiktokId===key) :
-    students.find(s=>s.name.toLocaleLowerCase('vi')===name.toLocaleLowerCase('vi'));
-  if(student){student.points+=points;student.name=name}
-  else{student={name,points,correct:0,id:Date.now()+Math.random(),tiktokId:key||null};students.push(student)}
+  name=String(name||'Học sinh mới').trim().slice(0,25)||'Học sinh mới';
+  const key=studentIdentityKey(identityKey),nameKey=studentNameKey(name);
+  // A nickname match is intentional here: repeated comments/gifts or a change
+  // in the provider's user-id format must not create duplicate seats.
+  let student=students.find(s=>
+    (key&&s.tiktokId===key) || studentNameKey(s.name)===nameKey);
+  if(student){
+    student.points+=points;
+    student.name=name;
+    if(key&&!student.tiktokId)student.tiktokId=key;
+  }else{
+    student={name,points,correct:0,id:Date.now()+Math.random(),tiktokId:key||null};
+    students.push(student); // Insertion order is the stable seat assignment.
+  }
   renderStudents();
-  let tile=[...$('students').children].find(el=>el.querySelector('.name').textContent===student.name);
+  const tile=[...$('students').children].find(el=>el.dataset.id===String(student.id));
   if(tile){tile.classList.add('active');setTimeout(()=>tile.classList.remove('active'),1300)}
   return student;
 }
@@ -1632,10 +1665,12 @@ function onComment(name,comment,identityKey=''){
   if(!match){notify('💬',name+': '+comment,'Bạn '+name+' bình luận: '+comment);return}
   const letter=match[1];
   if(!current||locked){notify('💬',name+': '+comment,'Bạn '+name+' bình luận đáp án '+letter+' nhưng câu hỏi đã kết thúc.');return}
-  const identity=String(identityKey||name).toLocaleLowerCase('vi');
+  const student=ensureStudent(name,0,identityKey);
+  // Deduplicate against the actual seated student, not a nickname/userId
+  // that can vary between the JOIN, COMMENT and GIFT events.
+  const identity=String(student.id);
   if(answeredThisQuestion.has(identity)){liveLog('↩️',name+' đã trả lời câu này rồi');status(name+' đã trả lời câu này. Mỗi người chỉ được tính một lượt mỗi câu.');return}
   answeredThisQuestion.add(identity);
-  const student=ensureStudent(name,0,identityKey);
   const correctLetter=letters[options.indexOf(current.answer)];
   if(letter===correctLetter){
     student.correct=(student.correct||0)+1;
@@ -1671,7 +1706,7 @@ window.classroomLiveEvent=function(event){
   }finally{window.__classroomRealEvent=false;}
 };
 
-const $=id=>document.getElementById(id);const core=Object.entries(DATA).flatMap(([category,lines])=>lines.trim().split('\n').map(line=>{const [question,answer,...distractors]=line.split('|');return {question,answer,category,distractors}}));let extras=[];try{extras=JSON.parse(localStorage.getItem('classroom_extra')||'[]')}catch(e){};let bank=[...core,...extras];$('bankCount').textContent='('+bank.length+' câu)';let count=0,current=null,options=[],selected=-1,locked=false,seconds=20,tick=null,nextTimer=null,score=0,answeredThisQuestion=new Set(),correctTotalThisQuestion=0,fastestCorrectNames=[],students=['An','Bình','Chi','Dũng','Emi','Minh'].map((name,i)=>({name,points:0,correct:0,id:i}));
+const $=id=>document.getElementById(id);const core=Object.entries(DATA).flatMap(([category,lines])=>lines.trim().split('\n').map(line=>{const [question,answer,...distractors]=line.split('|');return {question,answer,category,distractors}}));let extras=[];try{extras=JSON.parse(localStorage.getItem('classroom_extra')||'[]')}catch(e){};let bank=[...core,...extras];$('bankCount').textContent='('+bank.length+' câu)';let count=0,current=null,options=[],selected=-1,locked=false,seconds=20,tick=null,nextTimer=null,score=0,answeredThisQuestion=new Set(),correctTotalThisQuestion=0,fastestCorrectNames=[],students=[]; // Every pictured seat is permanent; real TikTok viewers replace "Chờ bạn" labels, not student artwork.
 // Only correct answers are persisted; simulated gifts and total game points remain separate.
 try{const saved=JSON.parse(localStorage.getItem('classroom_correct_v5')||'[]');if(Array.isArray(saved))for(const entry of saved.slice(0,500)){if(!entry||typeof entry.name!=='string')continue;const name=entry.name.trim().slice(0,25),correct=Number(entry.correct);if(!name||!Number.isSafeInteger(correct)||correct<1||correct>999999)continue;let person=students.find(s=>s.name.toLocaleLowerCase('vi')===name.toLocaleLowerCase('vi'));if(!person){person={name,points:0,correct:0,id:Date.now()+Math.random()};students.push(person)}person.correct=correct;}}catch(e){}
 function saveCorrectRank(){try{localStorage.setItem('classroom_correct_v5',JSON.stringify(students.filter(s=>s.correct>0).map(s=>({name:s.name,correct:s.correct}))))}catch(e){}}
@@ -1703,7 +1738,7 @@ ${!boy&&variant===3?`<path d="M29 43 Q39 38 47 43 M54 43 Q64 38 73 43" stroke="#
 }
 function renderStudents(){
   const totalSeats=20;
-  const view=students.slice(-totalSeats);
+  const view=students.slice(0,totalSeats); // Seats never shift when another viewer joins.
   while(view.length<totalSeats)view.push({name:'',points:0,id:'empty'+view.length,empty:true});
   $('studentCount').textContent=students.length;
   renderPhotoSeatLabels();
@@ -1949,12 +1984,25 @@ function renderPhotoSeatLabels(){
  if(!window.__photoSeatDataReady)return;
  const layer=document.getElementById('photoSeatLabels');
  if(!layer)return;
- const visible=students.slice(-14);layer.replaceChildren();
+ // The photograph includes 6 illustrated pupils; the remaining 8 were
+ // gray silhouette placeholders. Restore them as fixed illustrated pupils.
+ // TikTok JOIN events only update the nameplate, not the artwork.
+ const visible=students.slice(0,photoPositions.length);layer.replaceChildren();
  photoPositions.forEach(([x,y],i)=>{
+   if(i>=6){
+     const portrait=document.createElement('div');
+     portrait.className='photo-seat-portrait'+(i>=9?' third-row':'');
+     portrait.style.left=x+'%';
+     portrait.style.top=(y-2.1)+'%';
+     portrait.innerHTML=studentArt(i+2);
+     layer.appendChild(portrait);
+   }
    const player=visible[i];
-   const name=document.createElement('div');name.className='photo-seat-name'+(!player?' empty':'');
+   const name=document.createElement('div');
+   name.className='photo-seat-name'+(!player?' empty':'');
    name.style.left=x+'%';name.style.top=y+'%';
    name.textContent=player?.name||'Chờ bạn';
+   name.dataset.seat=String(i+1);
    layer.appendChild(name);
  });
 }
