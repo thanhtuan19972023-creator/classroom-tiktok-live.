@@ -3,6 +3,7 @@
 import http from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { TikTokLiveConnection, WebcastEvent, ControlEvent } from 'tiktok-live-connector';
+import { EdgeTTS } from '@andresaya/edge-tts';
 
 const username = String(process.env.TIKTOK_USERNAME || '').trim().replace(/^@/, '').toLowerCase();
 const port = Number(process.env.PORT || 10000);
@@ -106,6 +107,68 @@ const allowedOrigins=new Set([
   'https://classroom-tiktok-live.vercel.app',
   'https://thanhtuan19972023-creator.github.io'
 ]);
+
+const voiceRequests=new Map();
+let voiceInFlight=0;
+// Public Edge Read Aloud neural voices are not an official paid API. The
+// connection may be throttled or change; the browser has a local TTS fallback.
+async function handleFreeNeuralVoice(req,res,headers){
+  const ip=String(req.headers['x-forwarded-for']||req.socket.remoteAddress||'unknown').split(',')[0].trim();
+  const now=Date.now();
+  const usage=voiceRequests.get(ip)||{start:now,count:0};
+  if(now-usage.start>60000){usage.start=now;usage.count=0}
+  usage.count++;
+  voiceRequests.set(ip,usage);
+  if(voiceRequests.size>500){
+    for(const [addr,record] of voiceRequests)if(now-record.start>120000)voiceRequests.delete(addr);
+  }
+  if(usage.count>24||voiceInFlight>=3){
+    res.writeHead(429,headers);
+    res.end(JSON.stringify({error:'Tạm quá nhiều lượt tạo giọng, chuyển sang giọng trên điện thoại.'}));
+    return;
+  }
+  let raw='',size=0;
+  try{
+    for await(const chunk of req){
+      size+=chunk.length;
+      if(size>4500)throw new Error('input_too_large');
+      raw+=chunk.toString('utf8');
+    }
+  }catch(e){
+    res.writeHead(413,headers);res.end('{"error":"Nội dung quá dài"}');return;
+  }
+  let data;
+  try{data=JSON.parse(raw)}catch(e){data={}}
+  const speech=trim(data.text||'',390);
+  const voice=data.voice==='female'?'vi-VN-HoaiMyNeural':'vi-VN-NamMinhNeural';
+  if(!speech||speech.length>380||/[<>{}]/.test(speech)){
+    res.writeHead(400,headers);
+    res.end('{"error":"Nội dung đọc không hợp lệ hoặc quá dài"}');return;
+  }
+  voiceInFlight++;
+  try{
+    const engine=new EdgeTTS({timeout:20000});
+    const result=await engine.generate(speech,voice,{
+      rate:voice==='vi-VN-NamMinhNeural'?14:9,
+      pitch:voice==='vi-VN-NamMinhNeural'?-10:-3,
+      volume:95,
+      outputFormat:'audio-24khz-96kbitrate-mono-mp3'
+    });
+    const audio=Buffer.from(result.audio);
+    if(audio.length<120||audio.length>1200000)throw new Error('empty_or_oversized_audio');
+    if(!res.writableEnded){
+      res.writeHead(200,{...headers,'Content-Type':'audio/mpeg',
+        'Content-Length':audio.length,'Cache-Control':'no-store'});
+      res.end(audio);
+    }
+  }catch(e){
+    console.warn('Free neural TTS unavailable:',String(e?.code||e?.message||e).slice(0,130));
+    if(!res.writableEnded){
+      res.writeHead(502,headers);
+      res.end('{"error":"Giọng Neural miễn phí tạm gián đoạn. Game sẽ dùng giọng điện thoại."}');
+    }
+  }finally{voiceInFlight--}
+}
 function handler(req,res){
   const origin=trim(req.headers.origin||'',250);
   if(origin && !allowedOrigins.has(origin)){
@@ -120,14 +183,18 @@ function handler(req,res){
   };
   if(origin){
     headers['Access-Control-Allow-Origin']=origin;
-    headers['Access-Control-Allow-Methods']='GET, OPTIONS';
+    headers['Access-Control-Allow-Methods']='GET, POST, OPTIONS';
     headers['Access-Control-Allow-Headers']='Content-Type';
   }
   if(req.method==='OPTIONS'){
     res.writeHead(204,headers);res.end();return;
   }
-  if(req.method!=='GET'){res.writeHead(405,headers);res.end('{"error":"GET only"}');return;}
   const url=new URL(req.url||'/', 'http://localhost');
+  if(url.pathname==='/api/voice'){
+    if(req.method!=='POST'){res.writeHead(405,headers);res.end('{"error":"POST only"}');return;}
+    void handleFreeNeuralVoice(req,res,headers);return;
+  }
+  if(req.method!=='GET'){res.writeHead(405,headers);res.end('{"error":"GET only"}');return;}
   if(url.pathname==='/health' || url.pathname==='/'){
     res.writeHead(200,headers);
     res.end(JSON.stringify({service:'12A LIVE Bridge',...info()}));return;
