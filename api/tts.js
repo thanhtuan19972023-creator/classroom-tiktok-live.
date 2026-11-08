@@ -36,7 +36,7 @@ export default async function handler(req, res){
       if (!voice.ok) {
         let code='';
         try{const obj=await voice.json();code=String(obj?.detail?.code||obj?.detail?.status||'').slice(0,64)}catch(e){}
-        const messages={401:'API Key ElevenLabs không hợp lệ (401).',403:'API Key không có quyền truy cập giọng Duyên (403).',404:'Voice ID không tồn tại hoặc không thuộc tài khoản API Key này (404).'};
+        const messages={401:code==='quota_exceeded'?'ElevenLabs đã hết hạn mức giọng đọc; cần đợi cấp lại credits hoặc bổ sung credits.':'API Key ElevenLabs không hợp lệ (401).',403:'API Key không có quyền truy cập giọng Duyên (403).',404:'Voice ID không tồn tại hoặc không thuộc tài khoản API Key này (404).'};
         return res.status(200).json({ready:true,voice_ready:false,provider_status:voice.status,error:messages[voice.status]||'ElevenLabs không xác nhận được giọng Duyên ('+voice.status+').',provider_code:/^[a-z0-9_-]{1,64}$/i.test(code)?code:undefined});
       }
       const metadata=await voice.json();
@@ -97,8 +97,9 @@ export default async function handler(req, res){
       else if(code===422)message='Cấu hình Voice ID hoặc model không hợp lệ (422).';
       else if(code===429)message='ElevenLabs giới hạn yêu cầu hoặc credits (429).';
       else if(code>=500)message='Máy chủ ElevenLabs hiện gặp lỗi ('+code+').';
-      if(/free|subscription|payment|voice.*not.*available|plan|tier/i.test(detailCode))message='Gói ElevenLabs hiện không cho phép dùng giọng Tuyết qua API. Kiểm tra quyền API Text to Speech, gói hiện tại và Voice ID.';
+      if(/free|subscription|payment|voice.*not.*available|plan|tier/i.test(detailCode))message='Gói ElevenLabs hiện không cho phép dùng giọng Duyên qua API. Kiểm tra quyền API Text to Speech, gói hiện tại và Voice ID.';
       if(detailCode==='invalid_api_key')message='API Key ElevenLabs không hợp lệ. Hãy kiểm tra hoặc tạo khóa API mới rồi thay biến ELEVENLABS_API_KEY trên Vercel.';
+      if(detailCode==='quota_exceeded'||detailCode==='insufficient_credits')message='ElevenLabs đã hết hạn mức giọng đọc. Chờ credits được cấp lại hoặc bổ sung credits nếu muốn tiếp tục dùng giọng Duyên AI.';
       if(detailCode)message+=' Mã: '+detailCode+'.';
       return res.status(code===429?429:502).json({error:message,provider_status:code,provider_code:detailCode||undefined});
     }
