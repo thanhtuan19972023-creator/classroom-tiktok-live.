@@ -140,7 +140,11 @@ async function handleFreeNeuralVoice(req,res,headers){
   let data;
   try{data=JSON.parse(raw)}catch(e){data={}}
   const speech=trim(data.text||'',390);
-  const voice=data.voice==='female'?'vi-VN-HoaiMyNeural':'vi-VN-NamMinhNeural';
+  // Select the native language for every Japanese word or sentence. Keep
+  // Vietnamese narration on the existing review-film voices.
+  const voice=data.voice==='japanese'?'ja-JP-NanamiNeural':
+    data.voice==='japanese-male'?'ja-JP-KeitaNeural':
+    data.voice==='female'?'vi-VN-HoaiMyNeural':'vi-VN-NamMinhNeural';
   if(!speech||speech.length>380||/[<>{}]/.test(speech)){
     res.writeHead(400,headers);
     res.end('{"error":"Nội dung đọc không hợp lệ hoặc quá dài"}');return;
@@ -149,8 +153,8 @@ async function handleFreeNeuralVoice(req,res,headers){
   try{
     const engine=new EdgeTTS({timeout:20000});
     const result=await engine.generate(speech,voice,{
-      rate:voice==='vi-VN-NamMinhNeural'?14:9,
-      pitch:voice==='vi-VN-NamMinhNeural'?-10:-3,
+      rate:voice.startsWith('ja-JP-')?-4:voice==='vi-VN-NamMinhNeural'?14:9,
+      pitch:voice.startsWith('ja-JP-')?0:voice==='vi-VN-NamMinhNeural'?-10:-3,
       volume:95,
       outputFormat:'audio-24khz-96kbitrate-mono-mp3'
     });
