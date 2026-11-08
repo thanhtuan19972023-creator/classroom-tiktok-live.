@@ -2569,16 +2569,19 @@ async function liveBridgePoll(){
    }
    const connected=Boolean(info.connected);
    liveBridgeBadge(connected);
+   const retryMs=Math.max(Number(info.rateLimitUntil)||0,Number(info.nextRetryAt)||0);
+   const retryMins=retryMs>Date.now()?Math.ceil((retryMs-Date.now())/60000):0;
+   const retryText=retryMins?' · Tự kiểm tra lại sau khoảng '+retryMins+' phút.':'';
    const stateText=info.state==='not_configured'?'Thiếu biến TIKTOK_USERNAME trong Render':
      info.state==='offline'?'Tài khoản chưa phát LIVE hoặc không tìm thấy phiên LIVE':
      info.state==='connecting'||info.state==='starting'?'Đang tìm phòng TikTok LIVE...':
      info.state==='error'?'Lỗi kết nối TikTok (có thể bị giới hạn bởi nhà cung cấp)':
      info.state==='disconnected'?'Mất kết nối, máy chủ đang tự nối lại':'Máy chủ đã chạy';
    liveBridgeUi(connected?'🟢 Đã kết nối TikTok LIVE thật: '+(info.username||'')+'. Bình luận và quà tặng sẽ vào game.':
-     '🟡 '+stateText+(info.lastError?' — '+String(info.lastError).slice(0,90):''),connected);
+     '🟡 '+stateText+(info.lastError?' — '+String(info.lastError).slice(0,90):'')+retryText,connected);
    if(!connected){
      showRealCommentStatus('⚠️ Render chưa kết nối được phòng TikTok. '+stateText+
-       (info.lastError?' — '+String(info.lastError).slice(0,140):''));
+       (info.lastError?' — '+String(info.lastError).slice(0,140):'')+retryText);
      return;
    }
    if(!realCommentSeen){
@@ -2626,25 +2629,33 @@ function liveBridgeStart(forceReconnect=false){
  const field=document.getElementById('liveBridgeUrl');
  const url=field.value.trim()||'https://classroom-12a-live-bridge.onrender.com';
  try{
-   liveBridgeBase=liveBridgeNormalUrl(url);
+   const normalized=liveBridgeNormalUrl(url);
+   // Do not rewind the event cursor when the creator starts another TikTok
+   // LIVE on the same Render bridge: that would replay comments and gifts.
+   if(liveBridgeBase!==normalized){
+     liveBridgeInstance='';liveBridgeCursor=0;
+     realCommentSeen=0;realLastCommentAt=0;
+   }
+   liveBridgeBase=normalized;
    field.value=liveBridgeBase;
  }catch(error){
    liveBridgeUi('🔴 Địa chỉ máy chủ không hợp lệ. Hãy dán https://classroom-12a-live-bridge.onrender.com');
    return;
  }
- liveBridgeActive=true;liveBridgeInstance='';liveBridgeCursor=0;
- realCommentSeen=0;realLastCommentAt=0;
+ liveBridgeActive=true;
  // The automatic page load only starts polling. Pressing the button during
  // a NEW TikTok LIVE explicitly asks Render to release the previous room.
  if(forceReconnect){
    void fetch(liveBridgeBase+'/api/reconnect',{
      method:'POST',credentials:'omit',cache:'no-store'
    }).then(async response=>{
-     if(!response.ok){
-       const detail=await response.json().catch(()=>({}));
-       throw Error(String(detail?.error||'HTTP '+response.status));
-     }
-     liveBridgeUi('🔄 Đã yêu cầu Render tìm phòng TikTok LIVE mới. Đang tự kết nối…');
+     const detail=await response.json().catch(()=>({}));
+     if(!response.ok)throw Error(String(detail?.error||'HTTP '+response.status));
+     const message=detail.state==='checking_room'?
+       '🔎 Đang kiểm tra phòng LIVE mới; giữ nguyên kết nối nếu vẫn đúng phòng.':
+       detail.state==='connecting'?'🔄 Máy chủ đang kết nối, không gửi yêu cầu trùng.':
+       '🔄 Đã yêu cầu máy chủ tìm phòng LIVE mới. Đang chờ trạng thái kết nối.';
+     liveBridgeUi(message);
    }).catch(e=>{
      liveBridgeUi('🟡 Chưa thể làm mới phòng LIVE: '+String(e?.message||e)+'. Game vẫn tự thử kết nối.');
    });
