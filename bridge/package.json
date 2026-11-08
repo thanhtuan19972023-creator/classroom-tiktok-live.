@@ -12,6 +12,7 @@
     "check": "node --check server.mjs"
   },
   "dependencies": {
-    "tiktok-live-connector": "2.5.0"
+    "tiktok-live-connector": "2.5.0",
+    "@andresaya/edge-tts": "1.9.1"
   }
 }
