@@ -426,11 +426,15 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 #stage.stage-exact #miniLeaderboard{margin-top:.5cqw;gap:.45cqw;font-size:clamp(7px,1.6cqw,19px)}
 #stage.stage-exact #photoSeatLabels{display:block;position:absolute;inset:0;z-index:15;pointer-events:none}
 #stage.stage-exact .photo-seat-name{position:absolute;display:flex;justify-content:center;align-items:center;
- transform:translate(-50%,-50%);width:11%;height:2.45%;border:.17cqw solid #bd8457;border-radius:99px;
- background:linear-gradient(#fffdf5,#ffebd0);color:#533226;box-shadow:0 .15cqw .3cqw #77523566;
- font-size:clamp(7px,1.68cqw,20px);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
- padding:0 .3cqw}
-#stage.stage-exact .photo-seat-name.empty{color:#61465f;background:#f6e6df}
+ transform:translate(-50%,-50%);width:13.2%;height:3.15%;border:.24cqw solid #b87843;border-radius:99px;
+ background:linear-gradient(180deg,#fffdf5 0%,#fff3d7 80%,#f3cfaa 100%);color:#422918;
+ box-shadow:inset 0 0 0 .12cqw #fff7e5,0 .2cqw .3cqw #8c513b88;
+ font-size:clamp(7px,1.85cqw,22px);font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ padding:0 .35cqw;line-height:1.1}
+#stage.stage-exact .photo-seat-name.empty{color:#5b4358;background:linear-gradient(#fff0e9,#ebd1cb)}
+#stage.stage-exact .photo-seat-name:not(.empty)::before{
+ content:'●';position:absolute;left:4%;color:#40cf31;font-size:.9em;line-height:1
+}
 #stage.stage-exact .photo-seat-name.active{background:#fff2c3;border-color:#f9b735}
 #referencePickerBtn,#referenceResetBtn{white-space:normal}
 
@@ -1147,10 +1151,12 @@ renderStudents();voiceState();loadVietnameseVoices();if(speechAvailable)window.s
    Keeping the real source pixels intact avoids the blurry clipped teacher hand
    and nonmatching procedurally drawn students. No upload to a remote server. */
 let originalReferenceObjectUrl=null;
+// Calibrated against the reference photograph (1199 x 1312): each live name
+// overlays the original printed nameplate exactly, never above/below it.
 const photoPositions=[
- [38.1,70.0],[54.2,70.0],[70.8,70.0],[87.5,70.0],
- [29.6,81.9],[47.1,81.9],[62.8,81.9],[77.8,81.9],[91.8,81.9],
- [29.5,94.7],[44.8,94.7],[60.5,94.7],[75.9,94.7],[91.2,94.7]
+ [38.2,71.55],[55.3,71.55],[71.8,71.55],[89.8,71.55],
+ [32.4,83.1],[47.4,83.1],[62.2,83.1],[76.6,83.1],[90.3,83.1],
+ [30.5,94.7],[45.5,94.7],[60.5,94.7],[75.0,94.7],[89.7,94.7]
 ];
 window.__photoSeatDataReady=true;
 function renderPhotoSeatLabels(){
