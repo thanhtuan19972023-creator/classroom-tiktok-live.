@@ -567,13 +567,15 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 }
 
 
-/* One full-width Top 5 panel. Cover the leaderboard baked into the uploaded
-   classroom photo, while remaining just above the teacher's hair. */
+/* One Top 5 panel aligned exactly over the board printed in the user's
+   background photo. The old board is hidden underneath the live board, with
+   no exposed strips at its right/bottom. It starts BELOW the score HUD and
+   ends ABOVE the teacher's hair. */
 #stage .class-rank,
 body #stage.stage-exact .class-rank,
 body.live-safe #stage.stage-exact .class-rank{
-  top:15.3%;left:.45%;width:20.5%;height:17.4%;
-  padding:.3cqw .3cqw;
+  top:18.6%;left:2%;width:22.0%;height:16.8%;
+  padding:.3cqw .4cqw;
   overflow:hidden;z-index:23;
   background:#fff9f0;
   border:.28cqw solid #f45aa3;
