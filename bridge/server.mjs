@@ -110,6 +110,9 @@ const allowedOrigins=new Set([
 
 const voiceRequests=new Map();
 let voiceInFlight=0;
+// Cache frequently repeated question and Japanese word clips for multiple
+// Android/iPhone viewers; capped to avoid exhausting the free Render RAM.
+const neuralSpeechCache=new Map();
 // Public Edge Read Aloud neural voices are not an official paid API. The
 // connection may be throttled or change; the browser has a local TTS fallback.
 async function handleFreeNeuralVoice(req,res,headers){
@@ -122,7 +125,7 @@ async function handleFreeNeuralVoice(req,res,headers){
   if(voiceRequests.size>500){
     for(const [addr,record] of voiceRequests)if(now-record.start>120000)voiceRequests.delete(addr);
   }
-  if(usage.count>24||voiceInFlight>=3){
+  if(usage.count>45){
     res.writeHead(429,headers);
     res.end(JSON.stringify({error:'Tạm quá nhiều lượt tạo giọng, chuyển sang giọng trên điện thoại.'}));
     return;
@@ -149,6 +152,20 @@ async function handleFreeNeuralVoice(req,res,headers){
     res.writeHead(400,headers);
     res.end('{"error":"Nội dung đọc không hợp lệ hoặc quá dài"}');return;
   }
+  const cacheKey=voice+'\u0000'+speech;
+  const cached=neuralSpeechCache.get(cacheKey);
+  if(cached){
+    neuralSpeechCache.delete(cacheKey);neuralSpeechCache.set(cacheKey,cached);
+    res.writeHead(200,{...headers,'Content-Type':'audio/mpeg',
+      'Content-Length':cached.length,'Cache-Control':'no-store'});
+    res.end(cached);
+    return;
+  }
+  if(voiceInFlight>=4){
+    res.writeHead(429,headers);
+    res.end('{"error":"Máy chủ đang tạo nhiều đoạn giọng cùng lúc. Hãy thử lại sau."}');
+    return;
+  }
   voiceInFlight++;
   try{
     const engine=new EdgeTTS({timeout:20000});
@@ -160,6 +177,9 @@ async function handleFreeNeuralVoice(req,res,headers){
     });
     const audio=Buffer.from(result.audio);
     if(audio.length<120||audio.length>1200000)throw new Error('empty_or_oversized_audio');
+    neuralSpeechCache.set(cacheKey,audio);
+    while(neuralSpeechCache.size>36)
+      neuralSpeechCache.delete(neuralSpeechCache.keys().next().value);
     if(!res.writableEnded){
       res.writeHead(200,{...headers,'Content-Type':'audio/mpeg',
         'Content-Length':audio.length,'Cache-Control':'no-store'});
