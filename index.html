@@ -1233,10 +1233,19 @@ function cacheNeuralAudio(key,buffer){
 async function playGeneratedAudio(sound,serial,neural,japanese){
   if(!aiAudioContext)unlockAIAudio();
   if(!aiAudioContext)throw new Error('Thiết bị không hỗ trợ phát giọng AI');
+  if(aiAudioContext.state!=='running'){
+    // iPhone browsers can block Web Audio even after the server generated an audio clip.
+    // Detect it rather than showing "ĐANG ĐỌC" with no audible voice.
+    try{await Promise.race([
+      aiAudioContext.resume().catch(()=>{}),
+      new Promise(resolve=>setTimeout(resolve,1800))
+    ])}catch(e){}
+    if(aiAudioContext.state!=='running')
+      throw new Error('iPhone chưa cho phép phát âm thanh AI. Hãy mở bằng Safari rồi bấm NGHE THỬ GIỌNG.');
+  }
   await new Promise((resolve,reject)=>{
     if(serial!==aiSerial){resolve();return}
     try{
-      if(aiAudioContext.state!=='running')aiAudioContext.resume().catch(()=>{});
       const source=aiAudioContext.createBufferSource();
       aiSource=source;source.buffer=sound;source.connect(aiAudioContext.destination);
       let finished=false,playbackTimer=null;
@@ -1271,7 +1280,9 @@ async function requestGeneratedVoice(endpoint,part,voice,serial){
     if(serial!==aiSerial)return null;
     const ctrl=new AbortController();
     aiAbort=ctrl;
-    const timeout=setTimeout(()=>ctrl.abort(),19000);
+    // Cap the waiting time before falling back; Render can be slow or temporarily offline.
+    const requestTimeoutMs=endpoint===FREE_NEURAL_TTS_BACKEND?(attempt===0?12500:8500):19000;
+    const timeout=setTimeout(()=>ctrl.abort(),requestTimeoutMs);
     try{
       const response=await fetch(endpoint,{
         method:'POST',headers:{'Content-Type':'application/json'},
@@ -1295,7 +1306,7 @@ async function requestGeneratedVoice(endpoint,part,voice,serial){
       if(serial!==aiSerial)return null;
       error=e;
       if(attempt+1<attempts){
-        voiceState('🎬 Máy chủ giọng tạm bận, đang thử lại. Vẫn giữ giọng review phim AI...');
+        voiceState('🎬 Máy chủ giọng đang chậm. Thử thêm một lần rồi dùng giọng dự phòng nếu cần...');
         await new Promise(r=>setTimeout(r,e?.statusCode===429?1200:500));
       }
     }finally{
@@ -1338,8 +1349,8 @@ async function aiSpeak(text,after,options={}){
         // Only the failing clip uses local Vietnamese or Japanese pronunciation.
         if(neural||japanese){
           console.warn('One neural voice clip failed',String(e?.statusCode||''),String(e?.message||'').slice(0,160));
-          voiceState(japanese?'⚠️ Giọng Nhật AI bị gián đoạn ở đoạn này. Đang thử phát âm Nhật trên máy; giọng AI vẫn được giữ.':
-            '⚠️ Giọng review phim bị gián đoạn ở đoạn này. Đang đọc tạm bằng giọng máy; lần sau vẫn dùng giọng AI.');
+          voiceState(japanese?'⚠️ Giọng Nhật AI bị gián đoạn. Đang thử đọc trên thiết bị.':
+            '⚠️ Máy chủ giọng review phim không phản hồi đúng hạn. Đang thử giọng tiếng Việt trên điện thoại.');
           if(japanese)await speakJapaneseOnDevice(part);
           else await speakVietnameseOnDevice(part);
           continue;
@@ -1357,7 +1368,7 @@ async function aiSpeak(text,after,options={}){
     // ElevenLabs exhausted credits still requires a different service.
     if(!neural)switchToBrowserVoice(remainingText,after,quota?'quota':'unavailable');
     else{
-      voiceState('⚠️ Giọng review phim tạm gián đoạn: '+issue+'. Giữ nguyên lựa chọn AI.');
+      voiceState('⚠️ Giọng review phim không phản hồi: '+issue.slice(0,120)+'. Thử giọng dự phòng; mở Safari nếu vẫn im lặng.');
       if(speechAvailable)await speakVietnameseOnDevice(remainingText);
       if(serial===aiSerial&&typeof after==='function')after();
     }
