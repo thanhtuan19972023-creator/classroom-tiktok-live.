@@ -358,8 +358,67 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
  .teacher{top:36%;left:-1%;width:36%;height:45%}
 }
 
+
+/* Exact reference-photo mode. An uploaded photo is displayed without cropping, resampling,
+   segmentation or transparency: teacher's extended hand and anime pupils stay intact. */
+#exactReferenceImage{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:1;pointer-events:none}
+#photoSeatLabels{display:none}
+#stage.stage-exact{aspect-ratio:1199 / 1312;background:#f3e0cb;container-type:inline-size}
+#stage.stage-exact::before,#stage.stage-exact::after{display:none!important}
+#stage.stage-exact #exactReferenceImage{display:block}
+#stage.stage-exact .ref-backdrop,#stage.stage-exact .ref-title,
+#stage.stage-exact .ref-subtitle,#stage.stage-exact .ref-live-demo,
+#stage.stage-exact .stage-decoration,#stage.stage-exact .stage-top,
+#stage.stage-exact .hanging-light,#stage.stage-exact .window,
+#stage.stage-exact .teacher,#stage.stage-exact .teacherdesk,
+#stage.stage-exact .teachbubble,#stage.stage-exact .students{display:none!important}
+#stage.stage-exact .hud{position:absolute;top:13.2%;left:17.8%;right:17%;height:5.1%;z-index:17;display:flex;gap:1.8cqw}
+#stage.stage-exact .hud>span{border:.2cqw solid #ffdbf0;border-radius:99px;background:linear-gradient(#653a59,#4b304b);box-shadow:0 0 .8cqw #e858a3;font-size:2cqw;padding:.35cqw;text-align:center;flex:1;white-space:nowrap}
+#stage.stage-exact .hud>span span{border:none;background:none;box-shadow:none;padding:0;font-size:inherit}
+#stage.stage-exact .board{position:absolute;top:19.2%;left:24.2%;right:8.5%;height:37.2%;padding:0;border:0;outline:0;box-shadow:none;background:transparent;z-index:19;display:block}
+#stage.stage-exact .board::after{display:none}
+#stage.stage-exact .chalk-top{display:none!important}
+#stage.stage-exact .question{position:absolute;top:17%;left:5%;right:5%;height:26%;max-height:none;min-height:0;
+ background:linear-gradient(90deg,#0c5b45,#0b5442,#0b4b3d);color:#ffe5ab;border:0;
+ text-shadow:0 .15cqw #153d32;font-size:clamp(14px,3.55cqw,39px);font-weight:950;text-align:center;
+ display:flex;align-items:center;justify-content:center;overflow:auto;border-radius:.5cqw;padding:.4cqw .7cqw}
+#stage.stage-exact .options{position:absolute;top:45.6%;left:5%;right:5%;height:31.4%;display:grid;
+ grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:.8cqw 1.2cqw}
+#stage.stage-exact .option{display:flex;gap:.6cqw;align-items:center;padding:.2cqw .65cqw;
+ border:.23cqw solid #78e4ea;border-radius:1.45cqw;
+ background:linear-gradient(180deg,#21445a,#082b3e);color:white;
+ font-size:clamp(10px,2.15cqw,25px);font-weight:900;box-shadow:0 0 .4cqw #6eddfb;
+ min-height:0;line-height:1.15;overflow:hidden}
+#stage.stage-exact .option:nth-child(3),#stage.stage-exact .option:nth-child(4){border-color:#a2ebba}
+#stage.stage-exact .option b{display:grid;place-items:center;min-width:3cqw;width:3cqw;height:3cqw;
+ background:linear-gradient(#ffe96a,#ecae37);border:.14cqw solid #fff5c6;border-radius:.6cqw;
+ font-size:clamp(9px,2.25cqw,27px);color:#4d2814}
+#stage.stage-exact .option.correct{background:#168b55;border-color:#fff091}
+#stage.stage-exact .option.wrong{background:#a82f4f;border-color:#ffe5e7}
+#stage.stage-exact .board-bottom{position:absolute;inset:auto 0 -1.5% auto;width:100%;height:18%;
+ display:flex;justify-content:flex-end;align-items:center}
+#stage.stage-exact #boardHint{display:none}
+#stage.stage-exact #timer{position:absolute;right:-2%;top:5%;width:6.4cqw;height:6.4cqw;min-width:28px;min-height:28px;
+ border:.45cqw solid #ef4672;background:#fff8ee;box-shadow:0 0 0 .35cqw #ffe7b3,0 .1cqw .9cqw #df7c8d;
+ color:#d72340;font-size:clamp(14px,3.3cqw,40px);font-weight:1000;z-index:19}
+#stage.stage-exact .class-rank{position:absolute;top:19.2%;left:4.9%;width:18.8%;height:16%;z-index:20;
+ background:#fff5ed;border:.28cqw solid #fb65a5;border-radius:1.4cqw;outline:.2cqw solid #fff4e9;
+ box-shadow:0 0 .75cqw #df6dab;color:#53324a;font-size:clamp(8px,1.6cqw,20px);padding:.6cqw}
+#stage.stage-exact .class-rank strong{font-size:clamp(8px,1.7cqw,21px);padding:.3cqw .1cqw;
+ background:linear-gradient(#fc4c9a,#c72380);color:white;border-radius:99px;text-align:center}
+#stage.stage-exact #miniLeaderboard{margin-top:.5cqw;gap:.45cqw;font-size:clamp(7px,1.6cqw,19px)}
+#stage.stage-exact #photoSeatLabels{display:block;position:absolute;inset:0;z-index:15;pointer-events:none}
+#stage.stage-exact .photo-seat-name{position:absolute;display:flex;justify-content:center;align-items:center;
+ transform:translate(-50%,-50%);width:11%;height:2.45%;border:.17cqw solid #bd8457;border-radius:99px;
+ background:linear-gradient(#fffdf5,#ffebd0);color:#533226;box-shadow:0 .15cqw .3cqw #77523566;
+ font-size:clamp(7px,1.68cqw,20px);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ padding:0 .3cqw}
+#stage.stage-exact .photo-seat-name.empty{color:#61465f;background:#f6e6df}
+#stage.stage-exact .photo-seat-name.active{background:#fff2c3;border-color:#f9b735}
+#referencePickerBtn,#referenceResetBtn{white-space:normal}
+
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
-<main id="stage" aria-label="Lớp học vui vẻ 12A">
+<main id="stage" aria-label="Lớp học vui vẻ 12A"><img id="exactReferenceImage" alt="" aria-hidden="true"><div id="photoSeatLabels" aria-hidden="true"></div>
 <div class="ref-backdrop" aria-hidden="true"><div class="ref-books leftbooks">📚</div><div class="ref-books rightbooks">📚</div><div class="ref-window"></div><div class="ref-blossoms blossom-one">🌸🌸🌸</div><div class="ref-blossoms blossom-two">🌸🌸</div><div class="ref-plants leftplant">🌿</div><div class="ref-plants rightplant">🌿</div><div class="ref-globe">🌎</div><div class="ref-flowerpot">🌸</div></div>
 <div class="ref-title" aria-label="Lớp học vui vẻ 12A"><div class="ref-cap">🎓</div><strong>🏫 LỚP HỌC VUI VẺ <span>• 12A</span></strong></div>
 <div class="ref-subtitle">💗 Đố vui kiến thức · Học mà chơi · Chơi mà học 💗</div>
@@ -367,7 +426,7 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 <div class="stage-decoration"></div><div class="stage-top"><span class="live">🎮 GAME LIVE</span></div>
 <div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top"><span class="ref-chalkicon">📚</span><span class="subject-chip" data-category="Lịch sử">Lịch sử</span><span class="subject-chip" data-category="Văn học">Văn học</span><span class="subject-chip" data-category="Khoa học">Khoa học</span><span class="subject-chip" data-category="Địa lý">Địa lý</span><span id="topic" class="current-topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
 <img class="teacher-art teacher-new" src="data:image/webp;base64,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" alt="Cô giáo Duyên áo dài trắng hoa anh đào" draggable="false"></div><div class="teachbubble" id="teacherSpeech">Các em chọn đáp án nhé! 💖</div><div class="teacherdesk"><div class="desk-top"></div><div class="desk-front">BÀN GIÁO VIÊN</div></div><div class="floorstripe"></div><div class="students" id="students"></div><div id="confetti"></div><div id="giftZone"></div><aside class="class-rank"><strong>👑 Top trả lời đúng</strong><div id="miniLeaderboard">Chưa có lượt đúng</div></aside></main>
-<section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button></div><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Cô giáo ấm áp</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="browser">Giọng Safari (dự phòng)</option><option value="ai">🎙️ Duyên – cô giáo nữ miền Nam AI</option></select></div><div class="field"><label for="ttsServer">🔗 Máy chủ giọng AI</label><input id="ttsServer" type="url" inputmode="url" autocomplete="url" placeholder="https://ten-du-an.vercel.app" maxlength="220"></div><div class="actions"><button class="secondary" id="ttsSaveBtn">💾 Lưu máy chủ</button><button class="secondary" id="ttsCheckBtn">🔌 Kiểm tra giọng AI</button></div><p class="mini">Chỉ nhập địa chỉ HTTPS của dự án Vercel. <b>Không dán API key vào đây.</b> Máy chủ sẽ nhận nội dung câu hỏi, bình luận để chuyển thành âm thanh.</p><p class="voice-note"><span id="voiceIndicator" class="voice-indicator"></span><span id="voiceStatus">Chạm KIỂM TRA ÂM THANH để bật giọng đọc trên iPhone.</span></p><p class="mini">📱 iPhone: mở trang bằng Safari (không dùng trình duyệt trong ChatGPT/TikTok), tắt chế độ im lặng và tăng âm lượng khi thử. Âm thanh cần một lần chạm để bắt đầu.</p><div class="field"><label for="category">Chủ đề</label><select id="category"><option value="Tất cả">Tất cả chủ đề</option><option>Lịch sử</option><option>Văn học</option><option>Khoa học</option><option>Địa lý</option></select></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
+<section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button><button class="gold" id="referencePickerBtn" type="button">🖼️ Dùng ảnh mẫu gốc</button><button class="secondary" id="referenceResetBtn" type="button" hidden>↩ Giao diện cũ</button><input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/*" id="referenceUpload" hidden></div><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Cô giáo ấm áp</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="browser">Giọng Safari (dự phòng)</option><option value="ai">🎙️ Duyên – cô giáo nữ miền Nam AI</option></select></div><div class="field"><label for="ttsServer">🔗 Máy chủ giọng AI</label><input id="ttsServer" type="url" inputmode="url" autocomplete="url" placeholder="https://ten-du-an.vercel.app" maxlength="220"></div><div class="actions"><button class="secondary" id="ttsSaveBtn">💾 Lưu máy chủ</button><button class="secondary" id="ttsCheckBtn">🔌 Kiểm tra giọng AI</button></div><p class="mini">Chỉ nhập địa chỉ HTTPS của dự án Vercel. <b>Không dán API key vào đây.</b> Máy chủ sẽ nhận nội dung câu hỏi, bình luận để chuyển thành âm thanh.</p><p class="voice-note"><span id="voiceIndicator" class="voice-indicator"></span><span id="voiceStatus">Chạm KIỂM TRA ÂM THANH để bật giọng đọc trên iPhone.</span></p><p class="mini">📱 iPhone: mở trang bằng Safari (không dùng trình duyệt trong ChatGPT/TikTok), tắt chế độ im lặng và tăng âm lượng khi thử. Âm thanh cần một lần chạm để bắt đầu.</p><div class="field"><label for="category">Chủ đề</label><select id="category"><option value="Tất cả">Tất cả chủ đề</option><option>Lịch sử</option><option>Văn học</option><option>Khoa học</option><option>Địa lý</option></select></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
 <section class="panel"><h2>📣 Tương tác lớp học (mô phỏng)</h2><div class="field"><label for="viewer">Tên hiển thị TikTok (mô phỏng)</label><input id="viewer" maxlength="25" placeholder="Ví dụ: Duyên Nguyễn"></div><div class="field"><label for="commentText">Bình luận</label><input id="commentText" maxlength="150" placeholder="Ví dụ: B hoặc chọn B"></div><div class="actions"><button class="secondary" id="joinBtn">👋 Vào lớp</button><button class="gold" id="giftBtn">🎁 Tặng quà</button><button id="commentBtn">💬 Bình luận</button><button class="secondary" id="removeBtn">🪑 Xóa học sinh cuối</button></div><p>Game đọc tên người vào lớp, người tặng quà và tên + nội dung bình luận. Quà cộng 10 điểm (không cộng số câu đúng). Chỉ bình luận đáp án đúng mới tăng số câu đúng trên bảng Top 10.</p><p class="voice-note"><strong>Chế độ mô phỏng:</strong> Các nút ở đây dùng để thử giọng đọc. GitHub Pages chưa tự nhận lượt vào LIVE, quà hoặc bình luận TikTok thật.</p><ul id="liveLog" class="live-log" aria-live="polite"></ul></section>
 <section class="panel"><h2>🏆 Top 10 người trả lời đúng nhiều nhất</h2><p>Xếp theo tổng số câu trả lời đúng (không tính quà tặng). Mỗi người chỉ được tính một lượt cho mỗi câu. Bình luận thử bằng A, B, C, D hoặc “chọn B” trong lúc câu hỏi đang mở.</p><div id="correctLeaderboard" class="correct-leaderboard" aria-live="polite"><p>Chưa có ai trả lời đúng.</p></div></section>
 <section class="panel"><h2>📝 Quản lý câu hỏi <span id="bankCount" class="count"></span></h2><p>Có sẵn hơn 100 câu lịch sử, văn học, khoa học, địa lý. Bạn có thể thêm câu hỏi riêng, dữ liệu được lưu trên trình duyệt này.</p><div class="actions"><button id="addBtn">＋ Thêm câu hỏi</button><button class="secondary" id="resetBtn">↻ Làm lại trò chơi</button></div></section><p class="footer">Classroom TikTok LIVE · Bản trò chơi độc lập cho iPhone · Không có kết nối TikTok API</p></div>
@@ -857,6 +916,7 @@ function renderStudents(){
   const view=students.slice(-totalSeats);
   while(view.length<totalSeats)view.push({name:'',points:0,id:'empty'+view.length,empty:true});
   $('studentCount').textContent=students.length;
+  renderPhotoSeatLabels();
   $('students').replaceChildren();
   view.forEach((s,i)=>{
     let el=document.createElement('div');el.className='student'+(s.empty?' empty':'');el.dataset.id=s.id;
@@ -1045,4 +1105,88 @@ $('testVoiceBtn').onclick=()=>speakFromTap('Xin chào cả lớp thân yêu! Hô
   };
 })();
 renderStudents();voiceState();loadVietnameseVoices();if(speechAvailable)window.speechSynthesis.onvoiceschanged=loadVietnameseVoices;newQuestion();
+
+/* The reference is selected once from Photos and saved privately on this iPhone.
+   Keeping the real source pixels intact avoids the blurry clipped teacher hand
+   and nonmatching procedurally drawn students. No upload to a remote server. */
+let originalReferenceObjectUrl=null;
+const photoPositions=[
+ [38.1,70.0],[54.2,70.0],[70.8,70.0],[87.5,70.0],
+ [29.6,81.9],[47.1,81.9],[62.8,81.9],[77.8,81.9],[91.8,81.9],
+ [29.5,94.7],[44.8,94.7],[60.5,94.7],[75.9,94.7],[91.2,94.7]
+];
+function renderPhotoSeatLabels(){
+ const layer=document.getElementById('photoSeatLabels');
+ if(!layer)return;
+ const visible=students.slice(-14);layer.replaceChildren();
+ photoPositions.forEach(([x,y],i)=>{
+   const player=visible[i];
+   const name=document.createElement('div');name.className='photo-seat-name'+(!player?' empty':'');
+   name.style.left=x+'%';name.style.top=y+'%';
+   name.textContent=player?.name||'Chờ bạn';
+   layer.appendChild(name);
+ });
+}
+function referenceOpenDB(){
+ return new Promise((resolve,reject)=>{
+   const req=indexedDB.open('classroom12a_reference_v1',1);
+   req.onupgradeneeded=()=>{req.result.createObjectStore('photos')};
+   req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+ });
+}
+async function referenceSaveBlob(blob){
+ const db=await referenceOpenDB();
+ await new Promise((resolve,reject)=>{
+   const tx=db.transaction('photos','readwrite');
+   tx.objectStore('photos').put(blob,'original');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)
+ });
+ db.close();
+}
+async function referenceLoadBlob(){
+ const db=await referenceOpenDB();
+ const blob=await new Promise((resolve,reject)=>{
+   const tx=db.transaction('photos','readonly'),req=tx.objectStore('photos').get('original');
+   req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)
+ });
+ db.close();return blob;
+}
+async function referenceDeleteBlob(){
+ const db=await referenceOpenDB();
+ await new Promise((resolve,reject)=>{
+   const tx=db.transaction('photos','readwrite');tx.objectStore('photos').delete('original');
+   tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)
+ });db.close();
+}
+function referenceShowBlob(blob){
+ if(originalReferenceObjectUrl)URL.revokeObjectURL(originalReferenceObjectUrl);
+ originalReferenceObjectUrl=URL.createObjectURL(blob);
+ const img=document.getElementById('exactReferenceImage');
+ img.onload=()=>{
+   const ratio=img.naturalWidth/img.naturalHeight;
+   if(Math.abs(ratio-1199/1312)>0.07){
+     status('Ảnh này không đúng tỷ lệ mẫu. Hãy chọn ảnh lớp học 12A gốc (1199 × 1312).',true);
+     return;
+   }
+   $('stage').classList.add('stage-exact');
+   $('referenceResetBtn').hidden=false;
+   renderPhotoSeatLabels();
+   status('Đã dùng hình lớp học gốc: cô giáo và học sinh giữ nguyên từng chi tiết.');
+ };
+ img.src=originalReferenceObjectUrl;
+}
+$('referencePickerBtn').onclick=()=>$('referenceUpload').click();
+$('referenceUpload').onchange=async()=>{
+ const file=$('referenceUpload').files?.[0];if(!file)return;
+ if(!file.type.startsWith('image/')){status('Hãy chọn ảnh lớp học.',true);return;}
+ try{referenceShowBlob(file);await referenceSaveBlob(file)}
+ catch(e){status('Đã hiển thị ảnh nhưng không lưu được vào iPhone: '+String(e?.message||e),true)}
+ $('referenceUpload').value='';
+};
+$('referenceResetBtn').onclick=async()=>{
+ $('stage').classList.remove('stage-exact');$('referenceResetBtn').hidden=true;
+ try{await referenceDeleteBlob()}catch(e){}
+ status('Đã trở về giao diện thông thường.');
+};
+referenceLoadBlob().then(blob=>{if(blob)referenceShowBlob(blob)}).catch(()=>{});
+
 </script></body></html>
