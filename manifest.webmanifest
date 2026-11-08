@@ -1,0 +1,26 @@
+{
+  "name": "Lớp học vui vẻ 12A — TikTok LIVE",
+  "short_name": "Lớp học 12A",
+  "description": "Game đố vui lớp học 12A trên TikTok LIVE",
+  "start_url": "/?live=1",
+  "scope": "/",
+  "id": "/classroom-12a",
+  "display": "fullscreen",
+  "background_color": "#442c57",
+  "theme_color": "#442c57",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}
