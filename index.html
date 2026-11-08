@@ -1897,13 +1897,17 @@ function spokenStudentName(name){
 }
 function correctAnswerHonors(){
   if(correctTotalThisQuestion===0)return 'Câu này chưa có học sinh nào trả lời đúng.';
-  const rankWords=['nhất','hai','ba','tư','năm'];
-  const listed=fastestCorrectNames.slice(0,5).map((name,i)=>
-    'Hạng '+rankWords[i]+', em '+spokenStudentName(name)+'.').join(' ');
-  const remaining=Math.max(0,correctTotalThisQuestion-fastestCorrectNames.length);
-  return 'Cô tuyên dương '+fastestCorrectNames.length+
-    ' học sinh trả lời đúng nhanh nhất. '+listed+
-    (remaining>0?' Ngoài ra còn '+remaining+' học sinh trả lời đúng. Cô tuyên dương tất cả các em!':'');
+  // Praise the fastest student personally; announce ranks 2-5 by name.
+  // Everyone from rank 6 onward is acknowledged once by their total count.
+  const winners=fastestCorrectNames.slice(0,5);
+  const phrases=winners.map((name,i)=>{
+    const student='em '+spokenStudentName(name);
+    if(i===0)return 'Chúc mừng '+student+' đã trả lời nhanh nhất!';
+    return ['','Thứ hai là ','Thứ ba là ','Thứ tư là ','Thứ năm là '][i]+student+'.';
+  });
+  const remaining=Math.max(0,correctTotalThisQuestion-winners.length);
+  if(remaining>0)phrases.push('Và còn '+remaining+' học sinh trả lời đúng nữa. Chúc mừng tất cả các em!');
+  return phrases.join(' ');
 }
 function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQuizReading();stopSpeaking();locked=true;clearInterval(tick);tick=null;$('timer').classList.remove('running','time-warning');const correct=options.indexOf(current.answer);[...$('options').children].forEach((b,i)=>{if(i===correct)b.classList.add('correct');else if(i===index)b.classList.add('wrong')});if(index===correct){score+=10;$('totalScore').textContent=score;setSpeech('Chính xác! Giỏi quá! 🌟');status('Đúng rồi! Đáp án '+letters[correct]+': '+current.answer);celebrate()}else{setSpeech('Đáp án là '+letters[correct]+' nhé! 💡');status('Đáp án đúng: '+letters[correct]+' — '+current.answer)}$('boardHint').textContent='Đáp án: '+letters[correct];
   const answerLine=(index===correct?'Chính xác! Giỏi lắm! ':'Hết giờ suy nghĩ. ')+
