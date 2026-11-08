@@ -16,7 +16,7 @@ export default async function handler(req, res){
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method === 'GET') return res.status(200).json({ready:Boolean(process.env.ELEVENLABS_API_KEY),voice:'Tuyết - miền Nam',model:process.env.ELEVENLABS_MODEL_ID || 'eleven_flash_v2_5'});
+  if (req.method === 'GET') return res.status(200).json({ready:Boolean(process.env.ELEVENLABS_API_KEY),voice:'Duyên - cô giáo miền Nam',model:process.env.ELEVENLABS_MODEL_ID || 'eleven_flash_v2_5'});
   if (req.method !== 'POST') return res.status(405).json({error:'Method not allowed'});
   if (!process.env.ELEVENLABS_API_KEY)
     return res.status(503).json({error:'AI voice has not been configured'});
@@ -33,8 +33,13 @@ export default async function handler(req, res){
   record.count++;windows.set(ip,record);
   if (record.count > 12) return res.status(429).json({error:'Rate limit reached'});
   const model = process.env.ELEVENLABS_MODEL_ID || 'eleven_flash_v2_5';
-  // Tuyet - Southern Vietnamese Storyteller (public ElevenLabs library voice).
-  const voiceId = process.env.ELEVENLABS_VOICE_ID || 'xjyQliDr4k3i3iSr1wSb';
+  // Duyên is the user-created female voice from ElevenLabs Voice Design.
+  const duyenVoiceId = 'lfkZiOFuinB91hJ9s2uA'; // Selected user-created voice: Duyên.
+  const oldTuyetVoiceId = 'xjyQliDr4k3i3iSr1wSb';
+  const configuredVoiceId = process.env.ELEVENLABS_VOICE_ID;
+  // Migrate automatically from the previous Tuyết voice in Vercel; a newly configured custom ID still takes priority.
+  const voiceId = !configuredVoiceId || configuredVoiceId === oldTuyetVoiceId
+    ? duyenVoiceId : configuredVoiceId;
   try{
     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' +
       encodeURIComponent(voiceId) + '?output_format=mp3_44100_128', {
@@ -64,11 +69,11 @@ export default async function handler(req, res){
       else if(code===401)message='API Key ElevenLabs không hợp lệ (401).';
       else if(code===402)message='Không đủ credits hoặc gói ElevenLabs cần nâng cấp (402).';
       else if(code===403)message='ElevenLabs không cho tài khoản dùng giọng này qua API (403). Giọng trong Voice Library yêu cầu gói hỗ trợ API.';
-      else if(code===404)message='Không tìm thấy hoặc không có quyền dùng giọng Tuyết (404). Kiểm tra Voice ID trong My Voices.';
+      else if(code===404)message='Không tìm thấy hoặc không có quyền dùng giọng Duyên (404). Kiểm tra Voice ID trong My Voices.';
       else if(code===422)message='Cấu hình Voice ID hoặc model không hợp lệ (422).';
       else if(code===429)message='ElevenLabs giới hạn yêu cầu hoặc credits (429).';
       else if(code>=500)message='Máy chủ ElevenLabs hiện gặp lỗi ('+code+').';
-      if(/free|subscription|payment|voice.*not.*available|plan|tier/i.test(detailCode))message='Gói ElevenLabs hiện không cho phép dùng giọng Tuyết qua API. Giọng Voice Library không hỗ trợ API trên gói Free.';
+      if(/free|subscription|payment|voice.*not.*available|plan|tier/i.test(detailCode))message='Gói ElevenLabs hiện không cho phép dùng giọng Tuyết qua API. Kiểm tra quyền API Text to Speech, gói hiện tại và Voice ID.';
       if(detailCode)message+=' Mã: '+detailCode+'.';
       return res.status(code===429?429:502).json({error:message,provider_status:code,provider_code:detailCode||undefined});
     }
