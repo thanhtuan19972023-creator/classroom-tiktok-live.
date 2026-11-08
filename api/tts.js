@@ -7,6 +7,12 @@ function cors(origin, request){
   if (origin && !allowed.includes(origin)) return false;
   return true;
 }
+function currentVoiceId(){
+  const userVoice = 'lfkZiOFuinB91hJ9s2uA';
+  const previousLibraryVoice = 'xjyQliDr4k3i3iSr1wSb';
+  const configured = process.env.ELEVENLABS_VOICE_ID;
+  return !configured || configured === previousLibraryVoice ? userVoice : configured;
+}
 export default async function handler(req, res){
   const origin = String(req.headers.origin || '');
   if (!cors(origin, req)) return res.status(403).json({error:'Origin not permitted'});
@@ -16,7 +22,30 @@ export default async function handler(req, res){
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method === 'GET') return res.status(200).json({ready:Boolean(process.env.ELEVENLABS_API_KEY),voice:'Duyên - cô giáo miền Nam',model:process.env.ELEVENLABS_MODEL_ID || 'eleven_flash_v2_5'});
+  if (req.method === 'GET') {
+    const configured=Boolean(process.env.ELEVENLABS_API_KEY);
+    const model=process.env.ELEVENLABS_MODEL_ID || 'eleven_flash_v2_5';
+    if (req.query?.check !== 'voice') return res.status(200).json({ready:configured,voice:'Duyên',model});
+    if (!configured) return res.status(200).json({ready:false,voice_ready:false,error:'Vercel chưa có ELEVENLABS_API_KEY'});
+    // Verify the exact selected voice with ElevenLabs. GET metadata does not generate speech or consume TTS credits.
+    try {
+      const voice=await fetch('https://api.elevenlabs.io/v1/voices/'+encodeURIComponent(currentVoiceId()),{
+        headers:{'xi-api-key':process.env.ELEVENLABS_API_KEY},
+        signal:AbortSignal.timeout(9000)
+      });
+      if (!voice.ok) {
+        let code='';
+        try{const obj=await voice.json();code=String(obj?.detail?.code||obj?.detail?.status||'').slice(0,64)}catch(e){}
+        const messages={401:'API Key ElevenLabs không hợp lệ (401).',403:'API Key không có quyền truy cập giọng Duyên (403).',404:'Voice ID không tồn tại hoặc không thuộc tài khoản API Key này (404).'};
+        return res.status(200).json({ready:true,voice_ready:false,provider_status:voice.status,error:messages[voice.status]||'ElevenLabs không xác nhận được giọng Duyên ('+voice.status+').',provider_code:/^[a-z0-9_-]{1,64}$/i.test(code)?code:undefined});
+      }
+      const metadata=await voice.json();
+      return res.status(200).json({ready:true,voice_ready:true,voice:metadata?.name||'Duyên',model,notice:'Voice ID có thể truy cập; kiểm tra phát thử để xác nhận Text to Speech.'});
+    } catch(e){
+      console.error('ElevenLabs voice metadata check failed',e?.name||'unknown');
+      return res.status(200).json({ready:true,voice_ready:false,error:'Không truy vấn được thông tin giọng từ ElevenLabs. Thử lại sau.'});
+    }
+  }
   if (req.method !== 'POST') return res.status(405).json({error:'Method not allowed'});
   if (!process.env.ELEVENLABS_API_KEY)
     return res.status(503).json({error:'AI voice has not been configured'});
@@ -33,13 +62,8 @@ export default async function handler(req, res){
   record.count++;windows.set(ip,record);
   if (record.count > 12) return res.status(429).json({error:'Rate limit reached'});
   const model = process.env.ELEVENLABS_MODEL_ID || 'eleven_flash_v2_5';
-  // Duyên is the user-created female voice from ElevenLabs Voice Design.
-  const duyenVoiceId = 'lfkZiOFuinB91hJ9s2uA'; // Selected user-created voice: Duyên.
-  const oldTuyetVoiceId = 'xjyQliDr4k3i3iSr1wSb';
-  const configuredVoiceId = process.env.ELEVENLABS_VOICE_ID;
-  // Migrate automatically from the previous Tuyết voice in Vercel; a newly configured custom ID still takes priority.
-  const voiceId = !configuredVoiceId || configuredVoiceId === oldTuyetVoiceId
-    ? duyenVoiceId : configuredVoiceId;
+  // The voice Duyên was created in the user's ElevenLabs account.
+  const voiceId = currentVoiceId();
   try{
     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' +
       encodeURIComponent(voiceId) + '?output_format=mp3_44100_128', {
