@@ -1615,9 +1615,14 @@ document.addEventListener('visibilitychange',()=>{
  if(!document.hidden&&liveBridgeActive)void liveBridgePoll();
 });
 try{
+ // The same LIVE classroom is opened on iPhone, Android and desktop.
+ // LocalStorage is per-device; pre-fill this user's shared Render bridge so
+ // other devices automatically receive real TikTok events too.
  const saved=localStorage.getItem('classroom12a_live_bridge_url');
- if(saved){document.getElementById('liveBridgeUrl').value=saved;liveBridgeStart()}
-}catch(e){}
+ const defaultBridge='https://classroom-12a-live-bridge.onrender.com';
+ document.getElementById('liveBridgeUrl').value=saved||defaultBridge;
+ liveBridgeStart();
+}catch(e){liveBridgeUi('🔴 Không thể tự kết nối. Nhấn Kết nối LIVE thật để thử lại.')}
 
 
 </script></body></html>
