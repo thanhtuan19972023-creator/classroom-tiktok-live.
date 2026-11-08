@@ -114,9 +114,259 @@ header strong{color:#7a4329;font-size:16px}
 /* New anime-style teacher illustration without covering game controls */
 .teacher{top:40%;left:-1%;width:32%;height:36%;z-index:12;filter:none;pointer-events:none;animation:wiggle 4s ease-in-out infinite}
 .teacher .teacher-art.teacher-new{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(1px 4px 4px #66435077)}
+
+/* LỚP HỌC VUI VẺ 12A — faithful responsive illustrated classroom refresh.
+   Everything interactive (questions, choices, seats, countdown, score) remains live. */
+body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);color:#563b50}
+.wrap{max-width:990px;margin:0 auto;padding:0 4px 40px}
+.wrap>header{display:none}
+#stage{
+  container-type:inline-size;position:relative;width:100%;aspect-ratio:1199/1312;
+  max-height:none;overflow:hidden;border:0;border-radius:16px;
+  background:linear-gradient(180deg,#f5cce3 0%,#fff1d9 18%,#fff5e5 59%,#f9dbad 61%,#ebbf8e 100%);
+  box-shadow:0 12px 42px #a3658955;isolation:isolate;
+}
+#stage::before{
+  content:"";position:absolute;inset:0;height:auto;z-index:0;border:0;
+  background:radial-gradient(circle at 14% 9%,#ffffffba 0 5%,transparent 20%),
+   radial-gradient(circle at 76% 21%,#ffffffaa 0 10%,transparent 29%),
+   linear-gradient(90deg,#f8bfdb77 0%,transparent 22%,transparent 80%,#f6c3d954 100%);
+  pointer-events:none;
+}
+#stage::after{
+  content:"";position:absolute;left:0;right:0;top:62%;bottom:0;z-index:0;
+  background:repeating-linear-gradient(180deg,transparent 0 8.2cqw,#ca91673f 8.3cqw 8.65cqw),
+  linear-gradient(180deg,#f8d6b7,#e9b989);opacity:1;pointer-events:none;
+}
+.ref-backdrop{position:absolute;inset:0;overflow:hidden;z-index:1;pointer-events:none}
+.ref-backdrop::before{
+ content:"";position:absolute;left:0;top:9%;width:19%;height:51%;
+ border-radius:0 7px 7px 0;border:1.1cqw solid #b77c4f;
+ box-shadow:inset 0 0 0 1.2cqw #ffe6c2,0 4px 10px #643f6440;
+ background:repeating-linear-gradient(180deg,#d9a779 0 11%,#885a3e 11.8% 13%,#f5c69a 13.1% 24%);
+}
+.ref-backdrop::after{
+ content:"";position:absolute;right:0;top:7%;width:19%;height:55%;
+ border:1.1cqw solid #fff7ea;border-right:0;border-radius:7px 0 0 7px;
+ box-shadow:inset 0 0 0 1cqw #99cfe7,0 3px 10px #63476730;
+ background:linear-gradient(90deg,#e7f5ffb8,#91cefb5c),
+  repeating-linear-gradient(0deg,#b9e7ff 0 26%,#e1f6ff 26% 28%,#a7e1ff 29% 52%);
+}
+.ref-window{position:absolute;right:9%;top:7%;height:55%;width:1.1%;background:#fffaf3;z-index:1}
+.ref-window::before{content:"";position:absolute;top:49%;right:-9cqw;width:19cqw;height:1.1cqw;background:#fffaf3}
+.ref-books{position:absolute;z-index:2;top:10%;font-size:8cqw;text-shadow:0 2px #80514530}
+.leftbooks{left:1%}.rightbooks{right:1%;top:21%;font-size:5cqw}
+.ref-blossoms{position:absolute;z-index:9;filter:drop-shadow(1px 2px 3px #9b3e7340);pointer-events:none}
+.blossom-one{top:-1%;left:-3%;font-size:6.4cqw;transform:rotate(-17deg)}
+.blossom-two{top:6%;left:0%;font-size:4cqw;transform:rotate(20deg)}
+.ref-plants{position:absolute;z-index:5;font-size:11cqw;color:#46864c;text-shadow:0 5px #3c724433}
+.leftplant{left:-2%;bottom:-2%}.rightplant{right:-2%;bottom:0%}
+.ref-globe{position:absolute;right:1%;top:52%;font-size:6cqw;z-index:3}
+.ref-flowerpot{position:absolute;bottom:18%;left:0%;font-size:6cqw;z-index:4}
+.ref-title{
+ position:absolute;top:2.6%;left:19%;right:18%;height:8.2%;z-index:15;
+ display:flex;align-items:center;justify-content:center;border-radius:999px;
+ border:.6cqw solid #efa865;
+ background:linear-gradient(180deg,#9b522d 0%,#54273f 28%,#52243d 75%,#ad6d43 100%);
+ box-shadow:0 0 0 .25cqw #fff0c8,0 0 0 .65cqw #bc694e,0 0 2cqw #f17da5a3,inset 0 0 1.5cqw #f5b17e;
+ color:#fff6f7;text-shadow:0 .32cqw 0 #783a46,0 0 .6cqw #ec6b94;
+ text-align:center;
+}
+.ref-title strong{font-weight:1000;font-size:clamp(15px,4.2cqw,48px);white-space:nowrap;letter-spacing:-.08cqw}
+.ref-title strong span{color:#ffe465;text-shadow:0 .25cqw #7f4b34,0 0 1cqw #f3cb77}
+.ref-cap{position:absolute;top:-4.3cqw;left:44%;font-size:5cqw;filter:drop-shadow(1px 2px 2px #70416a)}
+.ref-subtitle{
+ position:absolute;top:11.4%;left:26%;right:20%;z-index:15;
+ background:linear-gradient(90deg,#e85c9e,#6c3b9c,#ea5c9f);color:#fffaf2;
+ border:.25cqw solid #ffe6ec;border-radius:99px;padding:.5cqw .8cqw;
+ text-align:center;font-size:clamp(9px,2cqw,22px);font-weight:850;line-height:1.5;
+ box-shadow:0 0 1cqw #e55db3a6;text-shadow:0 1px #8b4779;white-space:nowrap;
+}
+.ref-live-demo{
+ position:absolute;top:4%;right:1.5%;z-index:16;padding:.8cqw 1.3cqw;
+ background:linear-gradient(180deg,#ff5d94,#db2862);color:#fff;
+ border:.28cqw solid #fff;border-radius:99px;box-shadow:0 0 1cqw #f1438c;
+ font-size:clamp(9px,1.9cqw,21px);font-weight:900;white-space:nowrap;
+}
+.stage-decoration{display:none}
+.hanging-light{display:none}
+.window{display:none}
+.stage-top{position:absolute;top:15%;left:auto;right:2%;z-index:15;width:auto}
+.stage-top .live{display:block;border:.2cqw solid #fff5ef;border-radius:99px;
+ background:linear-gradient(180deg,#ff648b,#d52057);box-shadow:0 0 .8cqw #e84375;color:white;
+ font-size:clamp(9px,1.8cqw,20px);padding:.7cqw 1.2cqw;font-weight:950}
+.hud{
+ position:absolute;top:14.2%;left:18%;right:17.4%;height:4.5%;z-index:12;
+ display:flex;align-items:center;justify-content:space-between;gap:1cqw;
+ color:#fff;filter:drop-shadow(0 0 .4cqw #dd5397);
+}
+.hud>span{
+ flex:1;min-width:0;text-align:center;white-space:nowrap;
+ background:linear-gradient(180deg,#6c405a 0%,#432b4e 100%);
+ border:.25cqw solid #ffd3e0;border-radius:999px;
+ padding:.6cqw .2cqw;color:#fff9f0;
+ box-shadow:0 0 0 .2cqw #d55d8b,0 0 1cqw #d75492;
+ font-size:clamp(10px,2.1cqw,23px);font-weight:950;
+}
+.hud>span span{background:transparent;border:0;padding:0;font-size:inherit;color:inherit}
+.board{
+ top:20%;left:24%;right:7%;height:39.4%;z-index:6;
+ display:flex;flex-direction:column;justify-content:space-between;
+ padding:1.3cqw 1.5cqw 2cqw;overflow:visible;
+ background:radial-gradient(ellipse at 50% 28%,#176c57 0%,#0a4d3c 55%,#083a30 100%);
+ border:.85cqw solid #c99154;border-radius:1.7cqw;
+ outline:.3cqw solid #f5d2a3;
+ box-shadow:0 .6cqw 0 #a66c37,0 1cqw 1.2cqw #60473b6b,inset 0 0 1.5cqw #021e1aab;
+}
+.board::after{height:.65cqw;bottom:-1cqw;left:-.6cqw;right:-.6cqw;
+ background:linear-gradient(180deg,#e1ac6d,#9d683d)}
+.chalk-top{
+ flex:0 0 auto;display:flex;gap:.6cqw;align-items:center;justify-content:space-between;
+ color:#fff;letter-spacing:normal;text-transform:none;
+ font-size:clamp(7px,1.75cqw,20px);font-weight:950;white-space:nowrap;
+}
+.chalk-top::before,.chalk-top::after{content:none}
+.ref-chalkicon{font-size:clamp(12px,3.2cqw,32px)}
+.subject-chip{display:inline-flex;justify-content:center;align-items:center;padding:.45cqw .8cqw;
+ border-radius:99px;border:.2cqw solid #fff7d7;background:#68439e;box-shadow:0 0 .9cqw #d466ff85;
+ color:#fff;font-size:inherit}
+.subject-chip[data-category="Lịch sử"]{background:linear-gradient(#ff5b75,#cf123e)}
+.subject-chip[data-category="Văn học"]{background:linear-gradient(#b66bee,#7436b1)}
+.subject-chip[data-category="Khoa học"]{background:linear-gradient(#42a9f7,#1463ca)}
+.subject-chip[data-category="Địa lý"]{background:linear-gradient(#62c575,#137c54)}
+.subject-chip.is-current{outline:.22cqw solid #fff6ac;box-shadow:0 0 1.1cqw #fff1b1}
+.current-topic{display:none}
+.question{
+ color:#ffe5ab;font-size:clamp(13px,3.6cqw,40px);font-weight:1000;
+ line-height:1.18;text-shadow:0 .2cqw 0 #2c3a2c,0 .4cqw .5cqw #06271e;
+ text-align:center;max-height:38%;min-height:25%;overflow:auto;
+ padding:0 1cqw;display:grid;place-items:center;
+}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:1.2cqw 1.3cqw;z-index:1}
+.option{
+ border:.22cqw solid #7cd9f1;border-radius:1.5cqw;min-height:4.9cqw;
+ background:linear-gradient(180deg,#183b53e8,#062f46f2);
+ display:flex;align-items:center;gap:.8cqw;padding:.3cqw .7cqw;
+ color:#fff;font-size:clamp(9px,2.15cqw,24px);font-weight:900;
+ box-shadow:0 .2cqw .45cqw #05151ec4,inset 0 0 .6cqw #12a0c165;
+ text-align:left;white-space:normal;
+}
+.option b{
+ flex:0 0 auto;width:3.3cqw;height:3.3cqw;min-width:14px;min-height:14px;
+ display:grid;place-items:center;border:.18cqw solid #fff1c2;border-radius:.8cqw;
+ background:linear-gradient(#ffe85d,#edac31);color:#54280e;
+ font-size:clamp(9px,2.4cqw,27px);box-shadow:0 .18cqw #c38a38;font-weight:1000;
+}
+.option:nth-child(3),.option:nth-child(4){border-color:#70efa5}
+.option.correct{background:linear-gradient(#29a77c,#127356);border-color:#fff5ad}
+.option.wrong{background:linear-gradient(#ef6481,#b83250);border-color:#ffe3e3}
+.board-bottom{display:flex;align-items:center;justify-content:center;
+ min-height:4.7cqw;color:#fff2c6;font-weight:950;font-size:clamp(9px,1.85cqw,21px)}
+#boardHint{display:block;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer{
+ flex:none;width:6cqw;height:6cqw;min-width:28px;min-height:28px;
+ border:.45cqw solid #ffd15a;border-radius:50%;
+ background:radial-gradient(circle,#fffde9 33%,#ffe89a 60%,#e15b79 61%,#a82050 100%);
+ color:#d73536;font-size:clamp(14px,3.3cqw,37px);
+ font-weight:1000;box-shadow:0 0 0 .3cqw #ffb9d3,0 0 1.3cqw #fa6e94;
+ display:grid;place-items:center
+}
+.timer.running{background:radial-gradient(circle,#fff8c5 40%,#ffcc52 65%,#ef4677 67%);animation:timerPulse 1s ease-in-out infinite}
+.class-rank{
+ position:absolute;top:19.1%;left:3.2%;width:20%;height:16.8%;
+ background:linear-gradient(180deg,#fff5fc,#fff4e4 85%);z-index:14;
+ border:.42cqw solid #ef61a8;border-radius:1.5cqw;padding:.8cqw .6cqw;
+ color:#602c4c;box-shadow:0 0 0 .22cqw #ffeef2,0 .3cqw 1.1cqw #e5489366;
+ font-size:clamp(8px,1.65cqw,19px);overflow:hidden;
+}
+.class-rank strong{display:block;white-space:nowrap;background:linear-gradient(90deg,#fa357d,#bf2990);
+ color:#fff;border-radius:1cqw;padding:.4cqw .2cqw;text-align:center;
+ font-size:clamp(8px,1.72cqw,21px);text-shadow:0 .1cqw #8c3163;margin-bottom:.4cqw}
+#miniLeaderboard{font-size:clamp(8px,1.54cqw,19px);margin-top:.25cqw;display:grid;gap:.3cqw}
+#miniLeaderboard>div{border-bottom:1px solid #ddbdd0;padding:.1cqw .2cqw;color:#562b47}
+#miniLeaderboard b{font-weight:900;max-width:82%}
+#miniLeaderboard em{color:#bd3b77;font-weight:900}
+.teacher{
+ position:absolute;top:35%;left:-.4%;width:35%;height:46%;
+ z-index:13;filter:none;pointer-events:none;transform-origin:center bottom;
+ animation:wiggle 4s ease-in-out infinite
+}
+.teacher .teacher-art.teacher-new{
+ display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;
+ filter:drop-shadow(.2cqw .5cqw .45cqw #44293e7a)
+}
+.teacherdesk{
+ position:absolute;top:75.5%;left:0;width:25%;height:9.8%;
+ z-index:14;transform:none;filter:drop-shadow(0 .3cqw .4cqw #905e6777)
+}
+.teacherdesk .desk-top{
+ height:21%;border:.35cqw solid #9d5d32;border-radius:.5cqw;
+ background:linear-gradient(180deg,#f4c086,#d99455);box-shadow:0 .3cqw #824a30
+}
+.teacherdesk .desk-front{
+ height:78%;margin:0 5%;border:.4cqw solid #b57b4a;border-top:0;
+ background:linear-gradient(#f2c990,#d28a54);
+ border-radius:0 0 .7cqw .7cqw;
+ color:#663423;font-size:clamp(7px,1.6cqw,18px);padding-top:.65cqw;
+ box-shadow:inset 0 -.4cqw #b97545
+}
+.teacherdesk .desk-front::before{content:"💻";right:.2cqw;top:-2.6cqw;font-size:2.7cqw}
+.teachbubble{top:57%;left:30%;max-width:57%;z-index:14;border-radius:99px;
+ background:linear-gradient(#fff5e1,#fff2cd);color:#89532b;border:.2cqw solid #f2c69d;
+ font-size:clamp(8px,1.65cqw,19px);padding:.6cqw 1cqw}
+.students{
+ position:absolute;top:60%;left:23.6%;right:1.2%;width:auto;height:39%;z-index:9;
+ display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ grid-template-rows:repeat(4,minmax(0,1fr));gap:1% .7%;
+}
+.student{position:relative;min-width:0;min-height:0;overflow:visible;filter:none}
+.student .kid{position:absolute;top:-8%;left:8%;width:84%;height:80%;z-index:1;animation:bob 3.4s ease-in-out infinite}
+.student .student-art{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 .2cqw .15cqw #52382f52)}
+.student .seatdesk{
+ position:absolute;left:1%;right:1%;bottom:3%;height:33%;z-index:2;
+ border:.27cqw solid #ce905a;border-radius:1.2cqw 1.2cqw .5cqw .5cqw;
+ background:linear-gradient(180deg,#ffdd9c 0%,#f4b975 24%,#b97848 27%,#d28a4c 100%);
+ box-shadow:0 .4cqw 0 #a36538,inset 0 -.25cqw #bf7441
+}
+.student .seatdesk::before{content:"";display:none}
+.student .name{
+ position:absolute;bottom:0;left:3%;right:3%;z-index:3;
+ background:linear-gradient(#fff9ec,#ffe8c3);color:#543224;
+ border:.14cqw solid #d3a06a;border-radius:99px;
+ font-size:clamp(7px,1.63cqw,18px);font-weight:950;line-height:1.45;
+ text-align:center;padding:.05cqw .15cqw;box-shadow:0 .18cqw .2cqw #916447aa
+}
+.student.empty .student-art{opacity:0;visibility:hidden}
+.student.empty .kid::after{content:"✚";display:grid;place-items:center;
+ position:absolute;inset:7% 17% 5%;background:linear-gradient(#bd9baf,#806d94);
+ border:.3cqw solid #e1c5d5;border-radius:40% 40% 12% 12%;
+ color:white;font-size:2.7cqw;opacity:.84}
+.student.empty .name{opacity:1;color:#654152;background:#f6dfd9}
+#stage .giftburst{z-index:25;top:40%;font-size:clamp(12px,2.5cqw,30px)}
+#stage .confetti{z-index:25}
+@media(max-width:540px){
+ .wrap{padding:0 2px 30px}
+ #stage{border-radius:7px}
+ .ref-live-demo{font-size:9px}
+ .ref-title strong{font-size:4.1cqw}
+ .ref-subtitle{font-size:1.8cqw}
+ .hud>span{font-size:2cqw}
+ .board{padding:1.2cqw 1.2cqw 1.8cqw}
+ .option{min-height:5.15cqw;font-size:2.1cqw}
+ .question{font-size:3.5cqw}
+ .teachbubble{display:none}
+ .teacher{top:36%;left:-1%;width:36%;height:45%}
+}
+
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
-<main id="stage"><div class="stage-decoration"></div><div class="stage-top"><b>🌺 TIÊN HỌC LỄ • HẬU HỌC VĂN</b><span class="live">🔴 GAME LIVE</span></div><div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top">🧠 đố vui kiến thức <span id="topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
-<img class="teacher-art teacher-new" src="data:image/webp;base64,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" alt="Cô giáo Duyên áo dài trắng hoa anh đào" draggable="false"></div><div class="teachbubble" id="teacherSpeech">Các em chọn đáp án nhé! 💖</div><div class="teacherdesk"><div class="desk-top"></div><div class="desk-front">BÀN GIÁO VIÊN</div></div><div class="floorstripe"></div><div class="students" id="students"></div><div id="confetti"></div><div id="giftZone"></div><aside class="class-rank"><strong>🏆 Top trả lời đúng</strong><div id="miniLeaderboard">Chưa có lượt đúng</div></aside></main>
+<main id="stage" aria-label="Lớp học vui vẻ 12A">
+<div class="ref-backdrop" aria-hidden="true"><div class="ref-books leftbooks">📚</div><div class="ref-books rightbooks">📚</div><div class="ref-window"></div><div class="ref-blossoms blossom-one">🌸🌸🌸</div><div class="ref-blossoms blossom-two">🌸🌸</div><div class="ref-plants leftplant">🌿</div><div class="ref-plants rightplant">🌿</div><div class="ref-globe">🌎</div><div class="ref-flowerpot">🌸</div></div>
+<div class="ref-title" aria-label="Lớp học vui vẻ 12A"><div class="ref-cap">🎓</div><strong>🏫 LỚP HỌC VUI VẺ <span>• 12A</span></strong></div>
+<div class="ref-subtitle">💗 Đố vui kiến thức · Học mà chơi · Chơi mà học 💗</div>
+<div class="ref-live-demo">● LIVE DEMO</div>
+<div class="stage-decoration"></div><div class="stage-top"><span class="live">🎮 GAME LIVE</span></div>
+<div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top"><span class="ref-chalkicon">📚</span><span class="subject-chip" data-category="Lịch sử">Lịch sử</span><span class="subject-chip" data-category="Văn học">Văn học</span><span class="subject-chip" data-category="Khoa học">Khoa học</span><span class="subject-chip" data-category="Địa lý">Địa lý</span><span id="topic" class="current-topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
+<img class="teacher-art teacher-new" src="data:image/webp;base64,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" alt="Cô giáo Duyên áo dài trắng hoa anh đào" draggable="false"></div><div class="teachbubble" id="teacherSpeech">Các em chọn đáp án nhé! 💖</div><div class="teacherdesk"><div class="desk-top"></div><div class="desk-front">BÀN GIÁO VIÊN</div></div><div class="floorstripe"></div><div class="students" id="students"></div><div id="confetti"></div><div id="giftZone"></div><aside class="class-rank"><strong>👑 Top trả lời đúng</strong><div id="miniLeaderboard">Chưa có lượt đúng</div></aside></main>
 <section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button></div><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Cô giáo ấm áp</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="browser">Giọng Safari (dự phòng)</option><option value="ai">🎙️ Duyên – cô giáo nữ miền Nam AI</option></select></div><div class="field"><label for="ttsServer">🔗 Máy chủ giọng AI</label><input id="ttsServer" type="url" inputmode="url" autocomplete="url" placeholder="https://ten-du-an.vercel.app" maxlength="220"></div><div class="actions"><button class="secondary" id="ttsSaveBtn">💾 Lưu máy chủ</button><button class="secondary" id="ttsCheckBtn">🔌 Kiểm tra giọng AI</button></div><p class="mini">Chỉ nhập địa chỉ HTTPS của dự án Vercel. <b>Không dán API key vào đây.</b> Máy chủ sẽ nhận nội dung câu hỏi, bình luận để chuyển thành âm thanh.</p><p class="voice-note"><span id="voiceIndicator" class="voice-indicator"></span><span id="voiceStatus">Chạm KIỂM TRA ÂM THANH để bật giọng đọc trên iPhone.</span></p><p class="mini">📱 iPhone: mở trang bằng Safari (không dùng trình duyệt trong ChatGPT/TikTok), tắt chế độ im lặng và tăng âm lượng khi thử. Âm thanh cần một lần chạm để bắt đầu.</p><div class="field"><label for="category">Chủ đề</label><select id="category"><option value="Tất cả">Tất cả chủ đề</option><option>Lịch sử</option><option>Văn học</option><option>Khoa học</option><option>Địa lý</option></select></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
 <section class="panel"><h2>📣 Tương tác lớp học (mô phỏng)</h2><div class="field"><label for="viewer">Tên hiển thị TikTok (mô phỏng)</label><input id="viewer" maxlength="25" placeholder="Ví dụ: Duyên Nguyễn"></div><div class="field"><label for="commentText">Bình luận</label><input id="commentText" maxlength="150" placeholder="Ví dụ: B hoặc chọn B"></div><div class="actions"><button class="secondary" id="joinBtn">👋 Vào lớp</button><button class="gold" id="giftBtn">🎁 Tặng quà</button><button id="commentBtn">💬 Bình luận</button><button class="secondary" id="removeBtn">🪑 Xóa học sinh cuối</button></div><p>Game đọc tên người vào lớp, người tặng quà và tên + nội dung bình luận. Quà cộng 10 điểm (không cộng số câu đúng). Chỉ bình luận đáp án đúng mới tăng số câu đúng trên bảng Top 10.</p><p class="voice-note"><strong>Chế độ mô phỏng:</strong> Các nút ở đây dùng để thử giọng đọc. GitHub Pages chưa tự nhận lượt vào LIVE, quà hoặc bình luận TikTok thật.</p><ul id="liveLog" class="live-log" aria-live="polite"></ul></section>
 <section class="panel"><h2>🏆 Top 10 người trả lời đúng nhiều nhất</h2><p>Xếp theo tổng số câu trả lời đúng (không tính quà tặng). Mỗi người chỉ được tính một lượt cho mỗi câu. Bình luận thử bằng A, B, C, D hoặc “chọn B” trong lúc câu hỏi đang mở.</p><div id="correctLeaderboard" class="correct-leaderboard" aria-live="polite"><p>Chưa có ai trả lời đúng.</p></div></section>
@@ -738,7 +988,7 @@ function quizDistractors(q,records){
 
 function newQuestion(){clearClocks();stopSpeaking();let scope=$('category').value;const filtered=bank.filter(q=>scope==='Tất cả'||q.category===scope);if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];selected=-1;seconds=Number($('duration').value);const distractors=quizDistractors(current,bank);
 if(!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
-options=shuffle([current.answer,...distractors]);$('topic').textContent='• '+current.category;$('question').textContent=current.question;$('questionNo').textContent=count;$('boardHint').textContent='Chọn đáp án A, B, C hoặc D';$('timer').textContent=seconds;$('options').innerHTML='';options.forEach((answer,i)=>{let b=document.createElement('button');b.className='option';let l=document.createElement('b');l.textContent=letters[i];let s=document.createElement('span');s.textContent=answer;b.append(l,s);b.onclick=()=>selectAnswer(i);$('options').appendChild(b)});setSpeech('Câu số '+count+' ✨');status('Câu '+count+': '+current.category+'. Chạm vào đáp án hoặc bắt đầu đếm ngược.');}
+options=shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));$('question').textContent=current.question;$('questionNo').textContent=count;$('boardHint').textContent='📣 Bình luận A, B, C hoặc D để trả lời!';$('timer').textContent=seconds;$('options').innerHTML='';options.forEach((answer,i)=>{let b=document.createElement('button');b.className='option';let l=document.createElement('b');l.textContent=letters[i];let s=document.createElement('span');s.textContent=answer;b.append(l,s);b.onclick=()=>selectAnswer(i);$('options').appendChild(b)});setSpeech('Câu số '+count+' ✨');status('Câu '+count+': '+current.category+'. Chạm vào đáp án hoặc bắt đầu đếm ngược.');}
 function correctAnswerHonors(){
   if(correctTotalThisQuestion===0)return 'Câu này chưa có học sinh nào trả lời đúng.';
   const rankWords=['nhất','hai','ba','tư','năm'];
