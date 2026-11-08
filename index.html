@@ -1728,16 +1728,25 @@ window.classroomLiveEvent=function(event){
     else if(event.type==='comment'||event.type==='answer'){
       const receivedAt=Number(event.receivedAt)||Date.now();
       const raw=String(event.comment||event.answer||'').trim().slice(0,80);
-      if(!raw||receivedAt<Date.now()-30000)return;
+      // Android may suspend Chrome while TikTok is foregrounded. Delayed
+      // polling does NOT mean TikTok failed: show every received comment.
+      if(!raw)return;
       realCommentSeen++;
       realLastCommentAt=receivedAt;
       const who=String(displayName).slice(0,25);
+      // Seat a real player who answered A-D even if the question was not
+      // opened yet; only awarding points requires an open question.
+      if(/^[ABCD]$/i.test(raw))ensureStudent(who,0,id);
       if(!current||locked||!window.__liveQuestionStartedAt||(!tick&&!readingQuiz)){
         showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Mới nhất: '+who+' — '+raw+'. Câu hỏi chưa bắt đầu, chưa chấm.');
         return;
       }
       if(receivedAt<window.__liveQuestionStartedAt-1000){
-        showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Bình luận cũ, không tính vào câu này.');
+        showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Bình luận trước câu hiện tại, không tính điểm: '+who+' — '+raw);
+        return;
+      }
+      if(window.__liveQuestionDeadline&&receivedAt>window.__liveQuestionDeadline+1000){
+        showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Đáp án gửi sau khi hết giờ: '+who+' — '+raw);
         return;
       }
       showRealCommentStatus('✅ Đã nhận '+realCommentSeen+' bình luận thật. Mới nhất: '+who+' — '+raw+'. Đang chấm đáp án.');
@@ -1919,7 +1928,7 @@ function quizDistractors(q,records){
  if(unique.length<3)return null;return shuffle(unique).slice(0,3);
 }
 
-function newQuestion(){window.__liveQuestionStartedAt=0;clearClocks();stopSpeaking();let scope=$('category').value;const filtered=bank.filter(q=>scope==='Tất cả'||q.category===scope);if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const distractors=quizDistractors(current,bank);
+function newQuestion(){window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();stopSpeaking();let scope=$('category').value;const filtered=bank.filter(q=>scope==='Tất cả'||q.category===scope);if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const distractors=quizDistractors(current,bank);
 if(!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
 options=shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));$('question').textContent=current.question;$('questionNo').textContent=count;$('boardHint').textContent='📣 Bình luận A, B, C hoặc D để trả lời!';$('timer').textContent=seconds;$('options').innerHTML='';options.forEach((answer,i)=>{let b=document.createElement('button');b.className='option';let l=document.createElement('b');l.textContent=letters[i];let s=document.createElement('span');s.textContent=answer;b.append(l,s);b.onclick=()=>selectAnswer(i);$('options').appendChild(b)});setSpeech('Câu số '+count+' ✨');status('Câu '+count+': '+current.category+'. Chạm vào đáp án hoặc bắt đầu đếm ngược.');}
 function spokenStudentName(name){
@@ -1965,6 +1974,7 @@ function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQu
  if(!window.__liveQuestionStartedAt)window.__liveQuestionStartedAt=Date.now();
  seconds=Math.max(1,Number($('duration').value)||20);
  const deadline=Date.now()+seconds*1000;
+ window.__liveQuestionDeadline=deadline;
  $('timer').textContent=seconds;
  $('timer').classList.add('running');
  $('timer').classList.remove('time-warning');
@@ -2278,8 +2288,16 @@ async function liveBridgePoll(){
    liveBridgeUi(connected?'🟢 Đã kết nối TikTok LIVE thật: '+(info.username||'')+'. Bình luận và quà tặng sẽ vào game.':
      '🟡 '+stateText+(info.lastError?' — '+String(info.lastError).slice(0,90):''),connected);
    if(!connected){
-     showRealCommentStatus('⚠️ Render chưa kết nối được với phòng TikTok. Bình luận thật không thể vào game.');
+     showRealCommentStatus('⚠️ Render chưa kết nối được phòng TikTok. '+stateText+
+       (info.lastError?' — '+String(info.lastError).slice(0,140):''));
      return;
+   }
+   if(!realCommentSeen){
+     const last=Number(info.lastEventAt)||0;
+     const secs=last?Math.max(0,Math.round((Date.now()-last)/1000)):0;
+     showRealCommentStatus(last?
+       '🟢 Render kết nối TikTok. Tương tác cuối trên máy chủ: '+secs+' giây trước. Chưa nhận được bình luận vào game.':
+       '🟢 Render kết nối TikTok nhưng máy chủ chưa nhận tương tác nào. Hãy thử bình luận A từ điện thoại khác.');
    }
    // Drain consecutive pages in chronological order. A LIVE can receive
    // hundreds of MEMBER events in seconds. Reading only the newest 100 would
@@ -2297,7 +2315,13 @@ async function liveBridgePoll(){
        const id=Number(evt?.id);
        if(!Number.isSafeInteger(id)||id<=liveBridgeCursor)continue;
        liveBridgeCursor=id;
-       if(['comment','gift','join'].includes(evt.type))window.classroomLiveEvent(evt);
+       if(['comment','gift','join'].includes(evt.type)){
+        try{window.classroomLiveEvent(evt)}
+        catch(e){
+          console.error('TikTok event processing failed',e);
+          showRealCommentStatus('⚠️ Game đã nhận dữ liệu TikTok nhưng có lỗi xử lý: '+String(e?.message||e).slice(0,110));
+        }
+      }
      }
      if(liveBridgeCursor===before||batch.events.length<100)break;
    }
