@@ -444,22 +444,20 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
  content:'●';position:absolute;left:4%;color:#40cf31;font-size:.9em;line-height:1
 }
 #stage.stage-exact .photo-seat-name.active{background:#fff2c3;border-color:#f9b735}
-/* Empty illustrated seats are permanent: adding viewers only replaces names. */
+/* Photo students are copies of the ORIGINAL anime pupils, never flat SVG
+   cartoons. All pupils look consistent with the user's reference artwork. */
 #stage.stage-exact .photo-seat-portrait{
- position:absolute;transform:translate(-50%,-100%);width:13.8%;height:9.1%;
- display:flex;align-items:flex-end;justify-content:center;
- z-index:1;pointer-events:none;filter:drop-shadow(0 .35cqw .35cqw #38252f88)
+ position:absolute;transform:translate(-50%,-100%);
+ width:16.1%;height:11.2%;object-fit:fill;z-index:1;
+ pointer-events:none;user-select:none;
+ filter:drop-shadow(0 .12cqw .18cqw #38252f44)
 }
-#stage.stage-exact .photo-seat-portrait:before{
- content:'';position:absolute;inset:8% 11% 1%;
- background:linear-gradient(180deg,#f8ddc5 0%,#f5c1b3 58%,#c4a3b2 100%);
- border-radius:48% 48% 22% 22%;opacity:.95
+#stage.stage-exact .photo-seat-portrait.mirrored{
+ transform:translate(-50%,-100%) scaleX(-1)
 }
-#stage.stage-exact .photo-seat-portrait svg{
- display:block;width:100%;height:100%;position:relative;z-index:1;
- overflow:visible
+#stage.stage-exact .photo-seat-portrait.third-row{
+ width:15%;height:10.2%
 }
-#stage.stage-exact .photo-seat-portrait.third-row{height:8.9%}
 #stage.stage-exact .photo-seat-name{z-index:2}
 #referencePickerBtn,#referenceResetBtn{white-space:normal}
 
@@ -1994,6 +1992,7 @@ renderStudents();voiceState();loadVietnameseVoices();if(speechAvailable)window.s
    Keeping the real source pixels intact avoids the blurry clipped teacher hand
    and nonmatching procedurally drawn students. No upload to a remote server. */
 let originalReferenceObjectUrl=null;
+let photoPupilSprites=[];
 // Calibrated against the reference photograph (1199 x 1312): each live name
 // overlays the original printed nameplate exactly, never above/below it.
 const photoPositions=[
@@ -2002,6 +2001,44 @@ const photoPositions=[
  [30.5,94.7],[45.5,94.7],[60.5,94.7],[75.0,94.7],[89.7,94.7]
 ];
 window.__photoSeatDataReady=true;
+function buildPhotoPupilSprites(referenceImage){
+ // Source coordinates are calibrated to the same 1199x1312 original photo.
+ // Reuse those beautiful anime characters to cover gray placeholder seats.
+ // No third-party images, cartoony vector pupils, or network dependency.
+ const sourcePupils=[
+   [385,785,155,151],[578,785,158,151],
+   [777,784,159,152],[973,784,158,152],
+   [327,969,131,112],[504,970,131,111]
+ ];
+ const scaleX=referenceImage.naturalWidth/1199;
+ const scaleY=referenceImage.naturalHeight/1312;
+ photoPupilSprites=sourcePupils.map(([x,y,w,h])=>{
+   try{
+     const canvas=document.createElement('canvas');
+     canvas.width=180;canvas.height=176;
+     const ctx=canvas.getContext('2d',{willReadFrequently:true});
+     if(!ctx)return '';
+     ctx.drawImage(referenceImage,x*scaleX,y*scaleY,w*scaleX,h*scaleY,
+       0,0,canvas.width,canvas.height);
+     // Softly feather the edge of each cropped pupil to blend into the desk
+     // background, without leaving the white labels of the source image.
+     const pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
+     const width=canvas.width,height=canvas.height;
+     for(let iy=0;iy<height;iy++){
+       for(let ix=0;ix<width;ix++){
+         const px=(ix-width/2)/(width*.53),py=(iy-height*.51)/(height*.69);
+         const radial=Math.sqrt(px*px+py*py);
+         const oval=Math.max(0,Math.min(1,(1-radial)/.17));
+         const bottom=Math.max(0,Math.min(1,(height-iy)/(height*.12)));
+         const top=Math.max(0,Math.min(1,iy/(height*.04)));
+         pixels.data[(iy*width+ix)*4+3]*=oval*bottom*top;
+       }
+     }
+     ctx.putImageData(pixels,0,0);
+     return canvas.toDataURL('image/png');
+   }catch(e){console.warn('Pupil sprite crop failed',String(e));return ''}
+ });
+}
 function renderPhotoSeatLabels(){
  if(!window.__photoSeatDataReady)return;
  const layer=document.getElementById('photoSeatLabels');
@@ -2011,13 +2048,21 @@ function renderPhotoSeatLabels(){
  // TikTok JOIN events only update the nameplate, not the artwork.
  const visible=students.slice(0,photoPositions.length);layer.replaceChildren();
  photoPositions.forEach(([x,y],i)=>{
-   if(i>=6){
-     const portrait=document.createElement('div');
-     portrait.className='photo-seat-portrait'+(i>=9?' third-row':'');
-     portrait.style.left=x+'%';
-     portrait.style.top=(y-2.1)+'%';
-     portrait.innerHTML=studentArt(i+2);
-     layer.appendChild(portrait);
+   if(i>=6 && photoPupilSprites.length){
+     // Stable image per seat; viewers only change the name underneath.
+     const sourceIdx=[0,2,3,1,4,5,0,3][i-6];
+     const sprite=photoPupilSprites[sourceIdx];
+     if(sprite){
+       const portrait=document.createElement('img');
+       portrait.alt='';
+       portrait.setAttribute('aria-hidden','true');
+       portrait.className='photo-seat-portrait'+(i>=9?' third-row':'')+
+         ((i===7||i===10||i===12)?' mirrored':'');
+       portrait.style.left=x+'%';
+       portrait.style.top=(y-2.05)+'%';
+       portrait.src=sprite;
+       layer.appendChild(portrait);
+     }
    }
    const player=visible[i];
    const name=document.createElement('div');
@@ -2116,6 +2161,7 @@ function referenceShowBlob(blob){
      return;
    }
    buildLiveTeacherHand(img);
+   buildPhotoPupilSprites(img);
    $('stage').classList.add('stage-exact');
    $('referenceResetBtn').hidden=false;
    renderPhotoSeatLabels();
