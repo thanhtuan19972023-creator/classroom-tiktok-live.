@@ -603,13 +603,21 @@ $('testVoiceBtn').onclick=()=>speakFromTap('Xin chào cả lớp thân yêu! Hô
   $('ttsCheckBtn').onclick=async()=>{
     const endpoint=aiUrl();
     if(!endpoint){voiceState('⚠️ Chưa có đường dẫn máy chủ AI. Hãy nhập URL Vercel rồi Lưu máy chủ.');return}
-    voiceState('Đang kiểm tra máy chủ giọng Duyên...');
+    voiceState('Đang xác minh giọng Duyên trực tiếp với ElevenLabs (không tốn credits)...');
     try{
-      const response=await fetch(endpoint,{method:'GET'});
+      const response=await fetch(endpoint+'?check=voice',{method:'GET',cache:'no-store'});
       const data=await response.json();
-      if(!response.ok)throw new Error('Lỗi '+response.status);
-      voiceState(data.ready?'✅ Máy chủ có API Key. Chạm NGHE THỬ GIỌNG để xác nhận giọng Duyên có phát được.':'⚠️ Máy chủ chạy nhưng chưa thấy ELEVENLABS_API_KEY trong Vercel.');
-    }catch(e){voiceState('⚠️ Không kiểm tra được /api/tts: '+(e?.message||'Lỗi mạng')+'. Nếu là 404: API chưa được deploy. Nếu 500: xem Vercel Function Logs.')}
+      if(!response.ok)throw new Error('Lỗi máy chủ '+response.status);
+      let message;
+      if(!data.ready) message='⚠️ Vercel chưa có ELEVENLABS_API_KEY. Kiểm tra Environment Variables.';
+      else if(data.voice_ready) message='✅ ElevenLabs đã nhận Voice ID '+(data.voice||'Duyên')+'. Bấm NGHE THỬ GIỌNG để kiểm tra tạo âm thanh.';
+      else message='⚠️ '+(data.error||'Không kiểm tra được quyền sử dụng Voice ID')+(data.provider_code?' Mã: '+data.provider_code:'');
+      voiceState(message);
+      status(message,!data.voice_ready);
+    }catch(e){
+      const message='⚠️ Không kiểm tra được giọng Duyên: '+(e?.message||'lỗi kết nối')+'.';
+      voiceState(message);status(message,true)
+    }
   };
 })();
 renderStudents();voiceState();loadVietnameseVoices();if(speechAvailable)window.speechSynthesis.onvoiceschanged=loadVietnameseVoices;newQuestion();
