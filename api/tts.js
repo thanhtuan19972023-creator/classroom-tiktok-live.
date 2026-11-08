@@ -50,14 +50,27 @@ export default async function handler(req, res){
     });
     if(!response.ok){
       const code=response.status;
-      console.error('ElevenLabs TTS status',code);
-      let message='ElevenLabs chưa tạo được giọng đọc';
-      if(code===401)message='ElevenLabs từ chối API Key (401). Kiểm tra khóa API trong Vercel';
-      else if(code===403)message='API Key không có quyền Text to Speech hoặc giọng chưa được cấp phép (403)';
-      else if(code===404)message='Không tìm thấy giọng Tuyết. Hãy thêm giọng vào My Voices và cập nhật VOICE_ID (404)';
-      else if(code===422)message='Voice ID hoặc model ElevenLabs chưa tương thích (422)';
-      else if(code===429)message='Hết credits hoặc vượt giới hạn gọi ElevenLabs (429)';
-      return res.status(code===429?429:502).json({error:message,provider_status:code});
+      let detailCode='';
+      try{
+        const result=await response.json();
+        const detail=result?.detail;
+        const rawCode=detail?.code || detail?.status || result?.code || '';
+        // Only a narrow error identifier is returned. Never expose provider credentials or arbitrary error bodies.
+        detailCode=typeof rawCode==='string' && /^[a-z0-9_-]{1,64}$/i.test(rawCode)?rawCode:'';
+      }catch(e){}
+      console.error('ElevenLabs TTS failure: status=%s code=%s',code,detailCode);
+      let message='ElevenLabs chưa tạo được giọng đọc (mã '+code+').';
+      if(code===400)message='Yêu cầu tạo giọng không hợp lệ (400). Kiểm tra cấu hình model và Voice ID.';
+      else if(code===401)message='API Key ElevenLabs không hợp lệ (401).';
+      else if(code===402)message='Không đủ credits hoặc gói ElevenLabs cần nâng cấp (402).';
+      else if(code===403)message='ElevenLabs không cho tài khoản dùng giọng này qua API (403). Giọng trong Voice Library yêu cầu gói hỗ trợ API.';
+      else if(code===404)message='Không tìm thấy hoặc không có quyền dùng giọng Tuyết (404). Kiểm tra Voice ID trong My Voices.';
+      else if(code===422)message='Cấu hình Voice ID hoặc model không hợp lệ (422).';
+      else if(code===429)message='ElevenLabs giới hạn yêu cầu hoặc credits (429).';
+      else if(code>=500)message='Máy chủ ElevenLabs hiện gặp lỗi ('+code+').';
+      if(/free|subscription|payment|voice.*not.*available|plan|tier/i.test(detailCode))message='Gói ElevenLabs hiện không cho phép dùng giọng Tuyết qua API. Giọng Voice Library không hỗ trợ API trên gói Free.';
+      if(detailCode)message+=' Mã: '+detailCode+'.';
+      return res.status(code===429?429:502).json({error:message,provider_status:code,provider_code:detailCode||undefined});
     }
     const audio=Buffer.from(await response.arrayBuffer());
     if(audio.length > 4000000) return res.status(502).json({error:'Audio too large'});
