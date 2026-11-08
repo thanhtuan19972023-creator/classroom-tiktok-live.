@@ -1653,7 +1653,9 @@ function notify(kind,text,spoken,readAloud=true){
   // Real LIVE: suppress non-answer chatter and wrong-answer speech to avoid
   // repeatedly cutting off the teacher and wasting ElevenLabs voice credits.
   const quietRealChat=window.__classroomRealEvent&&['💬','❌','👋'].includes(kind);
-  if(voiceEnabled&&readAloud&&!quietRealChat){
+  // New gifts still score and appear in the log, but never interrupt the
+  // answer reveal or Top 5 names while the teacher is announcing winners.
+  if(voiceEnabled&&readAloud&&!quietRealChat&&!honorSpeechActive){
     if(readingQuiz&&kind==='🎁'){
       if(pendingGiftGreetings.length<6)pendingGiftGreetings.push(spoken||text);
     }else if(!readingQuiz)say(spoken||text);
@@ -1737,7 +1739,7 @@ window.classroomLiveEvent=function(event){
       // Seat a real player who answered A-D even if the question was not
       // opened yet; only awarding points requires an open question.
       if(/^[ABCD]$/i.test(raw))ensureStudent(who,0,id);
-      if(!current||locked||!window.__liveQuestionStartedAt||(!tick&&!readingQuiz)){
+      if(!current||locked||!window.__liveQuestionStartedAt||(!tick&&!readingQuiz&&!roundGraceActive)){
         showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Mới nhất: '+who+' — '+raw+'. Câu hỏi chưa bắt đầu, chưa chấm.');
         return;
       }
@@ -1745,7 +1747,7 @@ window.classroomLiveEvent=function(event){
         showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Bình luận trước câu hiện tại, không tính điểm: '+who+' — '+raw);
         return;
       }
-      if(window.__liveQuestionDeadline&&receivedAt>window.__liveQuestionDeadline+1000){
+      if(window.__liveQuestionDeadline&&receivedAt>window.__liveQuestionDeadline){
         showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Đáp án gửi sau khi hết giờ: '+who+' — '+raw);
         return;
       }
@@ -1755,7 +1757,10 @@ window.classroomLiveEvent=function(event){
   }finally{window.__classroomRealEvent=false;}
 };
 
-const $=id=>document.getElementById(id);const core=Object.entries(DATA).flatMap(([category,lines])=>lines.trim().split('\n').map(line=>{const [question,answer,...distractors]=line.split('|');return {question,answer,category,distractors}}));let extras=[];try{extras=JSON.parse(localStorage.getItem('classroom_extra')||'[]')}catch(e){};let bank=[...core,...extras];$('bankCount').textContent='('+bank.length+' câu)';let count=0,current=null,options=[],selected=-1,locked=false,seconds=20,tick=null,nextTimer=null,score=0,answeredThisQuestion=new Set(),correctTotalThisQuestion=0,fastestCorrectNames=[],students=[]; // Every pictured seat is permanent; real TikTok viewers replace "Chờ bạn" labels, not student artwork.
+const $=id=>document.getElementById(id);const core=Object.entries(DATA).flatMap(([category,lines])=>lines.trim().split('\n').map(line=>{const [question,answer,...distractors]=line.split('|');return {question,answer,category,distractors}}));let extras=[];try{extras=JSON.parse(localStorage.getItem('classroom_extra')||'[]')}catch(e){};let bank=[...core,...extras];$('bankCount').textContent='('+bank.length+' câu)';let count=0,current=null,options=[],selected=-1,locked=false,seconds=20,tick=null,nextTimer=null,score=0,answeredThisQuestion=new Set(),correctTotalThisQuestion=0,fastestCorrectNames=[],students=[];
+// Grace period collects TikTok events that were posted before the clock hit zero
+// but reached the game on the next Render poll. Never score later timestamps.
+let roundGraceActive=false,roundGraceTimer=null,honorSpeechActive=false; // Every pictured seat is permanent; real TikTok viewers replace "Chờ bạn" labels, not student artwork.
 // Only correct answers are persisted; simulated gifts and total game points remain separate.
 try{const saved=JSON.parse(localStorage.getItem('classroom_correct_v5')||'[]');if(Array.isArray(saved))for(const entry of saved.slice(0,500)){if(!entry||typeof entry.name!=='string')continue;const name=entry.name.trim().slice(0,25),correct=Number(entry.correct);if(!name||!Number.isSafeInteger(correct)||correct<1||correct>999999)continue;const key=String(entry.tiktokId||'').trim().toLowerCase().slice(0,100);
   let person=key?students.find(s=>s.tiktokId===key):students.find(s=>!s.tiktokId&&s.name.toLocaleLowerCase('vi')===name.toLocaleLowerCase('vi'));
@@ -1810,7 +1815,7 @@ function renderStudents(){
     ranked.slice(0,3).forEach((s,i)=>{const line=document.createElement('div'),name=document.createElement('b'),correct=document.createElement('em');
       name.textContent=(i+1)+'. '+s.name;correct.textContent=s.correct+' ✓';line.append(name,correct);panel.appendChild(line)})}
 }
-function setSpeech(t){$('teacherSpeech').textContent=t}function clearClocks(){stopCountdownWarning();cancelQuizReading();clearInterval(tick);clearTimeout(nextTimer);tick=null;nextTimer=null;$('timer').classList.remove('running','time-warning')}
+function setSpeech(t){$('teacherSpeech').textContent=t}function clearClocks(){stopCountdownWarning();cancelQuizReading();clearInterval(tick);clearTimeout(nextTimer);clearTimeout(roundGraceTimer);tick=null;nextTimer=null;roundGraceTimer=null;roundGraceActive=false;honorSpeechActive=false;$('timer').classList.remove('running','time-warning')}
 // V13: generate distractors by semantic answer type, never by broad school subject.
 const QUIZ_CHOICE_GROUPS={
 writers:['Nguyễn Du','Nguyễn Trãi','Lý Thường Kiệt','Bà Huyện Thanh Quan','Nam Cao','Ngô Tất Tố','Tô Hoài','Kim Lân','Lê Minh Khuê','Nguyễn Quang Sáng','Nguyễn Thành Long','Chính Hữu','Quang Dũng','Xuân Quỳnh','Huy Cận','Bằng Việt','Hữu Thỉnh','Viễn Phương','Thanh Hải','Nguyễn Duy','Vũ Trọng Phụng','Thạch Lam','Đoàn Giỏi','Antoine de Saint-Exupéry','William Shakespeare','Victor Hugo','Miguel de Cervantes','Ernest Hemingway','J. K. Rowling'],
@@ -1950,22 +1955,27 @@ function correctAnswerHonors(){
   if(remaining>0)phrases.push('Và còn '+remaining+' học sinh trả lời đúng nữa. Chúc mừng tất cả các em!');
   return phrases.join(' ');
 }
-function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQuizReading();stopSpeaking();locked=true;clearInterval(tick);tick=null;$('timer').classList.remove('running','time-warning');const correct=options.indexOf(current.answer);[...$('options').children].forEach((b,i)=>{if(i===correct)b.classList.add('correct');else if(i===index)b.classList.add('wrong')});if(index===correct){score+=10;$('totalScore').textContent=score;setSpeech('Chính xác! Giỏi quá! 🌟');status('Đúng rồi! Đáp án '+letters[correct]+': '+current.answer);celebrate()}else{setSpeech('Đáp án là '+letters[correct]+' nhé! 💡');status('Đáp án đúng: '+letters[correct]+' — '+current.answer)}$('boardHint').textContent='Đáp án: '+letters[correct];
+function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQuizReading();stopSpeaking();clearTimeout(roundGraceTimer);roundGraceTimer=null;roundGraceActive=false;locked=true;clearInterval(tick);tick=null;$('timer').classList.remove('running','time-warning');const correct=options.indexOf(current.answer);[...$('options').children].forEach((b,i)=>{if(i===correct)b.classList.add('correct');else if(i===index)b.classList.add('wrong')});if(index===correct){score+=10;$('totalScore').textContent=score;setSpeech('Chính xác! Giỏi quá! 🌟');status('Đúng rồi! Đáp án '+letters[correct]+': '+current.answer);celebrate()}else{setSpeech('Đáp án là '+letters[correct]+' nhé! 💡');status('Đáp án đúng: '+letters[correct]+' — '+current.answer)}$('boardHint').textContent='Đáp án: '+letters[correct];
   const answerLine=(index===correct?'Chính xác! Giỏi lắm! ':'Hết giờ suy nghĩ. ')+
     'Đáp án đúng là '+letters[correct]+': '+spokenQuizValue(current.answer)+'.';
   const honorsLine=correctAnswerHonors();
+  // Preserve a snapshot of every winner before making any network voice calls.
+  honorSpeechActive=Boolean(voiceEnabled);
+  showRoundCorrectCount();
   if($('autonext').checked){
     const quizSerial=++quizReadSerial;
     let advanced=false;
     const goNext=()=>{
       if(advanced||quizSerial!==quizReadSerial||!locked)return;
-      advanced=true;clearTimeout(nextTimer);
+      advanced=true;honorSpeechActive=false;clearTimeout(nextTimer);
       nextTimer=setTimeout(()=>{newQuestion();beginQuestionReading()},1500);
     };
     nextTimer=setTimeout(()=>{stopSpeaking();goNext()},90000);
     if(voiceEnabled)say(answerLine,()=>sayVietnamese(honorsLine,goNext));
     else goNext();
-  }else if(voiceEnabled)say(answerLine,()=>sayVietnamese(honorsLine));
+  }else if(voiceEnabled){
+    say(answerLine,()=>sayVietnamese(honorsLine,()=>{honorSpeechActive=false}));
+  }
 }function selectAnswer(i){if(!current||locked)return;selected=i;finishAnswer(i)}function countdown(){
  if(!current||locked)return;
  stopCountdownWarning();
@@ -1984,7 +1994,18 @@ function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQu
    seconds=Math.max(0,Math.ceil((deadline-Date.now())/1000));
    $('timer').textContent=seconds;
    if(seconds>0&&seconds<=5)announceCountdownWarning();
-   if(seconds<=0){clearInterval(tick);tick=null;finishAnswer(-1)}
+   if(seconds<=0){
+     clearInterval(tick);tick=null;
+     if(!roundGraceActive){
+       // One poll runs every 2.8s; a 5.2s grace allows at least one
+       // additional poll to collect valid comments with pre-zero timestamps.
+       roundGraceActive=true;
+       $('timer').textContent='0';
+       $('boardHint').textContent='⏳ Đang tổng hợp đáp án trước khi hết giờ…';
+       roundGraceTimer=setTimeout(()=>finishAnswer(-1),5200);
+       if(liveBridgeActive)void liveBridgePoll();
+     }
+   }
  };
  tick=setInterval(update,200);
  update();
