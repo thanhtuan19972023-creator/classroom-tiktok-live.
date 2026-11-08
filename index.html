@@ -448,7 +448,7 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
    cartoons. All pupils look consistent with the user's reference artwork. */
 #stage.stage-exact .photo-seat-portrait{
  position:absolute;transform:translate(-50%,-100%);
- width:16.1%;height:11.2%;object-fit:fill;z-index:1;
+ width:13.6%;height:9.4%;object-fit:fill;z-index:1;
  pointer-events:none;user-select:none;
  filter:drop-shadow(0 .12cqw .18cqw #38252f44)
 }
@@ -456,7 +456,7 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
  transform:translate(-50%,-100%) scaleX(-1)
 }
 #stage.stage-exact .photo-seat-portrait.third-row{
- width:15%;height:10.2%
+ width:13.0%;height:8.9%
 }
 #stage.stage-exact .photo-seat-name{z-index:2}
 #referencePickerBtn,#referenceResetBtn{white-space:normal}
@@ -2059,7 +2059,7 @@ function renderPhotoSeatLabels(){
        portrait.className='photo-seat-portrait'+(i>=9?' third-row':'')+
          ((i===7||i===10||i===12)?' mirrored':'');
        portrait.style.left=x+'%';
-       portrait.style.top=(y-2.05)+'%';
+       portrait.style.top=(y-1.45)+'%';
        portrait.src=sprite;
        layer.appendChild(portrait);
      }
