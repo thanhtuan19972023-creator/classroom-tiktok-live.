@@ -1162,94 +1162,166 @@ function speakJapaneseOnDevice(text){
   });
 }
 
+
+// Local speech is a fallback for ONE failed clip, not a global change in
+// narration preferences. In particular, never overwrite "edge-male" /
+// "edge-female" just because Render had a temporary network error.
+function speakVietnameseOnDevice(text){
+  return new Promise(resolve=>{
+    if(!speechAvailable){resolve();return}
+    const utterance=new SpeechSynthesisUtterance(String(text||'').slice(0,390));
+    utterance.lang='vi-VN';
+    const preferred=vietnameseVoice();if(preferred)utterance.voice=preferred;
+    const style=speechStyle();utterance.rate=style.rate;utterance.pitch=style.pitch;
+    utterance.volume=1;
+    let finished=false;
+    const finish=()=>{if(finished)return;finished=true;clearTimeout(watch);resolve()};
+    const watch=setTimeout(finish,26000);
+    utterance.onend=finish;utterance.onerror=finish;
+    try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}
+    catch(e){finish()}
+  });
+}
+const neuralAudioCache=new Map();
+function getCachedNeuralAudio(key){
+  const cached=neuralAudioCache.get(key);
+  if(cached){neuralAudioCache.delete(key);neuralAudioCache.set(key,cached)}
+  return cached||null;
+}
+function cacheNeuralAudio(key,buffer){
+  if(!buffer||!key||buffer.duration>22)return;
+  neuralAudioCache.set(key,buffer);
+  while(neuralAudioCache.size>24)neuralAudioCache.delete(neuralAudioCache.keys().next().value);
+}
+async function playGeneratedAudio(sound,serial,neural,japanese){
+  if(!aiAudioContext)unlockAIAudio();
+  if(!aiAudioContext)throw new Error('Thiết bị không hỗ trợ phát giọng AI');
+  await new Promise((resolve,reject)=>{
+    if(serial!==aiSerial){resolve();return}
+    try{
+      if(aiAudioContext.state!=='running')aiAudioContext.resume().catch(()=>{});
+      const source=aiAudioContext.createBufferSource();
+      aiSource=source;source.buffer=sound;source.connect(aiAudioContext.destination);
+      let finished=false,playbackTimer=null;
+      const finishPlayback=()=>{
+        if(finished)return;
+        finished=true;clearTimeout(playbackTimer);
+        if(aiSource===source)aiSource=null;
+        source.onended=null;
+        try{source.disconnect()}catch(e){}
+        resolve();
+      };
+      source.onended=finishPlayback;source.start(0);
+      const durationMs=Number.isFinite(sound.duration)&&sound.duration>0
+        ?Math.ceil(sound.duration*1000):15000;
+      playbackTimer=setTimeout(()=>{
+        if(serial!==aiSerial){finishPlayback();return}
+        try{source.stop(0)}catch(e){}
+        finishPlayback();
+      },Math.min(60000,Math.max(1500,durationMs+1400)));
+      voiceState(japanese?'🇯🇵 ĐANG ĐỌC: phát âm Nhật chuẩn':
+        neural?'🎬 ĐANG ĐỌC – giọng review phim AI':'✨ Cô giáo Duyên đang nói...');
+    }catch(e){reject(e)}
+  });
+}
+async function requestGeneratedVoice(endpoint,part,voice,serial){
+  const cacheKey=endpoint===FREE_NEURAL_TTS_BACKEND?voice+'|'+part:'';
+  const cached=cacheKey&&getCachedNeuralAudio(cacheKey);
+  if(cached)return cached;
+  let error=null;
+  const attempts=endpoint===FREE_NEURAL_TTS_BACKEND?2:1;
+  for(let attempt=0;attempt<attempts;attempt++){
+    if(serial!==aiSerial)return null;
+    const ctrl=new AbortController();
+    aiAbort=ctrl;
+    const timeout=setTimeout(()=>ctrl.abort(),19000);
+    try{
+      const response=await fetch(endpoint,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text:part,voice}),signal:ctrl.signal
+      });
+      if(!response.ok){
+        const data=await response.json().catch(()=>({}));
+        const e=new Error(String(data?.error||'Máy chủ giọng báo lỗi HTTP '+response.status));
+        e.providerCode=String(data?.provider_code||'');
+        e.statusCode=response.status;
+        throw e;
+      }
+      const bytes=await response.arrayBuffer();
+      if(serial!==aiSerial)return null;
+      if(!aiAudioContext)unlockAIAudio();
+      if(!aiAudioContext)throw new Error('Trình duyệt chưa sẵn sàng phát âm thanh');
+      const sound=await aiAudioContext.decodeAudioData(bytes.slice(0));
+      if(cacheKey)cacheNeuralAudio(cacheKey,sound);
+      return sound;
+    }catch(e){
+      if(serial!==aiSerial)return null;
+      error=e;
+      if(attempt+1<attempts){
+        voiceState('🎬 Máy chủ giọng tạm bận, đang thử lại. Vẫn giữ giọng review phim AI...');
+        await new Promise(r=>setTimeout(r,e?.statusCode===429?1200:500));
+      }
+    }finally{
+      clearTimeout(timeout);
+      if(aiAbort===ctrl)aiAbort=null;
+    }
+  }
+  throw error||new Error('Giọng AI không phản hồi');
+}
 async function aiSpeak(text,after){
   const neural=neuralActive();
   const endpoint=neural?FREE_NEURAL_TTS_BACKEND:aiUrl();
-  if(!endpoint){
-    switchToBrowserVoice(text,after,'unavailable');
-    return;
-  }
+  if(!endpoint){switchToBrowserVoice(text,after,'unavailable');return}
   const serial=++aiSerial;
-  // Longer chunks reduce latency; never discard the final answer options.
   const parts=multilingualSpeechParts(text);
   let remainingText=String(text||'');
   try{
     for(let i=0;i<parts.length;i++){
+      if(serial!==aiSerial)return;
       const part=parts[i].text;
       const japanese=parts[i].language==='ja';
       remainingText=parts.slice(i).map(p=>p.text).join(' ');
-      if(serial!==aiSerial)return;
-      aiAbort=new AbortController();
-      voiceState(japanese?'🇯🇵 Đang đọc từ tiếng Nhật bằng giọng Nhật...':
-        neural?'🎬 Giọng review phim AI đang chuẩn bị đọc...':'✨ AI đang tạo giọng: '+part.slice(0,40));
-      const reply=await fetch(japanese?FREE_NEURAL_TTS_BACKEND:endpoint,{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text:part,voice:japanese?
-          ($('ttsEngine').value==='edge-male'?'japanese-male':'japanese'):
-          $('ttsEngine').value==='edge-female'?'female':'male'}),signal:aiAbort.signal});
-      if(!reply.ok){
-        if(japanese&&speechAvailable){
-          voiceState('🇯🇵 Giọng Nhật Neural tạm lỗi, đang đọc bằng giọng Nhật trên điện thoại.');
-          await speakJapaneseOnDevice(part);
-          if(serial!==aiSerial)return;
+      const voice=japanese?
+        (neural&&$('ttsEngine').value==='edge-male'?'japanese-male':'japanese'):
+        $('ttsEngine').value==='edge-female'?'female':'male';
+      const partEndpoint=japanese?FREE_NEURAL_TTS_BACKEND:endpoint;
+      try{
+        voiceState(japanese?'🇯🇵 Đang phát âm từ tiếng Nhật...':
+          neural?'🎬 Giọng review phim AI đang tạo âm thanh...':'✨ Duyên AI đang tạo âm thanh...');
+        const sound=await requestGeneratedVoice(partEndpoint,part,voice,serial);
+        if(serial!==aiSerial)return;
+        if(sound)await playGeneratedAudio(sound,serial,neural,japanese);
+      }catch(e){
+        if(serial!==aiSerial)return;
+        // Free Neural voices must stay selected across temporary server errors.
+        // Only the failing clip uses local Vietnamese or Japanese pronunciation.
+        if(neural||japanese){
+          console.warn('One neural voice clip failed',String(e?.statusCode||''),String(e?.message||'').slice(0,160));
+          voiceState(japanese?'⚠️ Giọng Nhật AI bị gián đoạn ở đoạn này. Đang thử phát âm Nhật trên máy; giọng AI vẫn được giữ.':
+            '⚠️ Giọng review phim bị gián đoạn ở đoạn này. Đang đọc tạm bằng giọng máy; lần sau vẫn dùng giọng AI.');
+          if(japanese)await speakJapaneseOnDevice(part);
+          else await speakVietnameseOnDevice(part);
           continue;
         }
-        let msg='Máy chủ AI lỗi '+reply.status, code='';
-        try{
-          const info=await reply.json();
-          msg=info.error||msg;
-          code=String(info.provider_code||'');
-        }catch(e){}
-        const error=new Error(msg);error.providerCode=code;throw error;
+        throw e;
       }
-      const bytes=await reply.arrayBuffer();
-      if(serial!==aiSerial)return;
-      if(!aiAudioContext)unlockAIAudio();
-      if(!aiAudioContext)throw new Error('Thiết bị không hỗ trợ âm thanh AI');
-      const sound=await aiAudioContext.decodeAudioData(bytes.slice(0));
-      if(serial!==aiSerial)return;
-      await new Promise((resolve,reject)=>{
-        if(serial!==aiSerial){resolve();return}
-        try{
-          if(aiAudioContext.state!=='running')aiAudioContext.resume().catch(()=>{});
-          const source=aiAudioContext.createBufferSource();
-          aiSource=source;source.buffer=sound;source.connect(aiAudioContext.destination);
-          // Safari can play audio normally but sometimes omit AudioBufferSourceNode.onended.
-          // Complete the speech promise from either the audio event or its actual duration.
-          let finished=false,playbackTimer=null;
-          const finishPlayback=()=>{
-            if(finished)return;
-            finished=true;clearTimeout(playbackTimer);
-            if(aiSource===source)aiSource=null;
-            source.onended=null;
-            resolve();
-          };
-          source.onended=finishPlayback;
-          source.start(0);
-          const durationMs=Number.isFinite(sound.duration)&&sound.duration>0
-            ?Math.ceil(sound.duration*1000):15000;
-          playbackTimer=setTimeout(()=>{
-            if(serial!==aiSerial){finishPlayback();return}
-            try{source.stop(0)}catch(e){}
-            finishPlayback();
-          },Math.min(60000,Math.max(1500,durationMs+1400)));
-          voiceState(neural?'🎬 ĐANG ĐỌC – giọng review phim AI':'✨ Cô giáo AI đang nói...');
-        }catch(e){reject(e)}
-      });
     }
-    if(serial===aiSerial&&after)after();
+    if(serial===aiSerial&&typeof after==='function')after();
   }catch(e){
     if(serial!==aiSerial)return;
     const issue=String(e?.message||'Không phát được giọng AI');
     const code=String(e?.providerCode||'');
     const quota=/quota_exceeded|insufficient_credits/i.test(code+' '+issue)
       ||/hết hạn mức|không đủ credits/i.test(issue);
-    // Do not retry an unavailable provider during the LIVE session.
-    // Continue with local speech, including four choices and Top 5.
-    switchToBrowserVoice(remainingText,after,neural?'neural':quota?'quota':'unavailable');
+    // ElevenLabs exhausted credits still requires a different service.
+    if(!neural)switchToBrowserVoice(remainingText,after,quota?'quota':'unavailable');
+    else{
+      voiceState('⚠️ Giọng review phim tạm gián đoạn: '+issue+'. Giữ nguyên lựa chọn AI.');
+      if(speechAvailable)await speakVietnameseOnDevice(remainingText);
+      if(serial===aiSerial&&typeof after==='function')after();
+    }
   }
 }
-
 function speechStyle(){const v=$('voiceStyle')?.value;return v==='cheerful'?{rate:1.02,pitch:1.16}:v==='clear'?{rate:.82,pitch:1.0}:{rate:.92,pitch:1.09}}
 function loadVietnameseVoices(){if(!speechAvailable)return;const sel=$('voiceChoice');if(!sel)return;const chosen=sel.value;const vs=window.speechSynthesis.getVoices().filter(v=>/^vi([-_]|$)/i.test(v.lang));sel.replaceChildren(new Option('Tự chọn giọng tốt nhất',''));vs.forEach(v=>sel.add(new Option(v.name+(v.localService?' (trên máy)':''),v.voiceURI)));if([...sel.options].some(o=>o.value===chosen))sel.value=chosen;}
 
