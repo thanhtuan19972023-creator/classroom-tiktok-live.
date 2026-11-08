@@ -640,7 +640,12 @@ function setSpeech(t){$('teacherSpeech').textContent=t}function clearClocks(){ca
 // V13: generate distractors by semantic answer type, never by broad school subject.
 const QUIZ_CHOICE_GROUPS={
 writers:['Nguyễn Du','Nguyễn Trãi','Lý Thường Kiệt','Bà Huyện Thanh Quan','Nam Cao','Ngô Tất Tố','Tô Hoài','Kim Lân','Lê Minh Khuê','Nguyễn Quang Sáng','Nguyễn Thành Long','Chính Hữu','Quang Dũng','Xuân Quỳnh','Huy Cận','Bằng Việt','Hữu Thỉnh','Viễn Phương','Thanh Hải','Nguyễn Duy','Vũ Trọng Phụng','Thạch Lam','Đoàn Giỏi','Antoine de Saint-Exupéry','William Shakespeare','Victor Hugo','Miguel de Cervantes','Ernest Hemingway','J. K. Rowling'],
-historicalPeople:['Ngô Quyền','Lý Công Uẩn','Trần Hưng Đạo','Lê Lợi','Trưng Trắc và Trưng Nhị','Bảo Đại','Quang Trung','Nguyễn Huệ','An Dương Vương','Vua Hàm Nghi','Neil Armstrong','Đinh Bộ Lĩnh','Lê Hoàn','Trần Nhân Tông','Phan Đình Phùng'],
+historicalPeople:['Ngô Quyền','Lý Công Uẩn','Trần Hưng Đạo','Lê Lợi','Trưng Trắc và Trưng Nhị','Bảo Đại','Quang Trung','Nguyễn Huệ','An Dương Vương','Vua Hàm Nghi','Đinh Bộ Lĩnh','Lê Hoàn','Trần Nhân Tông','Phan Đình Phùng','Nguyễn Trãi','Lý Thường Kiệt'],
+worldWriters:['Antoine de Saint-Exupéry','William Shakespeare','Victor Hugo','Miguel de Cervantes','Ernest Hemingway','J. K. Rowling','Charles Dickens','Mark Twain'],
+astronauts:['Neil Armstrong','Buzz Aldrin','Michael Collins','Yuri Gagarin','Alan Shepard'],
+kings:['Lý Công Uẩn','Bảo Đại','Quang Trung','Đinh Bộ Lĩnh','Lê Hoàn','Trần Thái Tông','An Dương Vương','Vua Hàm Nghi'],
+historicCapitals:['Hoa Lư','Cổ Loa','Thăng Long','Phú Xuân','Huế','Tây Đô'],
+historicalAuthors:['Trần Hưng Đạo','Nguyễn Trãi','Lý Thường Kiệt','Trần Nhân Tông','Phan Đình Phùng'],
 literaryCharacters:['Thúy Kiều','Thúy Vân','Kim Trọng','Hoạn Thư','Chị Dậu','Lão Hạc'],
 literaryWorks:['Tắt đèn','Chí Phèo','Lão Hạc','Truyện Kiều','Vợ nhặt','Số đỏ','Hai đứa trẻ','Chiếc lược ngà','Dế Mèn phiêu lưu ký'],
 cities:['Hà Nội','Hải Phòng','Hoa Lư','Tokyo','Seoul','Paris','London','Bangkok','Bắc Kinh','Washington, D.C.','New York','Canberra','Ottawa','San Francisco','Huế','Kyoto','Osaka','Thành phố Hồ Chí Minh'],
@@ -684,7 +689,12 @@ function quizChoiceType(q){
  if(/^-?\d+(?:[.,]\d+)?\s*(?:ngày|giờ|phút|chiếc|cạnh|câu|°C|°)$/i.test(a))return 'quantity';
  if(/^\d+(?:,\d+)?$/.test(a))return 'number';
  if(/^Thứ (?:nhất|hai|ba|tư|năm|sáu)$/i.test(a))return 'ordinals';
- if(q.category==='Văn học'&&QUIZ_CHOICE_GROUPS.writers.includes(a))return 'writers';
+ if(q.category==='Văn học'&&QUIZ_CHOICE_GROUPS.writers.includes(a))
+   return QUIZ_CHOICE_GROUPS.worldWriters.includes(a)?'worldWriters':'writers';
+ if(/hịch tướng sĩ/i.test(question))return 'historicalAuthors';
+ if(/(vua đầu tiên|vua cuối cùng|vị vua nào)/i.test(question))return 'kings';
+ if(/kinh đô nước ta/i.test(question))return 'historicCapitals';
+ if(/người đầu tiên đặt chân lên mặt trăng/i.test(question))return 'astronauts';
  if(/nguyên tố số 1|nguyên tố nào/.test(question))return 'elements';
  if(/khí chiếm nhiều nhất/.test(question))return 'gases';
  if(/công thức hóa học|ký hiệu hóa học/.test(question))return question.includes('ký hiệu')?'chemicalSymbols':'chemicalFormulas';
@@ -731,6 +741,7 @@ function quizDistractors(q,records){
    if(m){const d=Number(m[1]),month=Number(m[2]),year=Number(m[3]);
      pool.push(...[year-1,year+1,year-2].map(y=>d+'/'+month+'/'+y));}}
  if(kind==='centuries'){const n=Number(answer.match(/\d+/)?.[0]);if(n)pool.push(...[n-2,n-1,n+1,n+2].filter(v=>v>0).map(v=>'Thế kỷ '+v));}
+ if(kind==='writers')pool=pool.filter(v=>!QUIZ_CHOICE_GROUPS.worldWriters.includes(v));
  if(kind&&!['number','quantity','year'].includes(kind))pool=[
    ...records.filter(other=>quizChoiceType(other)===kind).map(other=>other.answer),...pool
  ];
