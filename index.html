@@ -1271,22 +1271,33 @@ async function playGeneratedAudio(sound,serial,neural,japanese){
   });
 }
 async function requestGeneratedVoice(endpoint,part,voice,serial){
-  const cacheKey=endpoint===FREE_NEURAL_TTS_BACKEND?voice+'|'+part:'';
+  const isNeural=endpoint===FREE_NEURAL_TTS_BACKEND;
+  // Render Free may be sleeping. Try a separate, same-origin Vercel
+  // endpoint once before using the device voice. GitHub Pages keeps its
+  // original network retry and device fallback.
+  const useBackup=isNeural&&location.hostname.endsWith('.vercel.app');
+  const sources=useBackup?[endpoint,'/api/voice']:
+    isNeural?[endpoint,endpoint]:[endpoint];
+  const cacheKey=isNeural?voice+'|'+part:'';
   const cached=cacheKey&&getCachedNeuralAudio(cacheKey);
   if(cached)return cached;
   let error=null;
-  const attempts=endpoint===FREE_NEURAL_TTS_BACKEND?2:1;
-  for(let attempt=0;attempt<attempts;attempt++){
+  for(let attempt=0;attempt<sources.length;attempt++){
     if(serial!==aiSerial)return null;
-    const ctrl=new AbortController();
+    const source=sources[attempt],ctrl=new AbortController();
     aiAbort=ctrl;
-    // Cap the waiting time before falling back; Render can be slow or temporarily offline.
-    const requestTimeoutMs=endpoint===FREE_NEURAL_TTS_BACKEND?(attempt===0?12500:8500):19000;
-    const timeout=setTimeout(()=>ctrl.abort(),requestTimeoutMs);
+    const timeoutMs=isNeural?(useBackup?(attempt===0?9500:16500):(attempt===0?12500:8500)):19000;
+    const timeout=setTimeout(()=>ctrl.abort(),timeoutMs);
+    if(useBackup&&attempt===1)
+      voiceState('🔁 Máy chủ Render chưa tạo được giọng. Đang thử giọng AI dự phòng trên Vercel...');
+    else if(isNeural&&attempt===1)
+      voiceState('🎬 Máy chủ giọng đang chậm. Thử thêm một lần...');
     try{
-      const response=await fetch(endpoint,{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text:part,voice}),signal:ctrl.signal
+      const response=await fetch(source,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text:part,voice}),
+        signal:ctrl.signal
       });
       if(!response.ok){
         const data=await response.json().catch(()=>({}));
@@ -1305,16 +1316,14 @@ async function requestGeneratedVoice(endpoint,part,voice,serial){
     }catch(e){
       if(serial!==aiSerial)return null;
       error=e;
-      if(attempt+1<attempts){
-        voiceState('🎬 Máy chủ giọng đang chậm. Thử thêm một lần rồi dùng giọng dự phòng nếu cần...');
+      if(!useBackup&&isNeural&&attempt+1<sources.length)
         await new Promise(r=>setTimeout(r,e?.statusCode===429?1200:500));
-      }
     }finally{
       clearTimeout(timeout);
       if(aiAbort===ctrl)aiAbort=null;
     }
   }
-  throw error||new Error('Giọng AI không phản hồi');
+  throw error||new Error('Cả hai máy chủ giọng AI đều không phản hồi');
 }
 async function aiSpeak(text,after,options={}){
   const neural=neuralActive();
