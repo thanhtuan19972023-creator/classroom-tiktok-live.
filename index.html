@@ -234,6 +234,9 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 .subject-chip[data-category="Văn học"]{background:linear-gradient(#b66bee,#7436b1)}
 .subject-chip[data-category="Khoa học"]{background:linear-gradient(#42a9f7,#1463ca)}
 .subject-chip[data-category="Địa lý"]{background:linear-gradient(#62c575,#137c54)}
+.subject-chip[data-category="Toán học"]{background:linear-gradient(#f6ae50,#c86625)}
+.chalk-top:has(.subject-chip[data-category="Toán học"]){gap:.3cqw}
+.chalk-top:has(.subject-chip[data-category="Toán học"]) .subject-chip{padding:.32cqw .48cqw;font-size:clamp(7px,1.45cqw,17px)}
 .subject-chip.is-current{outline:.22cqw solid #fff6ac;box-shadow:0 0 1.1cqw #fff1b1}
 .current-topic{display:none}
 .question{
@@ -465,9 +468,9 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 <div class="ref-subtitle">💗 Đố vui kiến thức · Học mà chơi · Chơi mà học 💗</div>
 <div class="ref-live-demo">● LIVE DEMO</div>
 <div class="stage-decoration"></div><div class="stage-top"><span class="live">🎮 GAME LIVE</span></div>
-<div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top"><span class="ref-chalkicon">📚</span><span class="subject-chip" data-category="Lịch sử">Lịch sử</span><span class="subject-chip" data-category="Văn học">Văn học</span><span class="subject-chip" data-category="Khoa học">Khoa học</span><span class="subject-chip" data-category="Địa lý">Địa lý</span><span id="topic" class="current-topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
+<div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top"><span class="ref-chalkicon">📚</span><span class="subject-chip" data-category="Lịch sử">Lịch sử</span><span class="subject-chip" data-category="Văn học">Văn học</span><span class="subject-chip" data-category="Khoa học">Khoa học</span><span class="subject-chip" data-category="Địa lý">Địa lý</span><span class="subject-chip" data-category="Toán học">Toán</span><span id="topic" class="current-topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
 <img class="teacher-art teacher-new" src="data:image/webp;base64,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" alt="Cô giáo Duyên áo dài trắng hoa anh đào" draggable="false"></div><div class="teachbubble" id="teacherSpeech">Các em chọn đáp án nhé! 💖</div><div class="teacherdesk"><div class="desk-top"></div><div class="desk-front">BÀN GIÁO VIÊN</div></div><div class="floorstripe"></div><div class="students" id="students"></div><div id="confetti"></div><div id="giftZone"></div><aside class="class-rank"><strong>👑 Top trả lời đúng</strong><div id="miniLeaderboard">Chưa có lượt đúng</div></aside></main>
-<section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button><button class="gold" id="referencePickerBtn" type="button">🖼️ Dùng ảnh mẫu gốc</button><button class="secondary" id="referenceResetBtn" type="button" hidden>↩ Giao diện cũ</button><input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/*" id="referenceUpload" hidden></div><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Cô giáo ấm áp</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="browser">Giọng Safari (dự phòng)</option><option value="ai">🎙️ Duyên – cô giáo nữ miền Nam AI</option></select></div><div class="field"><label for="ttsServer">🔗 Máy chủ giọng AI</label><input id="ttsServer" type="url" inputmode="url" autocomplete="url" placeholder="https://ten-du-an.vercel.app" maxlength="220"></div><div class="actions"><button class="secondary" id="ttsSaveBtn">💾 Lưu máy chủ</button><button class="secondary" id="ttsCheckBtn">🔌 Kiểm tra giọng AI</button></div><p class="mini">Chỉ nhập địa chỉ HTTPS của dự án Vercel. <b>Không dán API key vào đây.</b> Máy chủ sẽ nhận nội dung câu hỏi, bình luận để chuyển thành âm thanh.</p><p class="voice-note"><span id="voiceIndicator" class="voice-indicator"></span><span id="voiceStatus">Chạm KIỂM TRA ÂM THANH để bật giọng đọc trên iPhone.</span></p><p class="mini">📱 iPhone: mở trang bằng Safari (không dùng trình duyệt trong ChatGPT/TikTok), tắt chế độ im lặng và tăng âm lượng khi thử. Âm thanh cần một lần chạm để bắt đầu.</p><div class="field"><label for="category">Chủ đề</label><select id="category"><option value="Tất cả">Tất cả chủ đề</option><option>Lịch sử</option><option>Văn học</option><option>Khoa học</option><option>Địa lý</option></select></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
+<section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button><button class="gold" id="referencePickerBtn" type="button">🖼️ Dùng ảnh mẫu gốc</button><button class="secondary" id="referenceResetBtn" type="button" hidden>↩ Giao diện cũ</button><input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/*" id="referenceUpload" hidden></div><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Cô giáo ấm áp</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="browser">Giọng Safari (dự phòng)</option><option value="ai">🎙️ Duyên – cô giáo nữ miền Nam AI</option></select></div><div class="field"><label for="ttsServer">🔗 Máy chủ giọng AI</label><input id="ttsServer" type="url" inputmode="url" autocomplete="url" placeholder="https://ten-du-an.vercel.app" maxlength="220"></div><div class="actions"><button class="secondary" id="ttsSaveBtn">💾 Lưu máy chủ</button><button class="secondary" id="ttsCheckBtn">🔌 Kiểm tra giọng AI</button></div><p class="mini">Chỉ nhập địa chỉ HTTPS của dự án Vercel. <b>Không dán API key vào đây.</b> Máy chủ sẽ nhận nội dung câu hỏi, bình luận để chuyển thành âm thanh.</p><p class="voice-note"><span id="voiceIndicator" class="voice-indicator"></span><span id="voiceStatus">Chạm KIỂM TRA ÂM THANH để bật giọng đọc trên iPhone.</span></p><p class="mini">📱 iPhone: mở trang bằng Safari (không dùng trình duyệt trong ChatGPT/TikTok), tắt chế độ im lặng và tăng âm lượng khi thử. Âm thanh cần một lần chạm để bắt đầu.</p><div class="field"><label for="category">Chủ đề</label><select id="category"><option value="Tất cả">Tất cả chủ đề</option><option>Lịch sử</option><option>Văn học</option><option>Khoa học</option><option>Địa lý</option><option>Toán học</option></select></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
 <section class="panel"><h2>📣 Tương tác lớp học (mô phỏng)</h2><div class="field"><label for="viewer">Tên hiển thị TikTok (mô phỏng)</label><input id="viewer" maxlength="25" placeholder="Ví dụ: Duyên Nguyễn"></div><div class="field"><label for="commentText">Bình luận</label><input id="commentText" maxlength="150" placeholder="Ví dụ: B hoặc chọn B"></div><div class="actions"><button class="secondary" id="joinBtn">👋 Vào lớp</button><button class="gold" id="giftBtn">🎁 Tặng quà</button><button id="commentBtn">💬 Bình luận</button><button class="secondary" id="removeBtn">🪑 Xóa học sinh cuối</button></div><p>Game đọc tên người vào lớp, người tặng quà và tên + nội dung bình luận. Quà cộng 10 điểm (không cộng số câu đúng). Chỉ bình luận đáp án đúng mới tăng số câu đúng trên bảng Top 10.</p><p class="voice-note"><strong>Chế độ mô phỏng:</strong> Các nút ở đây dùng để thử giọng đọc. GitHub Pages chưa tự nhận lượt vào LIVE, quà hoặc bình luận TikTok thật.</p><ul id="liveLog" class="live-log" aria-live="polite"></ul></section>
 <section class="panel"><h2>🏆 Top 10 người trả lời đúng nhiều nhất</h2><p>Xếp theo tổng số câu trả lời đúng (không tính quà tặng). Mỗi người chỉ được tính một lượt cho mỗi câu. Bình luận thử bằng A, B, C, D hoặc “chọn B” trong lúc câu hỏi đang mở.</p><div id="correctLeaderboard" class="correct-leaderboard" aria-live="polite"><p>Chưa có ai trả lời đúng.</p></div></section>
 <section class="panel"><h2>📝 Quản lý câu hỏi <span id="bankCount" class="count"></span></h2><p>Có sẵn hơn 100 câu lịch sử, văn học, khoa học, địa lý. Bạn có thể thêm câu hỏi riêng, dữ liệu được lưu trên trình duyệt này.</p><div class="actions"><button id="addBtn">＋ Thêm câu hỏi</button><button class="secondary" id="resetBtn">↻ Làm lại trò chơi</button></div></section><p class="footer">Classroom TikTok LIVE · Bản trò chơi độc lập cho iPhone · Không có kết nối TikTok API</p></div>
@@ -616,7 +619,191 @@ Sông Mekong đổ ra biển ở nước nào?|Việt Nam
 Thủ đô của Úc là gì?|Canberra
 Thủ đô của Canada là gì?|Ottawa
 Cầu Cổng Vàng (Golden Gate) nằm ở thành phố nào?|San Francisco
-Biển Đông thông với đại dương nào?|Thái Bình Dương`
+Biển Đông thông với đại dương nào?|Thái Bình Dương`,
+'Toán học':`Tính: 15 + 8 = ?|23
+Tính: 19 + 15 = ?|34
+Tính: 23 + 22 = ?|45
+Tính: 27 + 29 = ?|56
+Tính: 31 + 36 = ?|67
+Tính: 35 + 14 = ?|49
+Tính: 39 + 21 = ?|60
+Tính: 43 + 28 = ?|71
+Tính: 47 + 35 = ?|82
+Tính: 51 + 13 = ?|64
+Tính: 55 + 20 = ?|75
+Tính: 59 + 27 = ?|86
+Tính: 63 + 34 = ?|97
+Tính: 67 + 12 = ?|79
+Tính: 71 + 19 = ?|90
+Tính: 75 + 26 = ?|101
+Tính: 79 + 33 = ?|112
+Tính: 83 + 11 = ?|94
+Tính: 87 + 18 = ?|105
+Tính: 91 + 25 = ?|116
+Tính: 54 − 14 = ?|40
+Tính: 61 − 17 = ?|44
+Tính: 68 − 20 = ?|48
+Tính: 75 − 23 = ?|52
+Tính: 82 − 26 = ?|56
+Tính: 89 − 29 = ?|60
+Tính: 96 − 32 = ?|64
+Tính: 103 − 35 = ?|68
+Tính: 110 − 38 = ?|72
+Tính: 117 − 41 = ?|76
+Tính: 124 − 44 = ?|80
+Tính: 131 − 47 = ?|84
+Tính: 138 − 16 = ?|122
+Tính: 145 − 19 = ?|126
+Tính: 152 − 22 = ?|130
+Tính: 159 − 25 = ?|134
+Tính: 3 × 4 = ?|12
+Tính: 4 × 7 = ?|28
+Tính: 5 × 10 = ?|50
+Tính: 6 × 13 = ?|78
+Tính: 7 × 4 = ?|28
+Tính: 8 × 7 = ?|56
+Tính: 9 × 10 = ?|90
+Tính: 10 × 13 = ?|130
+Tính: 11 × 4 = ?|44
+Tính: 12 × 7 = ?|84
+Tính: 13 × 10 = ?|130
+Tính: 3 × 13 = ?|39
+Tính: 4 × 4 = ?|16
+Tính: 5 × 7 = ?|35
+Tính: 6 × 10 = ?|60
+Tính: 7 × 13 = ?|91
+Tính: 8 × 4 = ?|32
+Tính: 9 × 7 = ?|63
+Tính: 6 ÷ 2 = ?|3
+Tính: 15 ÷ 3 = ?|5
+Tính: 28 ÷ 4 = ?|7
+Tính: 45 ÷ 5 = ?|9
+Tính: 66 ÷ 6 = ?|11
+Tính: 91 ÷ 7 = ?|13
+Tính: 120 ÷ 8 = ?|15
+Tính: 153 ÷ 9 = ?|17
+Tính: 190 ÷ 10 = ?|19
+Tính: 231 ÷ 11 = ?|21
+Tính: 46 ÷ 2 = ?|23
+Tính: 75 ÷ 3 = ?|25
+Tính: 108 ÷ 4 = ?|27
+Tính: 145 ÷ 5 = ?|29
+Tính: 186 ÷ 6 = ?|31
+Tính: 231 ÷ 7 = ?|33
+5% của 100 bằng bao nhiêu?|5
+10% của 100 bằng bao nhiêu?|10
+15% của 100 bằng bao nhiêu?|15
+20% của 120 bằng bao nhiêu?|24
+25% của 120 bằng bao nhiêu?|30
+30% của 120 bằng bao nhiêu?|36
+5% của 240 bằng bao nhiêu?|12
+10% của 240 bằng bao nhiêu?|24
+15% của 240 bằng bao nhiêu?|36
+20% của 260 bằng bao nhiêu?|52
+25% của 260 bằng bao nhiêu?|65
+30% của 260 bằng bao nhiêu?|78
+Tìm x: x + 5 = 14.|9
+Tìm x: x + 12 = 24.|12
+Tìm x: x + 19 = 34.|15
+Tìm x: x + 6 = 24.|18
+Tìm x: x + 13 = 34.|21
+Tìm x: x + 20 = 44.|24
+Tìm x: x + 7 = 34.|27
+Tìm x: x + 14 = 44.|30
+Tìm x: x + 21 = 54.|33
+Tìm x: x + 8 = 44.|36
+Tìm x: x + 15 = 54.|39
+Tìm x: x + 22 = 64.|42
+Tìm x: x + 9 = 54.|45
+Tìm x: 4 × x = 20.|5
+Tìm x: 5 × x = 35.|7
+Tìm x: 6 × x = 54.|9
+Tìm x: 7 × x = 77.|11
+Tìm x: 8 × x = 104.|13
+Tìm x: 9 × x = 135.|15
+Tìm x: 10 × x = 170.|17
+Tìm x: 4 × x = 76.|19
+Tìm x: 5 × x = 105.|21
+Tìm x: 6 × x = 138.|23
+Tìm x: 7 × x = 175.|25
+Tìm x: 8 × x = 216.|27
+Diện tích hình vuông có cạnh 3 cm là bao nhiêu?|9 cm²
+Diện tích hình vuông có cạnh 4 cm là bao nhiêu?|16 cm²
+Diện tích hình vuông có cạnh 5 cm là bao nhiêu?|25 cm²
+Diện tích hình vuông có cạnh 6 cm là bao nhiêu?|36 cm²
+Diện tích hình vuông có cạnh 7 cm là bao nhiêu?|49 cm²
+Diện tích hình vuông có cạnh 8 cm là bao nhiêu?|64 cm²
+Diện tích hình vuông có cạnh 9 cm là bao nhiêu?|81 cm²
+Diện tích hình vuông có cạnh 10 cm là bao nhiêu?|100 cm²
+Diện tích hình vuông có cạnh 11 cm là bao nhiêu?|121 cm²
+Diện tích hình vuông có cạnh 12 cm là bao nhiêu?|144 cm²
+Chu vi hình chữ nhật dài 5 cm, rộng 3 cm là bao nhiêu?|16 cm
+Chu vi hình chữ nhật dài 6 cm, rộng 4 cm là bao nhiêu?|20 cm
+Chu vi hình chữ nhật dài 7 cm, rộng 5 cm là bao nhiêu?|24 cm
+Chu vi hình chữ nhật dài 8 cm, rộng 6 cm là bao nhiêu?|28 cm
+Chu vi hình chữ nhật dài 9 cm, rộng 7 cm là bao nhiêu?|32 cm
+Chu vi hình chữ nhật dài 10 cm, rộng 3 cm là bao nhiêu?|26 cm
+Chu vi hình chữ nhật dài 11 cm, rộng 4 cm là bao nhiêu?|30 cm
+Chu vi hình chữ nhật dài 12 cm, rộng 5 cm là bao nhiêu?|34 cm
+Diện tích hình chữ nhật dài 2 cm, rộng 3 cm là bao nhiêu?|6 cm²
+Diện tích hình chữ nhật dài 3 cm, rộng 4 cm là bao nhiêu?|12 cm²
+Diện tích hình chữ nhật dài 4 cm, rộng 5 cm là bao nhiêu?|20 cm²
+Diện tích hình chữ nhật dài 5 cm, rộng 6 cm là bao nhiêu?|30 cm²
+Diện tích hình chữ nhật dài 6 cm, rộng 7 cm là bao nhiêu?|42 cm²
+Diện tích hình chữ nhật dài 7 cm, rộng 8 cm là bao nhiêu?|56 cm²
+Diện tích hình chữ nhật dài 8 cm, rộng 9 cm là bao nhiêu?|72 cm²
+Diện tích hình chữ nhật dài 9 cm, rộng 3 cm là bao nhiêu?|27 cm²
+Diện tích hình chữ nhật dài 10 cm, rộng 4 cm là bao nhiêu?|40 cm²
+Diện tích hình chữ nhật dài 11 cm, rộng 5 cm là bao nhiêu?|55 cm²
+2² bằng bao nhiêu?|4
+3² bằng bao nhiêu?|9
+4² bằng bao nhiêu?|16
+5² bằng bao nhiêu?|25
+6² bằng bao nhiêu?|36
+7² bằng bao nhiêu?|49
+8² bằng bao nhiêu?|64
+9² bằng bao nhiêu?|81
+10² bằng bao nhiêu?|100
+11² bằng bao nhiêu?|121
+12² bằng bao nhiêu?|144
+13² bằng bao nhiêu?|169
+Căn bậc hai của 9 bằng bao nhiêu?|3
+Căn bậc hai của 16 bằng bao nhiêu?|4
+Căn bậc hai của 25 bằng bao nhiêu?|5
+Căn bậc hai của 36 bằng bao nhiêu?|6
+Căn bậc hai của 49 bằng bao nhiêu?|7
+Căn bậc hai của 64 bằng bao nhiêu?|8
+Căn bậc hai của 81 bằng bao nhiêu?|9
+Căn bậc hai của 100 bằng bao nhiêu?|10
+Tính: 1,0 + 0,2 = ?|1,2
+Tính: 2,0 + 0,5 = ?|2,5
+Tính: 3,0 + 0,8 = ?|3,8
+Tính: 4,0 + 0,3 = ?|4,3
+Tính: 5,0 + 0,6 = ?|5,6
+Tính: 6,0 + 0,9 = ?|6,9
+Tính: 7,0 + 0,4 = ?|7,4
+Tính: 8,0 + 0,7 = ?|8,7
+Có 4 hộp bút, mỗi hộp 3 cây bút. Có tất cả bao nhiêu cây bút?|12 cây
+Có 5 hộp bút, mỗi hộp 4 cây bút. Có tất cả bao nhiêu cây bút?|20 cây
+Có 6 hộp bút, mỗi hộp 5 cây bút. Có tất cả bao nhiêu cây bút?|30 cây
+Có 7 hộp bút, mỗi hộp 6 cây bút. Có tất cả bao nhiêu cây bút?|42 cây
+Có 8 hộp bút, mỗi hộp 7 cây bút. Có tất cả bao nhiêu cây bút?|56 cây
+Có 9 hộp bút, mỗi hộp 8 cây bút. Có tất cả bao nhiêu cây bút?|72 cây
+Có 10 hộp bút, mỗi hộp 3 cây bút. Có tất cả bao nhiêu cây bút?|30 cây
+Có 11 hộp bút, mỗi hộp 4 cây bút. Có tất cả bao nhiêu cây bút?|44 cây
+Có 12 hộp bút, mỗi hộp 5 cây bút. Có tất cả bao nhiêu cây bút?|60 cây
+Có 13 hộp bút, mỗi hộp 6 cây bút. Có tất cả bao nhiêu cây bút?|78 cây
+Có 14 hộp bút, mỗi hộp 7 cây bút. Có tất cả bao nhiêu cây bút?|98 cây
+Lan có 32 quyển vở và cho bạn 7 quyển. Lan còn bao nhiêu quyển vở?|25 quyển
+Lan có 35 quyển vở và cho bạn 8 quyển. Lan còn bao nhiêu quyển vở?|27 quyển
+Lan có 38 quyển vở và cho bạn 9 quyển. Lan còn bao nhiêu quyển vở?|29 quyển
+Lan có 41 quyển vở và cho bạn 10 quyển. Lan còn bao nhiêu quyển vở?|31 quyển
+Lan có 44 quyển vở và cho bạn 11 quyển. Lan còn bao nhiêu quyển vở?|33 quyển
+Lan có 47 quyển vở và cho bạn 12 quyển. Lan còn bao nhiêu quyển vở?|35 quyển
+Lan có 50 quyển vở và cho bạn 13 quyển. Lan còn bao nhiêu quyển vở?|37 quyển
+Lan có 53 quyển vở và cho bạn 14 quyển. Lan còn bao nhiêu quyển vở?|39 quyển
+Lan có 56 quyển vở và cho bạn 15 quyển. Lan còn bao nhiêu quyển vở?|41 quyển
+Lan có 59 quyển vở và cho bạn 16 quyển. Lan còn bao nhiêu quyển vở?|43 quyển`
 };
 
 // Browser speech engine. iOS Safari needs the first speak() within a genuine touch event.
@@ -805,7 +992,11 @@ function speakFromTap(text,after){
 function spokenQuizValue(value){
   return String(value??'').trim().replace(/\s+/g,' ')
     .replace(/Ω/g,' ôm ').replace(/°C/g,' độ C ').replace(/%/g,' phần trăm ')
-    .replace(/×/g,' nhân ').replace(/÷/g,' chia ');
+    .replace(/cm²/g,' xăng ti mét vuông ').replace(/\bcm\b/g,' xăng ti mét ')
+    .replace(/√\s*(\d+)/g,' căn bậc hai của $1 ')
+    .replace(/×/g,' nhân ').replace(/÷/g,' chia ')
+    .replace(/\+/g,' cộng ').replace(/−/g,' trừ ').replace(/=/g,' bằng ')
+    .replace(/²/g,' bình phương ').replace(/\bx\b/gi,' ích ');
 }
 function fullQuestionNarration(){
   if(!current)return '';
@@ -1021,6 +1212,7 @@ centuries:['Thế kỷ 12','Thế kỷ 13','Thế kỷ 14','Thế kỷ 15','Th�
 };
 function quizChoiceType(q){
  const a=String(q.answer||'').trim(),question=String(q.question||'').toLowerCase();
+ if(q.category==='Toán học'&&/^-?\d+(?:[.,]\d+)?(?:\s*(?:cm²|cm|cây|quyển))?$/.test(a))return 'mathNumber';
  if(/^(?:năm\s*)?\d{2,4}$/i.test(a)&&/năm nào|vào năm|năm mấy/.test(question))return 'year';
  if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(a))return 'dates';
  if(/^Thế kỷ\s*\d+/i.test(a))return 'centuries';
@@ -1073,14 +1265,14 @@ function quizYearDistractors(correct){
 function quizDistractors(q,records){
  const answer=String(q.answer||'').trim(),kind=quizChoiceType(q);
  let pool=kind==='year'?quizYearDistractors(answer):
-   ['number','quantity'].includes(kind)?quizNumberDistractors(answer):
+   ['number','quantity','mathNumber'].includes(kind)?quizNumberDistractors(answer):
    kind&&QUIZ_CHOICE_GROUPS[kind]?[...QUIZ_CHOICE_GROUPS[kind]]:[];
  if(kind==='dates'){const m=answer.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
    if(m){const d=Number(m[1]),month=Number(m[2]),year=Number(m[3]);
      pool.push(...[year-1,year+1,year-2].map(y=>d+'/'+month+'/'+y));}}
  if(kind==='centuries'){const n=Number(answer.match(/\d+/)?.[0]);if(n)pool.push(...[n-2,n-1,n+1,n+2].filter(v=>v>0).map(v=>'Thế kỷ '+v));}
  if(kind==='writers')pool=pool.filter(v=>!QUIZ_CHOICE_GROUPS.worldWriters.includes(v));
- if(kind&&!['number','quantity','year'].includes(kind))pool=[
+ if(kind&&!['number','quantity','mathNumber','year'].includes(kind))pool=[
    ...records.filter(other=>quizChoiceType(other)===kind).map(other=>other.answer),...pool
  ];
  const unique=[...new Set(pool.map(v=>String(v).trim()))].filter(v=>v&&v!==answer);
