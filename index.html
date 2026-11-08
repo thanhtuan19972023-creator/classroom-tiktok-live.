@@ -510,6 +510,7 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
   <div class="field"><label style="display:flex;align-items:center;gap:6px"><input id="liveAutoJoin" type="checkbox"> Tự cho người vừa vào LIVE ngồi vào lớp (không đọc tên liên tục)</label></div>
   <p class="status" role="status" id="liveBridgeStatus">🔴 Chưa kết nối LIVE thật. Trò chơi đang dùng chế độ mô phỏng.</p>
   <p id="realCommentStatus" class="voice-note" role="status" style="margin:8px 0;font-weight:750">💬 Bình luận thật: 0. Chưa thấy bình luận từ máy chủ.</p>
+  <p id="realRoundStats" class="voice-note" role="status" style="margin:8px 0;font-weight:750">✅ Câu hiện tại: 0 người trả lời đúng · Top 0</p>
   <small>Chỉ hiện “LIVE THẬT” khi máy chủ nhận được kết nối TikTok. Khi đang LIVE, hãy bật “Tự chuyển câu” và để Safari hiển thị trước màn hình.</small>
 </section>
 <section class="panel"><h2>📣 Tương tác lớp học (mô phỏng)</h2><div class="field"><label for="viewer">Tên hiển thị TikTok (mô phỏng)</label><input id="viewer" maxlength="25" placeholder="Ví dụ: Duyên Nguyễn"></div><div class="field"><label for="commentText">Bình luận</label><input id="commentText" maxlength="150" placeholder="Ví dụ: B hoặc chọn B"></div><div class="actions"><button class="secondary" id="joinBtn">👋 Vào lớp</button><button class="gold" id="giftBtn">🎁 Tặng quà</button><button id="commentBtn">💬 Bình luận</button><button class="secondary" id="removeBtn">🪑 Xóa học sinh cuối</button></div><p>Game đọc tên người vào lớp, người tặng quà và tên + nội dung bình luận. Quà cộng 10 điểm (không cộng số câu đúng). Chỉ bình luận đáp án đúng mới tăng số câu đúng trên bảng Top 10.</p><p class="voice-note"><strong>Chế độ mô phỏng:</strong> Các nút ở đây dùng để thử giọng đọc. GitHub Pages chưa tự nhận lượt vào LIVE, quà hoặc bình luận TikTok thật.</p><ul id="liveLog" class="live-log" aria-live="polite"></ul></section>
@@ -1539,10 +1540,13 @@ function studentIdentityKey(key){
 function ensureStudent(name,points,identityKey=''){
   name=String(name||'Học sinh mới').trim().slice(0,25)||'Học sinh mới';
   const key=studentIdentityKey(identityKey),nameKey=studentNameKey(name);
-  // A nickname match is intentional here: repeated comments/gifts or a change
-  // in the provider's user-id format must not create duplicate seats.
-  let student=students.find(s=>
-    (key&&s.tiktokId===key) || studentNameKey(s.name)===nameKey);
+  // Use the TikTok account ID first. Two DIFFERENT accounts can share the
+  // same visible nickname, but must have distinct seats and Top 5 slots.
+  // Only merge by nickname when at least one entry has no stable TikTok ID
+  // (older saved ranks and manually simulated users).
+  let student=key?students.find(s=>s.tiktokId===key):null;
+  if(!student&&key)student=students.find(s=>!s.tiktokId&&studentNameKey(s.name)===nameKey);
+  if(!student&&!key)student=students.find(s=>studentNameKey(s.name)===nameKey);
   if(student){
     student.points+=points;
     student.name=name;
@@ -1692,6 +1696,7 @@ function onComment(name,comment,identityKey=''){
     // Arrival order is authoritative: the first five unique correct answers win.
     correctTotalThisQuestion++;
     if(fastestCorrectNames.length<5)fastestCorrectNames.push(name);
+    showRoundCorrectCount();
     saveCorrectRank();renderStudents();celebrate();
     // Do not pronounce each correct name immediately: announce Top 5 together after the timer.
     notify('✅',name+' trả lời đúng '+letter+' · '+student.correct+' câu đúng','',false);
@@ -1704,6 +1709,12 @@ let realCommentSeen=0,realLastCommentAt=0;
 function showRealCommentStatus(line){
   const node=document.getElementById('realCommentStatus');
   if(node)node.textContent=line;
+}
+function showRoundCorrectCount(){
+  const node=document.getElementById('realRoundStats');
+  if(node)node.textContent='✅ Câu hiện tại: '+correctTotalThisQuestion+
+    ' người trả lời đúng · Top '+Math.min(5,fastestCorrectNames.length)+
+    (fastestCorrectNames.length?' — '+fastestCorrectNames.map(n=>spokenStudentName(n)).join(', '):'');
 }
 window.classroomLiveEvent=function(event){
   if(!event||typeof event!=='object')return;
@@ -1905,7 +1916,7 @@ function quizDistractors(q,records){
  if(unique.length<3)return null;return shuffle(unique).slice(0,3);
 }
 
-function newQuestion(){window.__liveQuestionStartedAt=0;clearClocks();stopSpeaking();let scope=$('category').value;const filtered=bank.filter(q=>scope==='Tất cả'||q.category===scope);if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];selected=-1;seconds=Number($('duration').value);const distractors=quizDistractors(current,bank);
+function newQuestion(){window.__liveQuestionStartedAt=0;clearClocks();stopSpeaking();let scope=$('category').value;const filtered=bank.filter(q=>scope==='Tất cả'||q.category===scope);if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const distractors=quizDistractors(current,bank);
 if(!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
 options=shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));$('question').textContent=current.question;$('questionNo').textContent=count;$('boardHint').textContent='📣 Bình luận A, B, C hoặc D để trả lời!';$('timer').textContent=seconds;$('options').innerHTML='';options.forEach((answer,i)=>{let b=document.createElement('button');b.className='option';let l=document.createElement('b');l.textContent=letters[i];let s=document.createElement('span');s.textContent=answer;b.append(l,s);b.onclick=()=>selectAnswer(i);$('options').appendChild(b)});setSpeech('Câu số '+count+' ✨');status('Câu '+count+': '+current.category+'. Chạm vào đáp án hoặc bắt đầu đếm ngược.');}
 function spokenStudentName(name){
@@ -2267,22 +2278,25 @@ async function liveBridgePoll(){
      showRealCommentStatus('⚠️ Render chưa kết nối được với phòng TikTok. Bình luận thật không thể vào game.');
      return;
    }
-   const batch=await liveBridgeFetch('/api/events?after='+liveBridgeCursor+'&limit=100');
-   if(!liveBridgeActive)return;
-   if(String(batch.instanceId)!==liveBridgeInstance){
-     liveBridgeInstance='';
-     return;
-   }
-   if(Array.isArray(batch.events)){
+   // Drain consecutive pages in chronological order. A LIVE can receive
+   // hundreds of MEMBER events in seconds. Reading only the newest 100 would
+   // lose correct comments and cause Top 5 to announce only the first viewer.
+   for(let page=0;page<5&&liveBridgeActive;page++){
+     const batch=await liveBridgeFetch('/api/events?after='+liveBridgeCursor+'&limit=100');
+     if(!liveBridgeActive)return;
+     if(String(batch.instanceId)!==liveBridgeInstance){
+       liveBridgeInstance='';
+       return;
+     }
+     if(!Array.isArray(batch.events)||batch.events.length===0)break;
+     const before=liveBridgeCursor;
      for(const evt of batch.events){
        const id=Number(evt?.id);
        if(!Number.isSafeInteger(id)||id<=liveBridgeCursor)continue;
        liveBridgeCursor=id;
-       if(['comment','gift','join'].includes(evt.type)){
-         window.classroomLiveEvent(evt);
-       }
+       if(['comment','gift','join'].includes(evt.type))window.classroomLiveEvent(evt);
      }
-     if(batch.events.length===0)liveBridgeCursor=Math.max(liveBridgeCursor,Number(batch.cursor)||0);
+     if(liveBridgeCursor===before||batch.events.length<100)break;
    }
  }catch(error){
    if(liveBridgeActive){
