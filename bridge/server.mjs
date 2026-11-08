@@ -14,6 +14,8 @@ const maxEvents = 1000; // Keep extra recent events during TikTok LIVE bursts.
 let lastId = 0, state = username ? 'starting' : 'not_configured';
 let currentConnection = null, reconnectTimer = null, lastError = '';
 let connectedSince = null, lastEventAt = null, roomId = null;
+let restartingConnection=false, roomProbeInFlight=false, lastManualRestart=0;
+let lastRoomProbeError='', lastRoomCheckedAt=0;
 
 function trim(value, max=120) { return String(value ?? '').trim().slice(0,max); }
 function displayUser(evt) {
@@ -46,16 +48,64 @@ function info() {
     ready:true, source:'unofficial_tiktok_live_connector', instanceId,
     username:username ? '@'+username : null, state, connected:state==='connected',
     roomId, connectedSince, lastEventAt, lastError, cursor:lastId,
+    checkingNewRoom:roomProbeInFlight, lastRoomCheckedAt, lastRoomProbeError,
     time:Date.now()
   };
 }
 function planReconnect(waitMs=30000) {
-  if(!username || reconnectTimer)return;
+  if(!username || reconnectTimer || restartingConnection)return;
   reconnectTimer=setTimeout(()=>{reconnectTimer=null;void connectLive()},waitMs);
   reconnectTimer.unref?.();
 }
+// TikTok creates a NEW room ID every time the creator starts a new LIVE.
+// Reset an old socket before binding to the new room, even if the old socket
+// never sent a DISCONNECTED event.
+async function restartConnection(reason='refresh TikTok room'){
+  if(!username||restartingConnection)return false;
+  restartingConnection=true;
+  if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}
+  const old=currentConnection;
+  currentConnection=null;state='disconnected';roomId=null;connectedSince=null;
+  console.log('Refreshing TikTok LIVE connection:',reason);
+  try{if(old)await old.disconnect()}catch(e){
+    console.warn('Closing previous TikTok room:',String(e?.message||e).slice(0,100));
+  }
+  restartingConnection=false;
+  void connectLive();
+  return true;
+}
+// Periodically discover the creator's CURRENT room, not merely whether a
+// websocket claims to be open. An old connection can outlive a LIVE restart.
+async function monitorLiveRoom(){
+  if(!username||restartingConnection||roomProbeInFlight)return;
+  if(state!=='connected'){
+    if(state!=='connecting'&&!reconnectTimer)planReconnect(1000);
+    return;
+  }
+  const conn=currentConnection;
+  if(!conn?.isConnected){
+    await restartConnection('stale or closed TikTok socket');
+    return;
+  }
+  roomProbeInFlight=true;lastRoomCheckedAt=Date.now();
+  try{
+    const discovered=trim(await conn.fetchRoomId(username),80);
+    if(conn!==currentConnection)return;
+    lastRoomProbeError='';
+    if(discovered&&roomId&&discovered!==roomId){
+      console.log('TikTok started a different LIVE room:',roomId,'->',discovered);
+      await restartConnection('new LIVE room detected');
+    }
+  }catch(e){
+    if(conn===currentConnection)lastRoomProbeError=trim(e?.message||e,160);
+    // TikTok's discovery endpoint can be rate-limited; a single failed check
+    // is not proof that an existing LIVE stopped. Keep the working socket.
+  }finally{roomProbeInFlight=false}
+}
+const liveRoomMonitor=setInterval(()=>{void monitorLiveRoom()},60000);
+liveRoomMonitor.unref?.();
 async function connectLive() {
-  if(!username || state==='connecting' || state==='connected')return;
+  if(!username || restartingConnection || state==='connecting' || state==='connected')return;
   state='connecting';lastError='';
   // A fresh socket is used for each retry. Only messages received after connection count.
   const conn=new TikTokLiveConnection(username,{
@@ -65,9 +115,11 @@ async function connectLive() {
   });
   currentConnection=conn;
   conn.on(WebcastEvent.CHAT, evt=>{
+    if(currentConnection!==conn)return;
     pushEvent('comment',evt,{comment:trim(evt.content || evt.comment || '',180)});
   });
   conn.on(WebcastEvent.GIFT, evt=>{
+    if(currentConnection!==conn)return;
     // Streak messages carry cumulative totals; do NOT count every intermediate update.
     if(evt?.gift?.type===1 && Number(evt.repeatEnd)!==1)return;
     const giftName=trim(evt?.gift?.name || evt?.extendedGiftInfo?.name || 'quà tặng',70);
@@ -77,22 +129,33 @@ async function connectLive() {
     });
   });
   conn.on(WebcastEvent.MEMBER,evt=>{
+    if(currentConnection!==conn)return;
     pushEvent('join',evt,{});
   });
+  conn.on(WebcastEvent.STREAM_END,()=>{
+    if(currentConnection!==conn)return;
+    state='offline';roomId=null;connectedSince=null;
+    console.log('Previous TikTok LIVE ended. Watching for the next LIVE.');
+    planReconnect(12000);
+  });
   conn.on(ControlEvent.ERROR,err=>{
+    if(currentConnection!==conn)return;
     lastError=trim(err?.message||err,240);
     console.warn('TikTok connection reported an error:',lastError);
   });
   conn.on(ControlEvent.DISCONNECTED,()=>{
     if(currentConnection!==conn)return;
     state='disconnected';roomId=null;connectedSince=null;
-    planReconnect(20000);
+    planReconnect(15000);
   });
   try{
     const connected=await conn.connect();
     if(currentConnection!==conn){try{await conn.disconnect()}catch{}return;}
+    if(!conn.isConnected){
+      state='disconnected';planReconnect(15000);return;
+    }
     state='connected';roomId=trim(connected?.roomId||conn.roomId||'',80);
-    connectedSince=Date.now();lastError='';
+    connectedSince=Date.now();lastError='';lastRoomProbeError='';
     console.log('Connected to public TikTok LIVE @'+username);
   }catch(error){
     if(currentConnection!==conn)return;
@@ -218,6 +281,26 @@ function handler(req,res){
     if(req.method!=='POST'){res.writeHead(405,headers);res.end('{"error":"POST only"}');return;}
     void handleFreeNeuralVoice(req,res,headers);return;
   }
+  // The game's "Kết nối LIVE thật" button can recover a stuck previous room.
+  // Require its approved browser origin and cap calls to once per 30 seconds.
+  if(url.pathname==='/api/reconnect'){
+    if(req.method!=='POST'){res.writeHead(405,headers);res.end('{"error":"POST only"}');return}
+    if(!origin||!allowedOrigins.has(origin)){
+      res.writeHead(403,headers);res.end('{"error":"Game origin required"}');return
+    }
+    if(!username){
+      res.writeHead(503,headers);res.end('{"error":"TIKTOK_USERNAME not configured"}');return
+    }
+    if(Date.now()-lastManualRestart<30000){
+      res.writeHead(429,headers);res.end('{"error":"Reconnect cooldown active"}');return
+    }
+    lastManualRestart=Date.now();
+    if(restartingConnection){
+      res.writeHead(202,headers);res.end('{"ok":true,"state":"reconnecting"}');return
+    }
+    void restartConnection('game reconnect button');
+    res.writeHead(202,headers);res.end('{"ok":true,"state":"reconnecting"}');return;
+  }
   if(req.method!=='GET'){res.writeHead(405,headers);res.end('{"error":"GET only"}');return;}
   if(url.pathname==='/health' || url.pathname==='/'){
     res.writeHead(200,headers);
@@ -243,6 +326,7 @@ http.createServer(handler).listen(port,'0.0.0.0',()=>{
   if(username)void connectLive();
 });
 function shutdown(){
+  clearInterval(liveRoomMonitor);
   clearTimeout(reconnectTimer);
   if(currentConnection)void currentConnection.disconnect().catch(()=>{});
 }
