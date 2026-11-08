@@ -1115,7 +1115,9 @@ const photoPositions=[
  [29.6,81.9],[47.1,81.9],[62.8,81.9],[77.8,81.9],[91.8,81.9],
  [29.5,94.7],[44.8,94.7],[60.5,94.7],[75.9,94.7],[91.2,94.7]
 ];
+window.__photoSeatDataReady=true;
 function renderPhotoSeatLabels(){
+ if(!window.__photoSeatDataReady)return;
  const layer=document.getElementById('photoSeatLabels');
  if(!layer)return;
  const visible=students.slice(-14);layer.replaceChildren();
@@ -1187,6 +1189,7 @@ $('referenceResetBtn').onclick=async()=>{
  try{await referenceDeleteBlob()}catch(e){}
  status('Đã trở về giao diện thông thường.');
 };
+renderPhotoSeatLabels();
 referenceLoadBlob().then(blob=>{if(blob)referenceShowBlob(blob)}).catch(()=>{});
 
 </script></body></html>
