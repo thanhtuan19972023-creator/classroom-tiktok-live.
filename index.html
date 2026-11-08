@@ -1122,7 +1122,8 @@ function multilingualSpeechParts(text){
   function append(language,value){
     let part=String(value||'').trim();
     if(language==='ja')part=part.replace(/_{2,}/g,'、').replace(/_+/g,' ').trim();
-    if(!part)return;
+    // Avoid wasting remote requests on punctuation left around Japanese words.
+    if(!part||language==='vi'&&!/[a-zA-Z0-9À-ỹ]/.test(part))return;
     if(out.length&&out[out.length-1].language===language&&out[out.length-1].text.length+part.length<360)
       out[out.length-1].text+=' '+part;
     else out.push({language,text:part});
@@ -1177,7 +1178,8 @@ async function aiSpeak(text,after){
         neural?'🎬 Giọng review phim AI đang chuẩn bị đọc...':'✨ AI đang tạo giọng: '+part.slice(0,40));
       const reply=await fetch(japanese?FREE_NEURAL_TTS_BACKEND:endpoint,{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text:part,voice:japanese?'japanese':
+        body:JSON.stringify({text:part,voice:japanese?
+          ($('ttsEngine').value==='edge-male'?'japanese-male':'japanese'):
           $('ttsEngine').value==='edge-female'?'female':'male'}),signal:aiAbort.signal});
       if(!reply.ok){
         if(japanese&&speechAvailable){
@@ -1355,9 +1357,14 @@ function fullQuestionNarration(){
   if(!current)return '';
   const question=spokenQuizValue(current.question);
   const punctuation=/[.!?]$/.test(question)?'':'?';
-  return 'Câu số '+count+'. '+question+punctuation+' '+
-    options.map((a,i)=>letters[i]+'. '+spokenQuizValue(a)+'.').join(' ')+
-    '';
+  const jpOptions=current.category==='Tiếng Nhật'&&
+    options.every(a=>/[\u3040-\u30ff\u3400-\u9fff]/.test(String(a)));
+  // Read all Japanese answer options in one native Japanese narration.
+  // This prevents 8-10 tiny calls and avoids exceeding Render's rate limit.
+  const optionsLine=jpOptions
+    ?' 「'+options.map((a,i)=>['エー','ビー','シー','ディー'][i]+'、'+a).join('。')+'。」'
+    :options.map((a,i)=>letters[i]+'. '+spokenQuizValue(a)+'.').join(' ');
+  return 'Câu số '+count+'. '+question+punctuation+' '+optionsLine;
 }
 function readQuestion(after){
   if(!current){if(after)after();return}
