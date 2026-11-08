@@ -235,9 +235,9 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 .subject-chip[data-category="Khoa học"]{background:linear-gradient(#42a9f7,#1463ca)}
 .subject-chip[data-category="Địa lý"]{background:linear-gradient(#62c575,#137c54)}
 .subject-chip[data-category="Toán học"]{background:linear-gradient(#f6ae50,#c86625)}
-.subject-chip[data-category="Tiếng Nhật N5"]{background:linear-gradient(#319a9e,#166f80)}
-.chalk-top:has(.subject-chip[data-category="Tiếng Nhật N5"]){gap:.16cqw;flex-wrap:nowrap}
-.chalk-top:has(.subject-chip[data-category="Tiếng Nhật N5"]) .subject-chip{font-size:clamp(6px,1.25cqw,15px);padding:.26cqw .33cqw;white-space:nowrap}
+.subject-chip[data-category="Tiếng Nhật"]{background:linear-gradient(#319a9e,#166f80)}
+.chalk-top:has(.subject-chip[data-category="Tiếng Nhật"]){gap:.16cqw;flex-wrap:nowrap}
+.chalk-top:has(.subject-chip[data-category="Tiếng Nhật"]) .subject-chip{font-size:clamp(6px,1.25cqw,15px);padding:.26cqw .33cqw;white-space:nowrap}
 .chalk-top:has(.subject-chip[data-category="Toán học"]){gap:.3cqw}
 .chalk-top:has(.subject-chip[data-category="Toán học"]) .subject-chip{padding:.32cqw .48cqw;font-size:clamp(7px,1.45cqw,17px)}
 .subject-chip.is-current{outline:.22cqw solid #fff6ac;box-shadow:0 0 1.1cqw #fff1b1}
@@ -482,9 +482,9 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 <div class="ref-subtitle">💗 Đố vui kiến thức · Học mà chơi · Chơi mà học 💗</div>
 <div class="ref-live-demo">● LIVE DEMO</div>
 <div class="stage-decoration"></div><div class="stage-top"><span class="live">🎮 GAME LIVE</span></div>
-<div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top"><span class="ref-chalkicon">📚</span><span class="subject-chip" data-category="Lịch sử">Lịch sử</span><span class="subject-chip" data-category="Văn học">Văn học</span><span class="subject-chip" data-category="Khoa học">Khoa học</span><span class="subject-chip" data-category="Địa lý">Địa lý</span><span class="subject-chip" data-category="Toán học">Toán</span><span class="subject-chip" data-category="Tiếng Nhật N5">N5 日本語</span><span id="topic" class="current-topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
+<div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top"><span class="ref-chalkicon">📚</span><span class="subject-chip" data-category="Lịch sử">Lịch sử</span><span class="subject-chip" data-category="Văn học">Văn học</span><span class="subject-chip" data-category="Khoa học">Khoa học</span><span class="subject-chip" data-category="Địa lý">Địa lý</span><span class="subject-chip" data-category="Toán học">Toán</span><span class="subject-chip" data-category="Tiếng Nhật">Nhật</span><span id="topic" class="current-topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
 <img class="teacher-art teacher-new" src="data:image/webp;base64,UklGRsARAABXRUJQVlA4WAoAAAAQAAAAdwAArwAAQUxQSGgHAAAB8IVtmzFJ2v6d1xVV7e6tqjW2PdXjqep+OLZt27Zt2/ZM43GPbZttWxXXdS4Uuioi7qVnJSImAP8/L9qqVIZom2hTKkLRdt+1Vl999dXXWgpaCYrF1lmz5dqrPzZnyrRpk+c8D4iWL2C9r2dPnd5ymrHVmcMPBVSlbAGDfmY7vVVy7s7LAVApl9Rg0M+M3iZb9+jzxty6QldASyXA6j8xsoOHXrpfP6gUSdH3wh9o7FA3mz2BX2+HIiv6Diedneicd2bfIMVR1A9ns7ETnUaeDi2Nou9wRna22e+biZRFUTeMkZ1vfLcnpCSK+mGMTMG/Wh5aEEXdUEYmGfmQSDkUdUMZmYg/g3II6ocyMlHjD4uJFEKk38uMTNZ4PEIhFBvRPZ3IoSpSBBG9ypwJ+/zLUUZBn59oKRm/7QMpw5K/peWcOQhaAkXTfHpKNB6hoQwbpBZ5G7QEEq5zY9Lu47aB5qdYew49LRpfU0gBNp2bnn/Uswgbp+ectRG0AJvmMP9vJZCGHOY2IWQXcJI7UzfeB5HMBIfPzeLz3shM5bD5dCbvnLgiNCtBz68Ymb75Z3WQzHp/6pYD/438PmMG7uN3EEVmvT7NwTisFzJTrDCGnh6d/+wLySpI44Is6BzRVyQnwQ00ZtnM0xAyUqw2OZdowwDJR3ATjXkav+2XkWDgL54LOX8wQjZB9nFnrsYT85GAV2jZRN4LySVg+7nu2Rg/7gXJQ7DZBDqzdc5sgGah+NsEGjM2HoyQheBpNjPnyPugmaz6DS0n47f9ITkoGkbTc3KOWjqPgP3ozOuPJXM51a2SUDuSsYoUDTPpVRRwOiMrSAT/qybFHnOdFSSoeZ2W39KhRpJRbeu1EvRHsqpoXbHcGHpm5IKr99h3EUgCKsCqN2wCBYIcQmMR/w7tNBVg1aunvL2YCKB4krEA0ZsHd54CQx6bQNsKAVD0/4ZWAHffvdMUDU/NI4dvWi8ApOvdNJbQ+EkdpFNq0DSKxn8OQMuAv7h7IX5ZpHMCBo/mPL4zAKG1/WksxI8DO0MU+49jM0eti4DWTi/HTy20g1Rx+AJGm70LAlpVrD6JXopFIYIOlQAcNZ/ReAIC2lpmTDF+7C0BDTUdEIA1n4j0yLtqVNqxbCmccw4CNpt8NHQhVFB/9gTSjSProGhTpP83tCKQtDOH/MGnRUVU2pAAbPYeGen8ZTUo2gGMLIbTZtHfr0VLEVHVAKx0z3ya023mtghoZ039gNeLQSeNkzaqH1i/zlJovfsJv5NG0vh9D5H2LPrar7NZTneSo7//6dtpx/RdtP+gP2135mtkdLb4/p6eaNdGs1nm8T/8/OPMSNKdLSNvF0W7P6IVx83M2Xo0th75CBaCpXYzc3e26jHOjw/IQlip2m2RLZ/GQrD8To5/7rLzL98ZUinufOyCv6AjC+fRebMCoiFolTjJm4MERUcWzTjuqd0CBB1bMuOoJgCCqjGOakRQQdUYRzcioBOLZRzdiIDqMY5uRED1RI5pQkD1RI5pQkD1GH9oQkD1GF9bBgHVYxzWFwHV4z63CTWooMhnVFFB7nOHoJIin1ZBBbnHzRCqyPhmT5Eqct8LARVkfKuHSBW57wVFBRnf7iGSintJIh+DIFUWNfJi0WTOnutekhMRksEVbuUwPyQhWW0WvRTO+Y3QdHr/uyQLhiSkaJhGL8aElZNaclQxjN/WQRJaY1pBfuib1IpfFGRYSEiAlywWIvJZCNJRuZfNhTBenxJEFnuVVooDEBKCYNERbLYyHJ8WFD1uIy0/5/xGaFII6HvTF/TsIl/vhtQFWOItt9yMZ0BTg9RiJ9Lzcs4alAEQup+wwJstp+gju0AyAHAc8zaeiYAcRXHKIydMpefinLgKNItW5TNaLpHPiyBXETztMRfnHgjZBBk8g+4xC+PnfSHZKDa8/SdmGjkUgqyP46in5tDTM14mISfVLtuu2etHWnLOmQ3IqlW9mTG5yDe7QvKSUIvt3D29G6HIPWBrZ3LOPRGyU1zByMSdk1aFZid4Lr3IN7pC8gv/zGE4BLkrVp5MT+8fBZAeZ9KYnA/PTnD6RzOYfuRrBXiFnp7zrV0E2TV87Jac8UCE/Hq+x/Tct9bsFH8yenrcEQUYsiA991kbQ/NrmJme8TIo8huSnntzE0J2ASczMnHj+31ECnCKNyfmPqkJigLswdQjb4cif0GfkXOaU7tKQgEA9N16PD0l47Eog2KjBdZsCXncohSy7mySlozxtZ4iRQB0iwvv+JCeiHNKIxQFXfEt9zSMn/UWKUbQgJUm0NPw3xZFOQCRJX6x6N5JbmbNvEYFJUHtuyTp7tHadHdfiFZf642iALj+vd+mLuBCu1s7fN47b7w1cj0oClvbdemV/rz3rvvf+urrLV/7ZerkyZGkt2F8oFvXrrUQFLu2S8vaxVZecYXN99rpcUZzdxrfGQgAgvKKqoYQFAvZ9RG2NF+wJYKIoODSpqpqqEG3ByeOHTudnL22KKpUULv8ckuvu+NOW/RAxQoqW1RVQwjVU0pWUDggMgoAAFAwAJ0BKngAsAA/AW6uTysmpCIt2UupYCAJZghwAY0Qxb09UymEJ23655/0ubyBvJX+FwWv+yehyzF0uiz1cT4BwFA1rJ0iHLL1EOlv6IDZA+6n2ZilXnXksT/o76Pr1lOVnnAkokq6nMkbvkgWKAy6zLO7Swe09xHSkj773IO7pSAqVz+I24jp7DyZbq+mHmgsu407gzADuaNhDpRvKx8cEg/Fo17JyvJUhWgXoB81DBZioJZvibJY0LZ415WHb05ZrLuq8tdMh7sZWnUTRvuJV9hdcpbCBqX6oY0igYp3ZVUZ/on6zhgEhpxfN9Wt9HHUyjVoKrYTLmG32INQvFhwc4KEgfvMVyuuTNjybf99bhu0e3uqCtjz1SayeXAgqH7cLWKXO+pPVPHW7KJTZk89vUpOF1CyGHvvkAhA4RGJ1da9vq/ycqogftEIqmkQP8PqXq1Xvl1m3snwRaLOFpVZCMzACpS8W/rtqHKVbL99ofigOsR6lSyyrpIBdkzONcqQQD8cR9TAbmhgAP649uuvoRd2cd7ON25dFG40TxOopyAqYowokigDKosxN59U7rtKIaQf0Q8AmKdj7D1wB4W8DFgNb/WVtwgnQd8j84Qnv+B9Djxev/KMI/92cabv+tcF+zMPNgfBtqhC9X1cSpqDF40QOBuyEb6Y9IDttmledocaI6GtDYn6K6wjoROJCYvkvQwf9le0O6xZHDr6Or6S+d9OT1o4ueGxnE55am3w9b7XcG+U2Nb+Uw1DgLkdD9eRdjBgQI+G28cukX4bvdQu5JglY6YgkS/ZLtkfijtzY+kL+eHxuzr2nuu8vc6Z6k9CxwoQbJdBzDdyjy1JsAduyS//ZhJWmtymtsUI/kCX01lW7zovY2y2eXe1kUxMaPRgjzkS5Zw7P73phPd5g9j8r/qaTlTc86rE2UOvRzG05PPwLu40r7YPA0N8TPJDcEh8L9wtHieXZwAn/Gi6ycr9kd9C3tnfJdbxjTxXZcP3UQhjswjyOrenwAk453v30SwD9BeOcbUxNtrNb21fPMsjAg126z/ECDI0zcMmx74i/tE9AC3K8uyuu6LBj5rbPzqq+wNdS7UY93GwSmHKIQsG21SESD3mV/hnDDm30lH9EESz1mtSwuQYZmq6JqXOsBuibjs8u75IvJO7NDWEqIgMKc1c5ewkTnAiNoMbNadrNox66OG5Tythkvpft7+dIagsRO1BDmb4zcGEi/35+AOReCGHmVBj0/mcYeNPMiTmH5OjmCbNeHMyPRF/3JjktfYjKvrdLjlyLQBTN6BAzUCh/m7pwa6P6PHgf0281w9HO33YaLBOn/nzIemcc8S5GMo+p0AdR84P6c3sClirBfKTx4lgenMdZW4GggHCuwLMuaAk2+FmQ2hWjRIDwz/pInIL36OqfZJsPAZvQNc1a88LsaSYimhMfSd+Iw+/5zkQylrOFYOJiPDprTSQ6rLEND90gRNQjHyrKQHoPGgPM0khzNF6qp49vHQLbglv5wnsl1Cb+Vk8p1x7D/HTcduKhUQzHjnhjyNvDLRUF2npHRKa89JtHsUJzUj8tYEy8ffjMkVFIjRHmuNfc1gecDxY+51TMxuEt+NrQ/D7j3mvGfwDYe3TTjxDSxMG+YHlhbPtZE1E5BJzEfX7wiJ1+H/WWD3XWaFj4TLCL8OOBbM20YNLrQXbA/TW1pV/CediDp2MciwXFhwRALJvxHbcZNlc6oF8W8y55pnQbNTFWpxI4pVHuk1C1dy5IW5G4Cmy44qBrgxgza9/B2A0eyOy6S86cx1A32unwN3LKo2Poz50QR22cvEJsYAOikiqeoDQEdSH6ahcasANqeUyuVbTyw02Q/p+LGdPTDR2jw9ak2DfFt9SKXUneRt6vS6H09FYfZRSnDLacjAqOqy2UcmyrDG/UorXkfFMIN2DazxCDzDQeFCSR8sQ+o1ctChRniWYVxX1Zi2pC/vQ3O/XsVmfIQMziriw9Td5anuJ6s6RJXD+tMLUz6HVYCqIHgDpzU3dMdQYFqLme7dcnGLyv+FJbZ2QJVFRCzweqB0TzFdo5/P8nxiaBgyiAKFhgx+Etv20JZG06QpkPGfXGZP7h6XTofa+HLuj1qwaaV4aM+gFvW6htO/twLgV6IbY449AMnoGfoUVKyJzkS3cjGwwxVjhSdjNphSHwiK4ni6Xr/Pjja+6tV8YpgjC6tsKuUOOsxLwP2N/idBHTPO9ZlDr+4dqPb8sL1SXIRJsGwbjiwi1NR5wZXW/rIO4MBjsRbg6lXeEDMP5+khpOBxPtaDXUszQAPnZKHCur6oCn5W91vDLUNV7F3cRwxaO6n/kshgJnmz0z1hatikuoPQ0wuomQISauvMa0DZq4IvqPJ3nf8rmzEKj6Y1B/g9vECtsTvEkux5z7nCet/JqOG5NsmbYMDAjUuezywMh8HZAH75SZ6O5QIB7xDYlCghsAcVqC4lR76Hd0a0+jDFRzQ9iFZudLNWvo9KCjT4M2CVQH4YJr07zzObMG09yWdpXbseLVLFt1WYSLi27mDovDqB3Cf345EuvK4u38FFpgs3NHR1jLT2VCVW1Mn6PU+20GoD5BiJaIlO8sNSP2QNioW/dSKJhYblcb/IFq+ThQ1MId/k4J5pkXg+qPbsmbKjw56MWY79J5obHfI5Z9EPmSjmTA8xZsAiRlmxVJLnIEPmens2vXFHqWnOLaVid/qMlY1Et0Ylxjjeknia4ftXkgYOuptMm7mmcq9uSGVzsCKcx3CGzlKuOEjOxHwzVsVoBcw/Aq8MjLtc295PtsYVfkBa6Uk5e1Frfnr/b9tA4gpYv4EibqEuLOaOlsVHrWPTE4ChvHRAC7uE8EV/Ng14Wafgno23YRWnY3b8j50GC9RjwsypwmPigRfKqwknI/uSfSO/RLcNREa6R6oau0P4/EkCwZINpzH9y7PTvK8vGXM7/pXqhu41JwyvVmSnuA1DCCBfWqLvnlaye14Zg/hLgKhRfXcdufdv4tppNz5O55sjvJuRFlLjoCLL4AJnSmiif1/4E05uz2tbOqadgzhZwalgszWrplKo8a+rH7FbPnvEL/X60hx/uEWu8nirsTLtlz96IrNWRoTk6EIyMhaOd8Dv7/6amI8DKKMd9GifDmur7r7BHoQ/FJFwTPmtNq35rpiVRwt6P2m6/3i8rBBPtJmiI5oVt4YBH4KFrxKWBEDzDcQqGVYehWXKdf8Rn+GXuNi1/ka/ZL4nK49aklKQad6DhLf3tosHMvq29F4OhqBge7J5E+0AWHwHeeS/fVymI8YeYjDBxnl/OG+soT2oKWh1Sfiy0zaicOJVcFGstXETrHipVyaY4k45RqJsyzWC6NqYQ9Dutn4F6JAqq0xgB41u+tFVAZ8XqhHZauHZXzxXFLotChOQqQYms3m3BQC3k+yRy1VGh5DJ6pFdnQuOumP4vlu+dRm4+0KPO3XWQMersItBaUKg+n+RDAAAAAA==" alt="Cô giáo Duyên áo dài trắng hoa anh đào" draggable="false"></div><div class="teachbubble" id="teacherSpeech">Các em chọn đáp án nhé! 💖</div><div class="teacherdesk"><div class="desk-top"></div><div class="desk-front">BÀN GIÁO VIÊN</div></div><div class="floorstripe"></div><div class="students" id="students"></div><div id="confetti"></div><div id="giftZone"></div><aside class="class-rank"><strong>👑 Top trả lời đúng</strong><div id="miniLeaderboard">Chưa có lượt đúng</div></aside></main>
-<section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button><button class="gold" id="referencePickerBtn" type="button">🖼️ Dùng ảnh mẫu gốc</button><button class="secondary" id="referenceResetBtn" type="button" hidden>↩ Giao diện cũ</button><input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/*" id="referenceUpload" hidden></div><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Cô giáo ấm áp</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="edge-male" selected>🎬 Review phim AI – Nam trầm (miễn phí)</option><option value="edge-female">🎬 Review phim AI – Nữ tự nhiên (miễn phí)</option><option value="browser">🔊 Giọng tiếng Việt trên điện thoại (dự phòng)</option><option value="ai">🎙️ Duyên – cô giáo nữ miền Nam (ElevenLabs)</option></select></div><div class="field"><label for="ttsServer">🔗 Máy chủ giọng AI</label><input id="ttsServer" type="url" inputmode="url" autocomplete="url" placeholder="https://ten-du-an.vercel.app" maxlength="220"></div><div class="actions"><button class="secondary" id="ttsSaveBtn">💾 Lưu máy chủ</button><button class="secondary" id="ttsCheckBtn">🔌 Kiểm tra giọng AI</button></div><p class="mini">🎬 Hai giọng review phim AI dùng nguồn Neural qua Render đã cài, không cần credits ElevenLabs. Nguồn này không chính thức nên có thể gián đoạn; khi đó game tự dùng giọng điện thoại. Ô máy chủ dưới đây chỉ dành cho giọng Duyên trả phí; <b>không nhập API key vào đây.</b></p><p class="voice-note"><span id="voiceIndicator" class="voice-indicator"></span><span id="voiceStatus">Chạm KIỂM TRA ÂM THANH để bật giọng đọc.</span></p><p id="voiceFallbackNote" class="mini" hidden style="background:#fff3d1;border:1px solid #e7ba5c;padding:10px;border-radius:12px;color:#6e4717;font-weight:700"></p><p class="mini">📱 iPhone: mở trang bằng Safari (không dùng trình duyệt trong ChatGPT/TikTok), tắt chế độ im lặng và tăng âm lượng khi thử. Âm thanh cần một lần chạm để bắt đầu.</p><div class="field"><label for="category">Chủ đề</label><select id="category"><option value="Tất cả">Tất cả chủ đề</option><option>Lịch sử</option><option>Văn học</option><option>Khoa học</option><option>Địa lý</option><option>Toán học</option><option>Tiếng Nhật N5</option></select></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
+<section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button><button class="gold" id="referencePickerBtn" type="button">🖼️ Dùng ảnh mẫu gốc</button><button class="secondary" id="referenceResetBtn" type="button" hidden>↩ Giao diện cũ</button><input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/*" id="referenceUpload" hidden></div><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Cô giáo ấm áp</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="edge-male" selected>🎬 Review phim AI – Nam trầm (miễn phí)</option><option value="edge-female">🎬 Review phim AI – Nữ tự nhiên (miễn phí)</option><option value="browser">🔊 Giọng tiếng Việt trên điện thoại (dự phòng)</option><option value="ai">🎙️ Duyên – cô giáo nữ miền Nam (ElevenLabs)</option></select></div><div class="field"><label for="ttsServer">🔗 Máy chủ giọng AI</label><input id="ttsServer" type="url" inputmode="url" autocomplete="url" placeholder="https://ten-du-an.vercel.app" maxlength="220"></div><div class="actions"><button class="secondary" id="ttsSaveBtn">💾 Lưu máy chủ</button><button class="secondary" id="ttsCheckBtn">🔌 Kiểm tra giọng AI</button></div><p class="mini">🎬 Hai giọng review phim AI dùng nguồn Neural qua Render đã cài, không cần credits ElevenLabs. Nguồn này không chính thức nên có thể gián đoạn; khi đó game tự dùng giọng điện thoại. Ô máy chủ dưới đây chỉ dành cho giọng Duyên trả phí; <b>không nhập API key vào đây.</b></p><p class="voice-note"><span id="voiceIndicator" class="voice-indicator"></span><span id="voiceStatus">Chạm KIỂM TRA ÂM THANH để bật giọng đọc.</span></p><p id="voiceFallbackNote" class="mini" hidden style="background:#fff3d1;border:1px solid #e7ba5c;padding:10px;border-radius:12px;color:#6e4717;font-weight:700"></p><p class="mini">📱 iPhone: mở trang bằng Safari (không dùng trình duyệt trong ChatGPT/TikTok), tắt chế độ im lặng và tăng âm lượng khi thử. Âm thanh cần một lần chạm để bắt đầu.</p><div class="field"><label for="category">Chủ đề</label><select id="category"><option value="Tất cả">Tất cả chủ đề</option><option>Lịch sử</option><option>Văn học</option><option>Khoa học</option><option>Địa lý</option><option>Toán học</option><option>Tiếng Nhật</option></select></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
 
 <section class="panel" id="realLivePanel">
   <h2>📡 Kết nối TikTok LIVE thật</h2>
@@ -829,237 +829,237 @@ Lan có 50 quyển vở và cho bạn 13 quyển. Lan còn bao nhiêu quyển v�
 Lan có 53 quyển vở và cho bạn 14 quyển. Lan còn bao nhiêu quyển vở?|39 quyển
 Lan có 56 quyển vở và cho bạn 15 quyển. Lan còn bao nhiêu quyển vở?|41 quyển
 Lan có 59 quyển vở và cho bạn 16 quyển. Lan còn bao nhiêu quyển vở?|43 quyển`,
-'Tiếng Nhật N5':`N5 • 「おはようございます」 có nghĩa là gì?|Chào buổi sáng|Xin chào|Cảm ơn|Tạm biệt
-N5 • 「こんにちは」 có nghĩa là gì?|Xin chào|Chào buổi tối|Xin lỗi / Cho hỏi|Rất vui khi mới gặp
-N5 • 「こんばんは」 có nghĩa là gì?|Chào buổi tối|Chúc ngủ ngon|Tạm biệt|Mời dùng bữa
-N5 • 「おやすみなさい」 có nghĩa là gì?|Chúc ngủ ngon|Cảm ơn|Rất vui khi mới gặp|Cảm ơn vì bữa ăn
-N5 • 「ありがとうございます」 có nghĩa là gì?|Cảm ơn|Xin lỗi / Cho hỏi|Mời dùng bữa|Tôi đi đây
-N5 • 「すみません」 có nghĩa là gì?|Xin lỗi / Cho hỏi|Tạm biệt|Cảm ơn vì bữa ăn|Tôi về rồi
-N5 • 「さようなら」 có nghĩa là gì?|Tạm biệt|Rất vui khi mới gặp|Tôi đi đây|Chào buổi sáng
-N5 • 「はじめまして」 có nghĩa là gì?|Rất vui khi mới gặp|Mời dùng bữa|Tôi về rồi|Xin chào
-N5 • 「いただきます」 có nghĩa là gì?|Mời dùng bữa|Cảm ơn vì bữa ăn|Chào buổi sáng|Chào buổi tối
-N5 • 「ごちそうさまでした」 có nghĩa là gì?|Cảm ơn vì bữa ăn|Tôi đi đây|Xin chào|Chúc ngủ ngon
-N5 • 「いってきます」 có nghĩa là gì?|Tôi đi đây|Tôi về rồi|Chào buổi tối|Cảm ơn
-N5 • 「ただいま」 có nghĩa là gì?|Tôi về rồi|Chào buổi sáng|Chúc ngủ ngon|Xin lỗi / Cho hỏi
-N5 • 「あさ」 có nghĩa là gì?|Buổi sáng|Buổi trưa|Ngày mai|Bây giờ
-N5 • 「ひる」 có nghĩa là gì?|Buổi trưa|Buổi tối|Hôm qua|Mỗi ngày
-N5 • 「よる」 có nghĩa là gì?|Buổi tối|Hôm nay|Bây giờ|Tuần này
-N5 • 「きょう」 có nghĩa là gì?|Hôm nay|Ngày mai|Mỗi ngày|Tuần sau
-N5 • 「あした」 có nghĩa là gì?|Ngày mai|Hôm qua|Tuần này|Tuần trước
-N5 • 「きのう」 có nghĩa là gì?|Hôm qua|Bây giờ|Tuần sau|Mỗi sáng
-N5 • 「いま」 có nghĩa là gì?|Bây giờ|Mỗi ngày|Tuần trước|Buổi sáng
-N5 • 「まいにち」 có nghĩa là gì?|Mỗi ngày|Tuần này|Mỗi sáng|Buổi trưa
-N5 • 「こんしゅう」 có nghĩa là gì?|Tuần này|Tuần sau|Buổi sáng|Buổi tối
-N5 • 「らいしゅう」 có nghĩa là gì?|Tuần sau|Tuần trước|Buổi trưa|Hôm nay
-N5 • 「せんしゅう」 có nghĩa là gì?|Tuần trước|Mỗi sáng|Buổi tối|Ngày mai
-N5 • 「まいあさ」 có nghĩa là gì?|Mỗi sáng|Buổi sáng|Hôm nay|Hôm qua
-N5 • 「おとうさん」 có nghĩa là gì?|Bố (cách gọi)|Mẹ (cách gọi)|Em trai|Gia đình
-N5 • 「おかあさん」 có nghĩa là gì?|Mẹ (cách gọi)|Anh trai (cách gọi)|Em gái|Trẻ em
-N5 • 「おにいさん」 có nghĩa là gì?|Anh trai (cách gọi)|Chị gái (cách gọi)|Gia đình|Bạn bè
-N5 • 「おねえさん」 có nghĩa là gì?|Chị gái (cách gọi)|Em trai|Trẻ em|Giáo viên
-N5 • 「おとうと」 có nghĩa là gì?|Em trai|Em gái|Bạn bè|Sinh viên
-N5 • 「いもうと」 có nghĩa là gì?|Em gái|Gia đình|Giáo viên|Bác sĩ
-N5 • 「かぞく」 có nghĩa là gì?|Gia đình|Trẻ em|Sinh viên|Bố (cách gọi)
-N5 • 「こども」 có nghĩa là gì?|Trẻ em|Bạn bè|Bác sĩ|Mẹ (cách gọi)
-N5 • 「ともだち」 có nghĩa là gì?|Bạn bè|Giáo viên|Bố (cách gọi)|Anh trai (cách gọi)
-N5 • 「せんせい」 có nghĩa là gì?|Giáo viên|Sinh viên|Mẹ (cách gọi)|Chị gái (cách gọi)
-N5 • 「がくせい」 có nghĩa là gì?|Sinh viên|Bác sĩ|Anh trai (cách gọi)|Em trai
-N5 • 「いしゃ」 có nghĩa là gì?|Bác sĩ|Bố (cách gọi)|Chị gái (cách gọi)|Em gái
-N5 • 「がっこう」 có nghĩa là gì?|Trường học|Nhà ga|Ngân hàng|Siêu thị
-N5 • 「えき」 có nghĩa là gì?|Nhà ga|Bệnh viện|Bưu điện|Công viên
-N5 • 「びょういん」 có nghĩa là gì?|Bệnh viện|Thư viện|Siêu thị|Ngôi nhà
-N5 • 「としょかん」 có nghĩa là gì?|Thư viện|Ngân hàng|Công viên|Căn phòng
-N5 • 「ぎんこう」 có nghĩa là gì?|Ngân hàng|Bưu điện|Ngôi nhà|Công ty
-N5 • 「ゆうびんきょく」 có nghĩa là gì?|Bưu điện|Siêu thị|Căn phòng|Đất nước
-N5 • 「スーパー」 có nghĩa là gì?|Siêu thị|Công viên|Công ty|Trường học
-N5 • 「こうえん」 có nghĩa là gì?|Công viên|Ngôi nhà|Đất nước|Nhà ga
-N5 • 「いえ」 có nghĩa là gì?|Ngôi nhà|Căn phòng|Trường học|Bệnh viện
-N5 • 「へや」 có nghĩa là gì?|Căn phòng|Công ty|Nhà ga|Thư viện
-N5 • 「かいしゃ」 có nghĩa là gì?|Công ty|Đất nước|Bệnh viện|Ngân hàng
-N5 • 「くに」 có nghĩa là gì?|Đất nước|Trường học|Thư viện|Bưu điện
-N5 • 「ほん」 có nghĩa là gì?|Quyển sách|Bút chì|Đồng hồ|Ô tô
-N5 • 「えんぴつ」 có nghĩa là gì?|Bút chì|Bút mực|Điện thoại|Xe đạp
-N5 • 「ペン」 có nghĩa là gì?|Bút mực|Túi / Cặp|Ô tô|Tàu điện
-N5 • 「かばん」 có nghĩa là gì?|Túi / Cặp|Cái bàn|Xe đạp|Cái ô
-N5 • 「つくえ」 có nghĩa là gì?|Cái bàn|Cái ghế|Tàu điện|Đôi giày
-N5 • 「いす」 có nghĩa là gì?|Cái ghế|Đồng hồ|Cái ô|Cái mũ
-N5 • 「とけい」 có nghĩa là gì?|Đồng hồ|Điện thoại|Đôi giày|Cửa sổ
-N5 • 「でんわ」 có nghĩa là gì?|Điện thoại|Ô tô|Cái mũ|Cửa ra vào
-N5 • 「くるま」 có nghĩa là gì?|Ô tô|Xe đạp|Cửa sổ|Quyển sách
-N5 • 「じてんしゃ」 có nghĩa là gì?|Xe đạp|Tàu điện|Cửa ra vào|Bút chì
-N5 • 「でんしゃ」 có nghĩa là gì?|Tàu điện|Cái ô|Quyển sách|Bút mực
-N5 • 「かさ」 có nghĩa là gì?|Cái ô|Đôi giày|Bút chì|Túi / Cặp
-N5 • 「くつ」 có nghĩa là gì?|Đôi giày|Cái mũ|Bút mực|Cái bàn
-N5 • 「ぼうし」 có nghĩa là gì?|Cái mũ|Cửa sổ|Túi / Cặp|Cái ghế
-N5 • 「まど」 có nghĩa là gì?|Cửa sổ|Cửa ra vào|Cái bàn|Đồng hồ
-N5 • 「ドア」 có nghĩa là gì?|Cửa ra vào|Quyển sách|Cái ghế|Điện thoại
-N5 • 「みず」 có nghĩa là gì?|Nước|Trà|Cá|Rau
-N5 • 「おちゃ」 có nghĩa là gì?|Trà|Cơm|Thịt|Trái cây
-N5 • 「ごはん」 có nghĩa là gì?|Cơm|Bánh mì|Rau|Trứng
-N5 • 「パン」 có nghĩa là gì?|Bánh mì|Cá|Trái cây|Sữa
-N5 • 「さかな」 có nghĩa là gì?|Cá|Thịt|Trứng|Quả táo
-N5 • 「にく」 có nghĩa là gì?|Thịt|Rau|Sữa|Quả chuối
-N5 • 「やさい」 có nghĩa là gì?|Rau|Trái cây|Quả táo|Nước
-N5 • 「くだもの」 có nghĩa là gì?|Trái cây|Trứng|Quả chuối|Trà
-N5 • 「たまご」 có nghĩa là gì?|Trứng|Sữa|Nước|Cơm
-N5 • 「ぎゅうにゅう」 có nghĩa là gì?|Sữa|Quả táo|Trà|Bánh mì
-N5 • 「りんご」 có nghĩa là gì?|Quả táo|Quả chuối|Cơm|Cá
-N5 • 「バナナ」 có nghĩa là gì?|Quả chuối|Nước|Bánh mì|Thịt
-N5 • 「たべます」 có nghĩa là gì?|Ăn|Uống|Nghe|Nói
-N5 • 「のみます」 có nghĩa là gì?|Uống|Đi|Đọc|Mua
-N5 • 「いきます」 có nghĩa là gì?|Đi|Đến|Viết|Ngủ
-N5 • 「きます」 có nghĩa là gì?|Đến|Trở về|Nói|Thức dậy
-N5 • 「かえります」 có nghĩa là gì?|Trở về|Xem / Nhìn|Mua|Làm việc
-N5 • 「みます」 có nghĩa là gì?|Xem / Nhìn|Nghe|Ngủ|Nghỉ ngơi
-N5 • 「ききます」 có nghĩa là gì?|Nghe|Đọc|Thức dậy|Học bài
-N5 • 「よみます」 có nghĩa là gì?|Đọc|Viết|Làm việc|Chơi
-N5 • 「かきます」 có nghĩa là gì?|Viết|Nói|Nghỉ ngơi|Gặp gỡ
-N5 • 「はなします」 có nghĩa là gì?|Nói|Mua|Học bài|Ăn
-N5 • 「かいます」 có nghĩa là gì?|Mua|Ngủ|Chơi|Uống
-N5 • 「ねます」 có nghĩa là gì?|Ngủ|Thức dậy|Gặp gỡ|Đi
-N5 • 「おきます」 có nghĩa là gì?|Thức dậy|Làm việc|Ăn|Đến
-N5 • 「はたらきます」 có nghĩa là gì?|Làm việc|Nghỉ ngơi|Uống|Trở về
-N5 • 「やすみます」 có nghĩa là gì?|Nghỉ ngơi|Học bài|Đi|Xem / Nhìn
-N5 • 「べんきょうします」 có nghĩa là gì?|Học bài|Chơi|Đến|Nghe
-N5 • 「あそびます」 có nghĩa là gì?|Chơi|Gặp gỡ|Trở về|Đọc
-N5 • 「あいます」 có nghĩa là gì?|Gặp gỡ|Ăn|Xem / Nhìn|Viết
-N5 • 「おおきい」 có nghĩa là gì?|To / Lớn|Nhỏ / Bé|Nóng (thời tiết)|Ấm áp
-N5 • 「ちいさい」 có nghĩa là gì?|Nhỏ / Bé|Mới|Lạnh (thời tiết)|Lạnh khi chạm vào
-N5 • 「あたらしい」 có nghĩa là gì?|Mới|Cũ|Ấm áp|Thú vị
-N5 • 「ふるい」 có nghĩa là gì?|Cũ|Đắt / Cao|Lạnh khi chạm vào|Nhàm chán
-N5 • 「たかい」 có nghĩa là gì?|Đắt / Cao|Rẻ|Thú vị|Bận rộn
-N5 • 「やすい」 có nghĩa là gì?|Rẻ|Nóng (thời tiết)|Nhàm chán|Rảnh rỗi
-N5 • 「あつい」 có nghĩa là gì?|Nóng (thời tiết)|Lạnh (thời tiết)|Bận rộn|Đẹp / Sạch sẽ
-N5 • 「さむい」 có nghĩa là gì?|Lạnh (thời tiết)|Ấm áp|Rảnh rỗi|Yên tĩnh
-N5 • 「あたたかい」 có nghĩa là gì?|Ấm áp|Lạnh khi chạm vào|Đẹp / Sạch sẽ|To / Lớn
-N5 • 「つめたい」 có nghĩa là gì?|Lạnh khi chạm vào|Thú vị|Yên tĩnh|Nhỏ / Bé
-N5 • 「おもしろい」 có nghĩa là gì?|Thú vị|Nhàm chán|To / Lớn|Mới
-N5 • 「つまらない」 có nghĩa là gì?|Nhàm chán|Bận rộn|Nhỏ / Bé|Cũ
-N5 • 「いそがしい」 có nghĩa là gì?|Bận rộn|Rảnh rỗi|Mới|Đắt / Cao
-N5 • 「ひま」 có nghĩa là gì?|Rảnh rỗi|Đẹp / Sạch sẽ|Cũ|Rẻ
-N5 • 「きれい」 có nghĩa là gì?|Đẹp / Sạch sẽ|Yên tĩnh|Đắt / Cao|Nóng (thời tiết)
-N5 • 「しずか」 có nghĩa là gì?|Yên tĩnh|To / Lớn|Rẻ|Lạnh (thời tiết)
-N5 • Chữ Hiragana 「あ」 đọc là gì?|a|e|ki|ko
-N5 • Chữ Hiragana 「い」 đọc là gì?|i|ki|se|na
-N5 • Chữ Hiragana 「う」 đọc là gì?|u|ko|na|ku
-N5 • Chữ Hiragana 「え」 đọc là gì?|e|su|u|te
-N5 • Chữ Hiragana 「お」 đọc là gì?|o|ta|sa|ka
-N5 • Chữ Hiragana 「か」 đọc là gì?|ka|te|tsu|chi
-N5 • Chữ Hiragana 「き」 đọc là gì?|ki|ni|no|u
-N5 • Chữ Hiragana 「く」 đọc là gì?|ku|no|ki|so
-N5 • Chữ Hiragana 「け」 đọc là gì?|ke|u|so|a
-N5 • Chữ Hiragana 「こ」 đọc là gì?|ko|ka|ni|su
-N5 • Chữ Hiragana 「さ」 đọc là gì?|sa|ke|e|ne
-N5 • Chữ Hiragana 「し」 đọc là gì?|shi|su|sa|ko
-N5 • Chữ Hiragana 「す」 đọc là gì?|su|ta|te|ni
-N5 • Chữ Hiragana 「せ」 đọc là gì?|se|te|a|ku
-N5 • Chữ Hiragana 「そ」 đọc là gì?|so|ni|ku|to
-N5 • Chữ Hiragana 「た」 đọc là gì?|ta|no|so|ka
-N5 • Chữ Hiragana 「ち」 đọc là gì?|chi|u|nu|tsu
-N5 • Chữ Hiragana 「つ」 đọc là gì?|tsu|ka|o|e
-N5 • Chữ Hiragana 「て」 đọc là gì?|te|ke|shi|so
-N5 • Chữ Hiragana 「と」 đọc là gì?|to|shi|te|i
-N5 • Chữ Hiragana 「な」 đọc là gì?|na|so|i|su
-N5 • Chữ Hiragana 「に」 đọc là gì?|ni|tsu|ke|no
-N5 • Chữ Hiragana 「ぬ」 đọc là gì?|nu|na|ta|sa
-N5 • Chữ Hiragana 「ね」 đọc là gì?|ne|no|nu|ni
-N5 • Chữ Hiragana 「の」 đọc là gì?|no|u|ka|ke
-N5 • Chữ Katakana 「ア」 đọc là gì?|a|ki|se|na
-N5 • Chữ Katakana 「イ」 đọc là gì?|i|ko|na|ku
-N5 • Chữ Katakana 「ウ」 đọc là gì?|u|su|e|te
-N5 • Chữ Katakana 「エ」 đọc là gì?|e|ta|sa|ka
-N5 • Chữ Katakana 「オ」 đọc là gì?|o|te|tsu|chi
-N5 • Chữ Katakana 「カ」 đọc là gì?|ka|ni|no|u
-N5 • Chữ Katakana 「キ」 đọc là gì?|ki|no|ku|so
-N5 • Chữ Katakana 「ク」 đọc là gì?|ku|u|so|a
-N5 • Chữ Katakana 「ケ」 đọc là gì?|ke|ka|ni|su
-N5 • Chữ Katakana 「コ」 đọc là gì?|ko|ke|e|ne
-N5 • Chữ Katakana 「サ」 đọc là gì?|sa|su|shi|ko
-N5 • Chữ Katakana 「シ」 đọc là gì?|shi|ta|te|ni
-N5 • Chữ Katakana 「ス」 đọc là gì?|su|te|a|ku
-N5 • Chữ Katakana 「セ」 đọc là gì?|se|ni|ku|to
-N5 • Chữ Katakana 「ソ」 đọc là gì?|so|no|ta|ka
-N5 • Kanji 「山」 có nghĩa cơ bản là gì?|Núi|Sông|Đất|Lớn
-N5 • Kanji 「川」 có nghĩa cơ bản là gì?|Sông|Mặt trời / Ngày|Người|Nhỏ
-N5 • Kanji 「日」 có nghĩa cơ bản là gì?|Mặt trời / Ngày|Mặt trăng / Tháng|Phụ nữ|Giữa
-N5 • Kanji 「月」 có nghĩa cơ bản là gì?|Mặt trăng / Tháng|Lửa|Đàn ông|Trên
-N5 • Kanji 「火」 có nghĩa cơ bản là gì?|Lửa|Nước|Đứa trẻ|Dưới
-N5 • Kanji 「水」 có nghĩa cơ bản là gì?|Nước|Cây|Lớn|Trái
-N5 • Kanji 「木」 có nghĩa cơ bản là gì?|Cây|Vàng / Tiền|Nhỏ|Phải
-N5 • Kanji 「金」 có nghĩa cơ bản là gì?|Vàng / Tiền|Đất|Giữa|Sách
-N5 • Kanji 「土」 có nghĩa cơ bản là gì?|Đất|Người|Trên|Xe
-N5 • Kanji 「人」 có nghĩa cơ bản là gì?|Người|Phụ nữ|Dưới|Mưa
-N5 • Kanji 「女」 có nghĩa cơ bản là gì?|Phụ nữ|Đàn ông|Trái|Năm
-N5 • Kanji 「男」 có nghĩa cơ bản là gì?|Đàn ông|Đứa trẻ|Phải|Núi
-N5 • Kanji 「子」 có nghĩa cơ bản là gì?|Đứa trẻ|Lớn|Sách|Sông
-N5 • Kanji 「大」 có nghĩa cơ bản là gì?|Lớn|Nhỏ|Xe|Mặt trời / Ngày
-N5 • Kanji 「小」 có nghĩa cơ bản là gì?|Nhỏ|Giữa|Mưa|Mặt trăng / Tháng
-N5 • Kanji 「中」 có nghĩa cơ bản là gì?|Giữa|Trên|Năm|Lửa
-N5 • Kanji 「上」 có nghĩa cơ bản là gì?|Trên|Dưới|Núi|Nước
-N5 • Kanji 「下」 có nghĩa cơ bản là gì?|Dưới|Trái|Sông|Cây
-N5 • Kanji 「左」 có nghĩa cơ bản là gì?|Trái|Phải|Mặt trời / Ngày|Vàng / Tiền
-N5 • Kanji 「右」 có nghĩa cơ bản là gì?|Phải|Sách|Mặt trăng / Tháng|Đất
-N5 • Kanji 「本」 có nghĩa cơ bản là gì?|Sách|Xe|Lửa|Người
-N5 • Kanji 「車」 có nghĩa cơ bản là gì?|Xe|Mưa|Nước|Phụ nữ
-N5 • Kanji 「雨」 có nghĩa cơ bản là gì?|Mưa|Năm|Cây|Đàn ông
-N5 • Kanji 「年」 có nghĩa cơ bản là gì?|Năm|Núi|Vàng / Tiền|Đứa trẻ
-N5 • Điền trợ từ chỉ đối tượng: りんご___たべます。|を|に|へ|で
-N5 • Điền trợ từ chỉ nơi thực hiện hành động: としょかん___べんきょうします。|で|を|に|へ
-N5 • Điền trợ từ chỉ sở hữu: これは わたし___ほんです。|の|を|に|で
-N5 • Điền trợ từ chỉ thời điểm: あさ 7じ___おきます。|に|を|へ|と
-N5 • Điền trợ từ chỉ người cùng đi: ともだち___いきます。|と|を|へ|で
-N5 • Điền trợ từ trong câu: きょうと___いきます。(Đi Kyoto)|へ|を|で|と
-N5 • Điền trợ từ: えんぴつ___かきます。(Viết bằng bút chì)|で|に|を|の
-N5 • Điền trợ từ: ここ___しゃしんを とります。(Chụp ảnh tại đây)|で|を|へ|と
-N5 • Điền trợ từ: きょうは げつようび___。(Hôm nay là thứ Hai)|です|ます|ました|ません
-N5 • Trợ từ kết thúc câu hỏi có/không thông thường là gì?|か|を|で|の
-N5 • Từ để hỏi “Ai?” là gì?|だれ|どこ|いつ|なに
-N5 • Từ để hỏi “Ở đâu?” là gì?|どこ|だれ|いつ|なぜ
-N5 • Từ để hỏi “Khi nào?” là gì?|いつ|どこ|だれ|なに
-N5 • Từ để hỏi “Cái gì?” là gì?|なに|どこ|いつ|だれ
-N5 • Từ để hỏi “Bao nhiêu tiền?” là gì?|いくら|いくつ|なんじ|なんさい
-N5 • Từ để hỏi “Mấy giờ?” là gì?|なんじ|なんさい|なんにん|いくら
-N5 • Từ để hỏi “Bao nhiêu tuổi?” là gì?|なんさい|なんじ|なんにん|いくら
-N5 • Câu “わたしは がくせいです。” có nghĩa là gì?|Tôi là sinh viên|Tôi là giáo viên|Tôi đang ngủ|Tôi đến nhà ga
-N5 • Câu “これは なんですか。” nghĩa là gì?|Đây là cái gì?|Đây là của ai?|Bây giờ mấy giờ?|Nhà ga ở đâu?
-N5 • Câu “おなまえは なんですか。” nghĩa là gì?|Bạn tên là gì?|Bạn bao nhiêu tuổi?|Bạn sống ở đâu?|Bạn làm nghề gì?
-N5 • Câu “もう いちど おねがいします。” nghĩa là gì?|Làm ơn nói lại một lần nữa|Làm ơn mở cửa|Làm ơn đợi đến ngày mai|Làm ơn đi cùng tôi
-N5 • Câu “いっしょに いきましょう。” nghĩa là gì?|Cùng đi nhé!|Đừng đi nhé!|Tôi đã đi rồi|Bạn đi lúc mấy giờ?
-N5 • Câu “ここに すわってください。” nghĩa là gì?|Hãy ngồi ở đây|Hãy đứng ngoài kia|Hãy về nhà|Hãy mở cửa
-N5 • Phủ định lịch sự hiện tại của 「たべます」 là gì?|たべません|たべました|たべます|たべませんでした
-N5 • Quá khứ lịch sự của 「いきます」 là gì?|いきました|いきません|いきませんでした|いきます
-N5 • Quá khứ phủ định lịch sự của 「のみます」 là gì?|のみませんでした|のみません|のみます|のみました
-N5 • Dạng phủ định lịch sự của 「です」 là gì?|ではありません|でした|でしょう|です
-N5 • Dạng quá khứ lịch sự của 「です」 là gì?|でした|ではありません|です|でしょう
-N5 • Ở hiện tại, cách nói “Tôi không uống nước” đúng là?|みずを のみません|みずを のみました|みずを のみます|みずを のみませんでした
-N5 • Dạng quá khứ của tính từ 「あつい」 là gì?|あつかったです|あついです|あつくないです|あついでした
-N5 • Dạng phủ định của tính từ 「たかい」 là gì?|たかくないです|たかいでした|たかかったです|たかくです
-N5 • Dạng phủ định của tính từ na 「しずか」 là gì?|しずかじゃありません|しずかくないです|しずかかったです|しずかいません
-N5 • “Một cái” (đếm đồ vật chung) nói thế nào?|ひとつ|ふたつ|みっつ|よっつ
-N5 • “Hai cái” (đếm đồ vật chung) nói thế nào?|ふたつ|ひとつ|みっつ|いつつ
-N5 • “Ba cái” (đếm đồ vật chung) nói thế nào?|みっつ|ふたつ|よっつ|むっつ
-N5 • “Một người” (cách đếm) nói thế nào?|ひとり|ふたり|さんにん|よにん
-N5 • “Hai người” (cách đếm) nói thế nào?|ふたり|ひとり|さんにん|ごにん
-N5 • “Hôm nay là thứ mấy?” trong tiếng Nhật là câu nào?|きょうは なんようびですか。|きょうは なんじですか。|これは なんですか。|あしたは どこですか。
-N5 • “Nhà ga ở đâu?” nói thế nào?|えきは どこですか。|えきは だれですか。|えきは いつですか。|えきは なんさいですか。
-N5 • “Mời vào!” nói thế nào?|どうぞ おはいりください。|どうぞ おやすみなさい。|どうぞ いただきます。|どうぞ いってきます。
-N5 • 「げつようび」 là ngày nào trong tuần?|Thứ Hai|Thứ Ba|Thứ Năm|Thứ Bảy
-N5 • 「かようび」 là ngày nào trong tuần?|Thứ Ba|Thứ Tư|Thứ Sáu|Chủ nhật
-N5 • 「すいようび」 là ngày nào trong tuần?|Thứ Tư|Thứ Năm|Thứ Bảy|Thứ Hai
-N5 • 「もくようび」 là ngày nào trong tuần?|Thứ Năm|Thứ Sáu|Chủ nhật|Thứ Ba
-N5 • 「きんようび」 là ngày nào trong tuần?|Thứ Sáu|Thứ Bảy|Thứ Hai|Thứ Tư
-N5 • 「どようび」 là ngày nào trong tuần?|Thứ Bảy|Chủ nhật|Thứ Ba|Thứ Năm
-N5 • 「にちようび」 là ngày nào trong tuần?|Chủ nhật|Thứ Hai|Thứ Tư|Thứ Sáu
-N5 • Số đếm 「いち」 là số mấy?|1|2|4|7
-N5 • Số đếm 「に」 là số mấy?|2|3|5|8
-N5 • Số đếm 「さん」 là số mấy?|3|4|6|9
-N5 • Số đếm 「よん」 là số mấy?|4|5|7|10
-N5 • Số đếm 「ご」 là số mấy?|5|6|8|1
-N5 • Số đếm 「ろく」 là số mấy?|6|7|9|2
-N5 • Số đếm 「なな」 là số mấy?|7|8|10|3
-N5 • Số đếm 「はち」 là số mấy?|8|9|1|4
-N5 • Số đếm 「きゅう」 là số mấy?|9|10|2|5
-N5 • Số đếm 「じゅう」 là số mấy?|10|1|3|6`
+'Tiếng Nhật':`「おはようございます」 có nghĩa là gì?|Chào buổi sáng|Xin chào|Cảm ơn|Tạm biệt
+「こんにちは」 có nghĩa là gì?|Xin chào|Chào buổi tối|Xin lỗi / Cho hỏi|Rất vui khi mới gặp
+「こんばんは」 có nghĩa là gì?|Chào buổi tối|Chúc ngủ ngon|Tạm biệt|Mời dùng bữa
+「おやすみなさい」 có nghĩa là gì?|Chúc ngủ ngon|Cảm ơn|Rất vui khi mới gặp|Cảm ơn vì bữa ăn
+「ありがとうございます」 có nghĩa là gì?|Cảm ơn|Xin lỗi / Cho hỏi|Mời dùng bữa|Tôi đi đây
+「すみません」 có nghĩa là gì?|Xin lỗi / Cho hỏi|Tạm biệt|Cảm ơn vì bữa ăn|Tôi về rồi
+「さようなら」 có nghĩa là gì?|Tạm biệt|Rất vui khi mới gặp|Tôi đi đây|Chào buổi sáng
+「はじめまして」 có nghĩa là gì?|Rất vui khi mới gặp|Mời dùng bữa|Tôi về rồi|Xin chào
+「いただきます」 có nghĩa là gì?|Mời dùng bữa|Cảm ơn vì bữa ăn|Chào buổi sáng|Chào buổi tối
+「ごちそうさまでした」 có nghĩa là gì?|Cảm ơn vì bữa ăn|Tôi đi đây|Xin chào|Chúc ngủ ngon
+「いってきます」 có nghĩa là gì?|Tôi đi đây|Tôi về rồi|Chào buổi tối|Cảm ơn
+「ただいま」 có nghĩa là gì?|Tôi về rồi|Chào buổi sáng|Chúc ngủ ngon|Xin lỗi / Cho hỏi
+「あさ」 có nghĩa là gì?|Buổi sáng|Buổi trưa|Ngày mai|Bây giờ
+「ひる」 có nghĩa là gì?|Buổi trưa|Buổi tối|Hôm qua|Mỗi ngày
+「よる」 có nghĩa là gì?|Buổi tối|Hôm nay|Bây giờ|Tuần này
+「きょう」 có nghĩa là gì?|Hôm nay|Ngày mai|Mỗi ngày|Tuần sau
+「あした」 có nghĩa là gì?|Ngày mai|Hôm qua|Tuần này|Tuần trước
+「きのう」 có nghĩa là gì?|Hôm qua|Bây giờ|Tuần sau|Mỗi sáng
+「いま」 có nghĩa là gì?|Bây giờ|Mỗi ngày|Tuần trước|Buổi sáng
+「まいにち」 có nghĩa là gì?|Mỗi ngày|Tuần này|Mỗi sáng|Buổi trưa
+「こんしゅう」 có nghĩa là gì?|Tuần này|Tuần sau|Buổi sáng|Buổi tối
+「らいしゅう」 có nghĩa là gì?|Tuần sau|Tuần trước|Buổi trưa|Hôm nay
+「せんしゅう」 có nghĩa là gì?|Tuần trước|Mỗi sáng|Buổi tối|Ngày mai
+「まいあさ」 có nghĩa là gì?|Mỗi sáng|Buổi sáng|Hôm nay|Hôm qua
+「おとうさん」 có nghĩa là gì?|Bố (cách gọi)|Mẹ (cách gọi)|Em trai|Gia đình
+「おかあさん」 có nghĩa là gì?|Mẹ (cách gọi)|Anh trai (cách gọi)|Em gái|Trẻ em
+「おにいさん」 có nghĩa là gì?|Anh trai (cách gọi)|Chị gái (cách gọi)|Gia đình|Bạn bè
+「おねえさん」 có nghĩa là gì?|Chị gái (cách gọi)|Em trai|Trẻ em|Giáo viên
+「おとうと」 có nghĩa là gì?|Em trai|Em gái|Bạn bè|Sinh viên
+「いもうと」 có nghĩa là gì?|Em gái|Gia đình|Giáo viên|Bác sĩ
+「かぞく」 có nghĩa là gì?|Gia đình|Trẻ em|Sinh viên|Bố (cách gọi)
+「こども」 có nghĩa là gì?|Trẻ em|Bạn bè|Bác sĩ|Mẹ (cách gọi)
+「ともだち」 có nghĩa là gì?|Bạn bè|Giáo viên|Bố (cách gọi)|Anh trai (cách gọi)
+「せんせい」 có nghĩa là gì?|Giáo viên|Sinh viên|Mẹ (cách gọi)|Chị gái (cách gọi)
+「がくせい」 có nghĩa là gì?|Sinh viên|Bác sĩ|Anh trai (cách gọi)|Em trai
+「いしゃ」 có nghĩa là gì?|Bác sĩ|Bố (cách gọi)|Chị gái (cách gọi)|Em gái
+「がっこう」 có nghĩa là gì?|Trường học|Nhà ga|Ngân hàng|Siêu thị
+「えき」 có nghĩa là gì?|Nhà ga|Bệnh viện|Bưu điện|Công viên
+「びょういん」 có nghĩa là gì?|Bệnh viện|Thư viện|Siêu thị|Ngôi nhà
+「としょかん」 có nghĩa là gì?|Thư viện|Ngân hàng|Công viên|Căn phòng
+「ぎんこう」 có nghĩa là gì?|Ngân hàng|Bưu điện|Ngôi nhà|Công ty
+「ゆうびんきょく」 có nghĩa là gì?|Bưu điện|Siêu thị|Căn phòng|Đất nước
+「スーパー」 có nghĩa là gì?|Siêu thị|Công viên|Công ty|Trường học
+「こうえん」 có nghĩa là gì?|Công viên|Ngôi nhà|Đất nước|Nhà ga
+「いえ」 có nghĩa là gì?|Ngôi nhà|Căn phòng|Trường học|Bệnh viện
+「へや」 có nghĩa là gì?|Căn phòng|Công ty|Nhà ga|Thư viện
+「かいしゃ」 có nghĩa là gì?|Công ty|Đất nước|Bệnh viện|Ngân hàng
+「くに」 có nghĩa là gì?|Đất nước|Trường học|Thư viện|Bưu điện
+「ほん」 có nghĩa là gì?|Quyển sách|Bút chì|Đồng hồ|Ô tô
+「えんぴつ」 có nghĩa là gì?|Bút chì|Bút mực|Điện thoại|Xe đạp
+「ペン」 có nghĩa là gì?|Bút mực|Túi / Cặp|Ô tô|Tàu điện
+「かばん」 có nghĩa là gì?|Túi / Cặp|Cái bàn|Xe đạp|Cái ô
+「つくえ」 có nghĩa là gì?|Cái bàn|Cái ghế|Tàu điện|Đôi giày
+「いす」 có nghĩa là gì?|Cái ghế|Đồng hồ|Cái ô|Cái mũ
+「とけい」 có nghĩa là gì?|Đồng hồ|Điện thoại|Đôi giày|Cửa sổ
+「でんわ」 có nghĩa là gì?|Điện thoại|Ô tô|Cái mũ|Cửa ra vào
+「くるま」 có nghĩa là gì?|Ô tô|Xe đạp|Cửa sổ|Quyển sách
+「じてんしゃ」 có nghĩa là gì?|Xe đạp|Tàu điện|Cửa ra vào|Bút chì
+「でんしゃ」 có nghĩa là gì?|Tàu điện|Cái ô|Quyển sách|Bút mực
+「かさ」 có nghĩa là gì?|Cái ô|Đôi giày|Bút chì|Túi / Cặp
+「くつ」 có nghĩa là gì?|Đôi giày|Cái mũ|Bút mực|Cái bàn
+「ぼうし」 có nghĩa là gì?|Cái mũ|Cửa sổ|Túi / Cặp|Cái ghế
+「まど」 có nghĩa là gì?|Cửa sổ|Cửa ra vào|Cái bàn|Đồng hồ
+「ドア」 có nghĩa là gì?|Cửa ra vào|Quyển sách|Cái ghế|Điện thoại
+「みず」 có nghĩa là gì?|Nước|Trà|Cá|Rau
+「おちゃ」 có nghĩa là gì?|Trà|Cơm|Thịt|Trái cây
+「ごはん」 có nghĩa là gì?|Cơm|Bánh mì|Rau|Trứng
+「パン」 có nghĩa là gì?|Bánh mì|Cá|Trái cây|Sữa
+「さかな」 có nghĩa là gì?|Cá|Thịt|Trứng|Quả táo
+「にく」 có nghĩa là gì?|Thịt|Rau|Sữa|Quả chuối
+「やさい」 có nghĩa là gì?|Rau|Trái cây|Quả táo|Nước
+「くだもの」 có nghĩa là gì?|Trái cây|Trứng|Quả chuối|Trà
+「たまご」 có nghĩa là gì?|Trứng|Sữa|Nước|Cơm
+「ぎゅうにゅう」 có nghĩa là gì?|Sữa|Quả táo|Trà|Bánh mì
+「りんご」 có nghĩa là gì?|Quả táo|Quả chuối|Cơm|Cá
+「バナナ」 có nghĩa là gì?|Quả chuối|Nước|Bánh mì|Thịt
+「たべます」 có nghĩa là gì?|Ăn|Uống|Nghe|Nói
+「のみます」 có nghĩa là gì?|Uống|Đi|Đọc|Mua
+「いきます」 có nghĩa là gì?|Đi|Đến|Viết|Ngủ
+「きます」 có nghĩa là gì?|Đến|Trở về|Nói|Thức dậy
+「かえります」 có nghĩa là gì?|Trở về|Xem / Nhìn|Mua|Làm việc
+「みます」 có nghĩa là gì?|Xem / Nhìn|Nghe|Ngủ|Nghỉ ngơi
+「ききます」 có nghĩa là gì?|Nghe|Đọc|Thức dậy|Học bài
+「よみます」 có nghĩa là gì?|Đọc|Viết|Làm việc|Chơi
+「かきます」 có nghĩa là gì?|Viết|Nói|Nghỉ ngơi|Gặp gỡ
+「はなします」 có nghĩa là gì?|Nói|Mua|Học bài|Ăn
+「かいます」 có nghĩa là gì?|Mua|Ngủ|Chơi|Uống
+「ねます」 có nghĩa là gì?|Ngủ|Thức dậy|Gặp gỡ|Đi
+「おきます」 có nghĩa là gì?|Thức dậy|Làm việc|Ăn|Đến
+「はたらきます」 có nghĩa là gì?|Làm việc|Nghỉ ngơi|Uống|Trở về
+「やすみます」 có nghĩa là gì?|Nghỉ ngơi|Học bài|Đi|Xem / Nhìn
+「べんきょうします」 có nghĩa là gì?|Học bài|Chơi|Đến|Nghe
+「あそびます」 có nghĩa là gì?|Chơi|Gặp gỡ|Trở về|Đọc
+「あいます」 có nghĩa là gì?|Gặp gỡ|Ăn|Xem / Nhìn|Viết
+「おおきい」 có nghĩa là gì?|To / Lớn|Nhỏ / Bé|Nóng (thời tiết)|Ấm áp
+「ちいさい」 có nghĩa là gì?|Nhỏ / Bé|Mới|Lạnh (thời tiết)|Lạnh khi chạm vào
+「あたらしい」 có nghĩa là gì?|Mới|Cũ|Ấm áp|Thú vị
+「ふるい」 có nghĩa là gì?|Cũ|Đắt / Cao|Lạnh khi chạm vào|Nhàm chán
+「たかい」 có nghĩa là gì?|Đắt / Cao|Rẻ|Thú vị|Bận rộn
+「やすい」 có nghĩa là gì?|Rẻ|Nóng (thời tiết)|Nhàm chán|Rảnh rỗi
+「あつい」 có nghĩa là gì?|Nóng (thời tiết)|Lạnh (thời tiết)|Bận rộn|Đẹp / Sạch sẽ
+「さむい」 có nghĩa là gì?|Lạnh (thời tiết)|Ấm áp|Rảnh rỗi|Yên tĩnh
+「あたたかい」 có nghĩa là gì?|Ấm áp|Lạnh khi chạm vào|Đẹp / Sạch sẽ|To / Lớn
+「つめたい」 có nghĩa là gì?|Lạnh khi chạm vào|Thú vị|Yên tĩnh|Nhỏ / Bé
+「おもしろい」 có nghĩa là gì?|Thú vị|Nhàm chán|To / Lớn|Mới
+「つまらない」 có nghĩa là gì?|Nhàm chán|Bận rộn|Nhỏ / Bé|Cũ
+「いそがしい」 có nghĩa là gì?|Bận rộn|Rảnh rỗi|Mới|Đắt / Cao
+「ひま」 có nghĩa là gì?|Rảnh rỗi|Đẹp / Sạch sẽ|Cũ|Rẻ
+「きれい」 có nghĩa là gì?|Đẹp / Sạch sẽ|Yên tĩnh|Đắt / Cao|Nóng (thời tiết)
+「しずか」 có nghĩa là gì?|Yên tĩnh|To / Lớn|Rẻ|Lạnh (thời tiết)
+Chữ Hiragana 「あ」 đọc là gì?|a|e|ki|ko
+Chữ Hiragana 「い」 đọc là gì?|i|ki|se|na
+Chữ Hiragana 「う」 đọc là gì?|u|ko|na|ku
+Chữ Hiragana 「え」 đọc là gì?|e|su|u|te
+Chữ Hiragana 「お」 đọc là gì?|o|ta|sa|ka
+Chữ Hiragana 「か」 đọc là gì?|ka|te|tsu|chi
+Chữ Hiragana 「き」 đọc là gì?|ki|ni|no|u
+Chữ Hiragana 「く」 đọc là gì?|ku|no|ki|so
+Chữ Hiragana 「け」 đọc là gì?|ke|u|so|a
+Chữ Hiragana 「こ」 đọc là gì?|ko|ka|ni|su
+Chữ Hiragana 「さ」 đọc là gì?|sa|ke|e|ne
+Chữ Hiragana 「し」 đọc là gì?|shi|su|sa|ko
+Chữ Hiragana 「す」 đọc là gì?|su|ta|te|ni
+Chữ Hiragana 「せ」 đọc là gì?|se|te|a|ku
+Chữ Hiragana 「そ」 đọc là gì?|so|ni|ku|to
+Chữ Hiragana 「た」 đọc là gì?|ta|no|so|ka
+Chữ Hiragana 「ち」 đọc là gì?|chi|u|nu|tsu
+Chữ Hiragana 「つ」 đọc là gì?|tsu|ka|o|e
+Chữ Hiragana 「て」 đọc là gì?|te|ke|shi|so
+Chữ Hiragana 「と」 đọc là gì?|to|shi|te|i
+Chữ Hiragana 「な」 đọc là gì?|na|so|i|su
+Chữ Hiragana 「に」 đọc là gì?|ni|tsu|ke|no
+Chữ Hiragana 「ぬ」 đọc là gì?|nu|na|ta|sa
+Chữ Hiragana 「ね」 đọc là gì?|ne|no|nu|ni
+Chữ Hiragana 「の」 đọc là gì?|no|u|ka|ke
+Chữ Katakana 「ア」 đọc là gì?|a|ki|se|na
+Chữ Katakana 「イ」 đọc là gì?|i|ko|na|ku
+Chữ Katakana 「ウ」 đọc là gì?|u|su|e|te
+Chữ Katakana 「エ」 đọc là gì?|e|ta|sa|ka
+Chữ Katakana 「オ」 đọc là gì?|o|te|tsu|chi
+Chữ Katakana 「カ」 đọc là gì?|ka|ni|no|u
+Chữ Katakana 「キ」 đọc là gì?|ki|no|ku|so
+Chữ Katakana 「ク」 đọc là gì?|ku|u|so|a
+Chữ Katakana 「ケ」 đọc là gì?|ke|ka|ni|su
+Chữ Katakana 「コ」 đọc là gì?|ko|ke|e|ne
+Chữ Katakana 「サ」 đọc là gì?|sa|su|shi|ko
+Chữ Katakana 「シ」 đọc là gì?|shi|ta|te|ni
+Chữ Katakana 「ス」 đọc là gì?|su|te|a|ku
+Chữ Katakana 「セ」 đọc là gì?|se|ni|ku|to
+Chữ Katakana 「ソ」 đọc là gì?|so|no|ta|ka
+Kanji 「山」 có nghĩa cơ bản là gì?|Núi|Sông|Đất|Lớn
+Kanji 「川」 có nghĩa cơ bản là gì?|Sông|Mặt trời / Ngày|Người|Nhỏ
+Kanji 「日」 có nghĩa cơ bản là gì?|Mặt trời / Ngày|Mặt trăng / Tháng|Phụ nữ|Giữa
+Kanji 「月」 có nghĩa cơ bản là gì?|Mặt trăng / Tháng|Lửa|Đàn ông|Trên
+Kanji 「火」 có nghĩa cơ bản là gì?|Lửa|Nước|Đứa trẻ|Dưới
+Kanji 「水」 có nghĩa cơ bản là gì?|Nước|Cây|Lớn|Trái
+Kanji 「木」 có nghĩa cơ bản là gì?|Cây|Vàng / Tiền|Nhỏ|Phải
+Kanji 「金」 có nghĩa cơ bản là gì?|Vàng / Tiền|Đất|Giữa|Sách
+Kanji 「土」 có nghĩa cơ bản là gì?|Đất|Người|Trên|Xe
+Kanji 「人」 có nghĩa cơ bản là gì?|Người|Phụ nữ|Dưới|Mưa
+Kanji 「女」 có nghĩa cơ bản là gì?|Phụ nữ|Đàn ông|Trái|Năm
+Kanji 「男」 có nghĩa cơ bản là gì?|Đàn ông|Đứa trẻ|Phải|Núi
+Kanji 「子」 có nghĩa cơ bản là gì?|Đứa trẻ|Lớn|Sách|Sông
+Kanji 「大」 có nghĩa cơ bản là gì?|Lớn|Nhỏ|Xe|Mặt trời / Ngày
+Kanji 「小」 có nghĩa cơ bản là gì?|Nhỏ|Giữa|Mưa|Mặt trăng / Tháng
+Kanji 「中」 có nghĩa cơ bản là gì?|Giữa|Trên|Năm|Lửa
+Kanji 「上」 có nghĩa cơ bản là gì?|Trên|Dưới|Núi|Nước
+Kanji 「下」 có nghĩa cơ bản là gì?|Dưới|Trái|Sông|Cây
+Kanji 「左」 có nghĩa cơ bản là gì?|Trái|Phải|Mặt trời / Ngày|Vàng / Tiền
+Kanji 「右」 có nghĩa cơ bản là gì?|Phải|Sách|Mặt trăng / Tháng|Đất
+Kanji 「本」 có nghĩa cơ bản là gì?|Sách|Xe|Lửa|Người
+Kanji 「車」 có nghĩa cơ bản là gì?|Xe|Mưa|Nước|Phụ nữ
+Kanji 「雨」 có nghĩa cơ bản là gì?|Mưa|Năm|Cây|Đàn ông
+Kanji 「年」 có nghĩa cơ bản là gì?|Năm|Núi|Vàng / Tiền|Đứa trẻ
+Điền trợ từ chỉ đối tượng: りんご___たべます。|を|に|へ|で
+Điền trợ từ chỉ nơi thực hiện hành động: としょかん___べんきょうします。|で|を|に|へ
+Điền trợ từ chỉ sở hữu: これは わたし___ほんです。|の|を|に|で
+Điền trợ từ chỉ thời điểm: あさ 7じ___おきます。|に|を|へ|と
+Điền trợ từ chỉ người cùng đi: ともだち___いきます。|と|を|へ|で
+Điền trợ từ trong câu: きょうと___いきます。(Đi Kyoto)|へ|を|で|と
+Điền trợ từ: えんぴつ___かきます。(Viết bằng bút chì)|で|に|を|の
+Điền trợ từ: ここ___しゃしんを とります。(Chụp ảnh tại đây)|で|を|へ|と
+Điền trợ từ: きょうは げつようび___。(Hôm nay là thứ Hai)|です|ます|ました|ません
+Trợ từ kết thúc câu hỏi có/không thông thường là gì?|か|を|で|の
+Từ để hỏi “Ai?” là gì?|だれ|どこ|いつ|なに
+Từ để hỏi “Ở đâu?” là gì?|どこ|だれ|いつ|なぜ
+Từ để hỏi “Khi nào?” là gì?|いつ|どこ|だれ|なに
+Từ để hỏi “Cái gì?” là gì?|なに|どこ|いつ|だれ
+Từ để hỏi “Bao nhiêu tiền?” là gì?|いくら|いくつ|なんじ|なんさい
+Từ để hỏi “Mấy giờ?” là gì?|なんじ|なんさい|なんにん|いくら
+Từ để hỏi “Bao nhiêu tuổi?” là gì?|なんさい|なんじ|なんにん|いくら
+Câu “わたしは がくせいです。” có nghĩa là gì?|Tôi là sinh viên|Tôi là giáo viên|Tôi đang ngủ|Tôi đến nhà ga
+Câu “これは なんですか。” nghĩa là gì?|Đây là cái gì?|Đây là của ai?|Bây giờ mấy giờ?|Nhà ga ở đâu?
+Câu “おなまえは なんですか。” nghĩa là gì?|Bạn tên là gì?|Bạn bao nhiêu tuổi?|Bạn sống ở đâu?|Bạn làm nghề gì?
+Câu “もう いちど おねがいします。” nghĩa là gì?|Làm ơn nói lại một lần nữa|Làm ơn mở cửa|Làm ơn đợi đến ngày mai|Làm ơn đi cùng tôi
+Câu “いっしょに いきましょう。” nghĩa là gì?|Cùng đi nhé!|Đừng đi nhé!|Tôi đã đi rồi|Bạn đi lúc mấy giờ?
+Câu “ここに すわってください。” nghĩa là gì?|Hãy ngồi ở đây|Hãy đứng ngoài kia|Hãy về nhà|Hãy mở cửa
+Phủ định lịch sự hiện tại của 「たべます」 là gì?|たべません|たべました|たべます|たべませんでした
+Quá khứ lịch sự của 「いきます」 là gì?|いきました|いきません|いきませんでした|いきます
+Quá khứ phủ định lịch sự của 「のみます」 là gì?|のみませんでした|のみません|のみます|のみました
+Dạng phủ định lịch sự của 「です」 là gì?|ではありません|でした|でしょう|です
+Dạng quá khứ lịch sự của 「です」 là gì?|でした|ではありません|です|でしょう
+Ở hiện tại, cách nói “Tôi không uống nước” đúng là?|みずを のみません|みずを のみました|みずを のみます|みずを のみませんでした
+Dạng quá khứ của tính từ 「あつい」 là gì?|あつかったです|あついです|あつくないです|あついでした
+Dạng phủ định của tính từ 「たかい」 là gì?|たかくないです|たかいでした|たかかったです|たかくです
+Dạng phủ định của tính từ na 「しずか」 là gì?|しずかじゃありません|しずかくないです|しずかかったです|しずかいません
+“Một cái” (đếm đồ vật chung) nói thế nào?|ひとつ|ふたつ|みっつ|よっつ
+“Hai cái” (đếm đồ vật chung) nói thế nào?|ふたつ|ひとつ|みっつ|いつつ
+“Ba cái” (đếm đồ vật chung) nói thế nào?|みっつ|ふたつ|よっつ|むっつ
+“Một người” (cách đếm) nói thế nào?|ひとり|ふたり|さんにん|よにん
+“Hai người” (cách đếm) nói thế nào?|ふたり|ひとり|さんにん|ごにん
+“Hôm nay là thứ mấy?” trong tiếng Nhật là câu nào?|きょうは なんようびですか。|きょうは なんじですか。|これは なんですか。|あしたは どこですか。
+“Nhà ga ở đâu?” nói thế nào?|えきは どこですか。|えきは だれですか。|えきは いつですか。|えきは なんさいですか。
+“Mời vào!” nói thế nào?|どうぞ おはいりください。|どうぞ おやすみなさい。|どうぞ いただきます。|どうぞ いってきます。
+「げつようび」 là ngày nào trong tuần?|Thứ Hai|Thứ Ba|Thứ Năm|Thứ Bảy
+「かようび」 là ngày nào trong tuần?|Thứ Ba|Thứ Tư|Thứ Sáu|Chủ nhật
+「すいようび」 là ngày nào trong tuần?|Thứ Tư|Thứ Năm|Thứ Bảy|Thứ Hai
+「もくようび」 là ngày nào trong tuần?|Thứ Năm|Thứ Sáu|Chủ nhật|Thứ Ba
+「きんようび」 là ngày nào trong tuần?|Thứ Sáu|Thứ Bảy|Thứ Hai|Thứ Tư
+「どようび」 là ngày nào trong tuần?|Thứ Bảy|Chủ nhật|Thứ Ba|Thứ Năm
+「にちようび」 là ngày nào trong tuần?|Chủ nhật|Thứ Hai|Thứ Tư|Thứ Sáu
+Số đếm 「いち」 là số mấy?|1|2|4|7
+Số đếm 「に」 là số mấy?|2|3|5|8
+Số đếm 「さん」 là số mấy?|3|4|6|9
+Số đếm 「よん」 là số mấy?|4|5|7|10
+Số đếm 「ご」 là số mấy?|5|6|8|1
+Số đếm 「ろく」 là số mấy?|6|7|9|2
+Số đếm 「なな」 là số mấy?|7|8|10|3
+Số đếm 「はち」 là số mấy?|8|9|1|4
+Số đếm 「きゅう」 là số mấy?|9|10|2|5
+Số đếm 「じゅう」 là số mấy?|10|1|3|6`
 };
 
 // Browser speech engine. iOS Safari needs the first speak() within a genuine touch event.
@@ -1113,6 +1113,48 @@ function switchToBrowserVoice(text,after,reason=''){
   if(speechAvailable)say(text,after);
   else if(typeof after==='function')after();
 }
+
+// Switch to a native Japanese voice for Japanese words; keep Vietnamese
+// narration and the review-film host voice for all other speech.
+function multilingualSpeechParts(text){
+  const japanese=/「([^」]+)」|([\u3040-\u30ff\u3400-\u9fff々ー]+(?:[\s\u3000。、！？・._]*[\u3040-\u30ff\u3400-\u9fff々ー]+)*)/g;
+  const out=[];
+  function append(language,value){
+    let part=String(value||'').trim();
+    if(language==='ja')part=part.replace(/_{2,}/g,'、').replace(/_+/g,' ').trim();
+    if(!part)return;
+    if(out.length&&out[out.length-1].language===language&&out[out.length-1].text.length+part.length<360)
+      out[out.length-1].text+=' '+part;
+    else out.push({language,text:part});
+  }
+  for(const chunk of aiSpeechParts(text)){
+    let last=0;
+    japanese.lastIndex=0;
+    for(const match of chunk.matchAll(japanese)){
+      append('vi',chunk.slice(last,match.index));
+      append('ja',match[1]||match[2]);
+      last=match.index+match[0].length;
+    }
+    append('vi',chunk.slice(last));
+  }
+  return out;
+}
+function speakJapaneseOnDevice(text){
+  return new Promise(resolve=>{
+    if(!speechAvailable){resolve();return}
+    const utterance=new SpeechSynthesisUtterance(String(text).slice(0,350));
+    utterance.lang='ja-JP';utterance.rate=.94;utterance.pitch=1;utterance.volume=1;
+    const preferred=window.speechSynthesis.getVoices().find(v=>/^ja([-_]|$)/i.test(v.lang));
+    if(preferred)utterance.voice=preferred;
+    let settled=false;
+    const finish=()=>{if(settled)return;settled=true;clearTimeout(timeout);resolve()};
+    const timeout=setTimeout(finish,13000);
+    utterance.onend=finish;utterance.onerror=finish;
+    try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}
+    catch(e){finish()}
+  });
+}
+
 async function aiSpeak(text,after){
   const neural=neuralActive();
   const endpoint=neural?FREE_NEURAL_TTS_BACKEND:aiUrl();
@@ -1122,18 +1164,28 @@ async function aiSpeak(text,after){
   }
   const serial=++aiSerial;
   // Longer chunks reduce latency; never discard the final answer options.
-  const parts=aiSpeechParts(text);
+  const parts=multilingualSpeechParts(text);
   let remainingText=String(text||'');
   try{
     for(let i=0;i<parts.length;i++){
-      const part=parts[i];
-      remainingText=parts.slice(i).join(' ');
+      const part=parts[i].text;
+      const japanese=parts[i].language==='ja';
+      remainingText=parts.slice(i).map(p=>p.text).join(' ');
       if(serial!==aiSerial)return;
       aiAbort=new AbortController();
-      voiceState(neural?'🎬 Giọng review phim AI đang chuẩn bị đọc...':'✨ AI đang tạo giọng: '+part.slice(0,40));
-      const reply=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text:part,voice:$('ttsEngine').value==='edge-female'?'female':'male'}),signal:aiAbort.signal});
+      voiceState(japanese?'🇯🇵 Đang đọc từ tiếng Nhật bằng giọng Nhật...':
+        neural?'🎬 Giọng review phim AI đang chuẩn bị đọc...':'✨ AI đang tạo giọng: '+part.slice(0,40));
+      const reply=await fetch(japanese?FREE_NEURAL_TTS_BACKEND:endpoint,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text:part,voice:japanese?'japanese':
+          $('ttsEngine').value==='edge-female'?'female':'male'}),signal:aiAbort.signal});
       if(!reply.ok){
+        if(japanese&&speechAvailable){
+          voiceState('🇯🇵 Giọng Nhật Neural tạm lỗi, đang đọc bằng giọng Nhật trên điện thoại.');
+          await speakJapaneseOnDevice(part);
+          if(serial!==aiSerial)return;
+          continue;
+        }
         let msg='Máy chủ AI lỗi '+reply.status, code='';
         try{
           const info=await reply.json();
