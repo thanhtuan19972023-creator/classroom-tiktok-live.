@@ -1285,12 +1285,16 @@ async function requestGeneratedVoice(endpoint,part,voice,serial){
   }
   throw error||new Error('Giọng AI không phản hồi');
 }
-async function aiSpeak(text,after){
+async function aiSpeak(text,after,options={}){
   const neural=neuralActive();
   const endpoint=neural?FREE_NEURAL_TTS_BACKEND:aiUrl();
   if(!endpoint){switchToBrowserVoice(text,after,'unavailable');return}
   const serial=++aiSerial;
-  const parts=multilingualSpeechParts(text);
+  // Announcing winners is a Vietnamese-only narration even if a nickname
+  // contains Japanese kana/kanji or symbols. Questions remain bilingual.
+  const parts=options.forceVietnamese?
+    aiSpeechParts(text).map(part=>({language:'vi',text:part})):
+    multilingualSpeechParts(text);
   let remainingText=String(text||'');
   try{
     for(let i=0;i<parts.length;i++){
@@ -1428,16 +1432,25 @@ function processSpeech(){
   },Math.max(3200,Math.min(15000,2000+item.text.length*105)));
   try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}catch(e){done(e.message||'lỗi phát')}
 }
-function say(text,after){
-  if(aiActive()||neuralActive()){if(voiceEnabled)aiSpeak(text,after);else if(after)after();return}
+function say(text,after,options={}){
+  if(aiActive()||neuralActive()){
+    if(voiceEnabled)aiSpeak(text,after,options);
+    else if(after)after();
+    return;
+  }
   if(!voiceEnabled||!speechAvailable){if(after)after();return}
-  const parts=multilingualSpeechParts(text).slice(0,30);
+  const parts=options.forceVietnamese?
+    speechParts(text).slice(0,30).map(part=>({language:'vi',text:part})):
+    multilingualSpeechParts(text).slice(0,30);
   if(speechQueue.length>30)speechQueue.splice(0,speechQueue.length-24);
   parts.forEach((part,i)=>speechQueue.push({
     text:part.text,language:part.language,after:i===parts.length-1?after:null
   }));
   if(!parts.length){if(after)after();return}
   processSpeech();
+}
+function sayVietnamese(text,after){
+  return say(text,after,{forceVietnamese:true});
 }
 function enableSpeech(){
   if(aiActive()||neuralActive()){
@@ -1879,18 +1892,25 @@ function quizDistractors(q,records){
 function newQuestion(){window.__liveQuestionStartedAt=0;clearClocks();stopSpeaking();let scope=$('category').value;const filtered=bank.filter(q=>scope==='Tất cả'||q.category===scope);if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];selected=-1;seconds=Number($('duration').value);const distractors=quizDistractors(current,bank);
 if(!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
 options=shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));$('question').textContent=current.question;$('questionNo').textContent=count;$('boardHint').textContent='📣 Bình luận A, B, C hoặc D để trả lời!';$('timer').textContent=seconds;$('options').innerHTML='';options.forEach((answer,i)=>{let b=document.createElement('button');b.className='option';let l=document.createElement('b');l.textContent=letters[i];let s=document.createElement('span');s.textContent=answer;b.append(l,s);b.onclick=()=>selectAnswer(i);$('options').appendChild(b)});setSpeech('Câu số '+count+' ✨');status('Câu '+count+': '+current.category+'. Chạm vào đáp án hoặc bắt đầu đếm ngược.');}
+function spokenStudentName(name){
+  return String(name||'').replace(/[\u{1F000}-\u{1FAFF}]/gu,' ')
+    .replace(/[_@]+/g,' ').replace(/[\u200b-\u200f\uFE0F]/g,'')
+    .replace(/\s+/g,' ').trim().slice(0,60)||'học sinh';
+}
 function correctAnswerHonors(){
   if(correctTotalThisQuestion===0)return 'Câu này chưa có học sinh nào trả lời đúng.';
   const rankWords=['nhất','hai','ba','tư','năm'];
   const listed=fastestCorrectNames.slice(0,5).map((name,i)=>
-    'Hạng '+rankWords[i]+', em '+String(name).trim()+'.').join(' ');
+    'Hạng '+rankWords[i]+', em '+spokenStudentName(name)+'.').join(' ');
   const remaining=Math.max(0,correctTotalThisQuestion-fastestCorrectNames.length);
   return 'Cô tuyên dương '+fastestCorrectNames.length+
     ' học sinh trả lời đúng nhanh nhất. '+listed+
     (remaining>0?' Ngoài ra còn '+remaining+' học sinh trả lời đúng. Cô tuyên dương tất cả các em!':'');
 }
-function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQuizReading();stopSpeaking();locked=true;clearInterval(tick);tick=null;$('timer').classList.remove('running','time-warning');const correct=options.indexOf(current.answer);[...$('options').children].forEach((b,i)=>{if(i===correct)b.classList.add('correct');else if(i===index)b.classList.add('wrong')});if(index===correct){score+=10;$('totalScore').textContent=score;setSpeech('Chính xác! Giỏi quá! 🌟');status('Đúng rồi! Đáp án '+letters[correct]+': '+current.answer);celebrate()}else{setSpeech('Đáp án là '+letters[correct]+' nhé! 💡');status('Đáp án đúng: '+letters[correct]+' — '+current.answer)}$('boardHint').textContent='Đáp án: '+letters[correct];const answerLine=(index===correct?'Chính xác! Giỏi lắm! ':'Hết giờ suy nghĩ. ')+
-  'Đáp án đúng là '+letters[correct]+': '+spokenQuizValue(current.answer)+'. '+correctAnswerHonors();
+function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQuizReading();stopSpeaking();locked=true;clearInterval(tick);tick=null;$('timer').classList.remove('running','time-warning');const correct=options.indexOf(current.answer);[...$('options').children].forEach((b,i)=>{if(i===correct)b.classList.add('correct');else if(i===index)b.classList.add('wrong')});if(index===correct){score+=10;$('totalScore').textContent=score;setSpeech('Chính xác! Giỏi quá! 🌟');status('Đúng rồi! Đáp án '+letters[correct]+': '+current.answer);celebrate()}else{setSpeech('Đáp án là '+letters[correct]+' nhé! 💡');status('Đáp án đúng: '+letters[correct]+' — '+current.answer)}$('boardHint').textContent='Đáp án: '+letters[correct];
+  const answerLine=(index===correct?'Chính xác! Giỏi lắm! ':'Hết giờ suy nghĩ. ')+
+    'Đáp án đúng là '+letters[correct]+': '+spokenQuizValue(current.answer)+'.';
+  const honorsLine=correctAnswerHonors();
   if($('autonext').checked){
     const quizSerial=++quizReadSerial;
     let advanced=false;
@@ -1900,8 +1920,10 @@ function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQu
       nextTimer=setTimeout(()=>{newQuestion();beginQuestionReading()},1500);
     };
     nextTimer=setTimeout(()=>{stopSpeaking();goNext()},90000);
-    if(voiceEnabled)say(answerLine,goNext);else goNext();
-  }else if(voiceEnabled)say(answerLine)}function selectAnswer(i){if(!current||locked)return;selected=i;finishAnswer(i)}function countdown(){
+    if(voiceEnabled)say(answerLine,()=>sayVietnamese(honorsLine,goNext));
+    else goNext();
+  }else if(voiceEnabled)say(answerLine,()=>sayVietnamese(honorsLine));
+}function selectAnswer(i){if(!current||locked)return;selected=i;finishAnswer(i)}function countdown(){
  if(!current||locked)return;
  stopCountdownWarning();
  clearInterval(tick);
