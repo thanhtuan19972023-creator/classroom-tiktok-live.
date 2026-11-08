@@ -23,14 +23,14 @@ export default async function handler(req, res){
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method === 'GET') {
-    const configured=Boolean(process.env.ELEVENLABS_API_KEY);
+    const configured=Boolean(String(process.env.ELEVENLABS_API_KEY || '').trim());
     const model=process.env.ELEVENLABS_MODEL_ID || 'eleven_flash_v2_5';
     if (req.query?.check !== 'voice') return res.status(200).json({ready:configured,voice:'Duyên',model});
     if (!configured) return res.status(200).json({ready:false,voice_ready:false,error:'Vercel chưa có ELEVENLABS_API_KEY'});
     // Verify the exact selected voice with ElevenLabs. GET metadata does not generate speech or consume TTS credits.
     try {
       const voice=await fetch('https://api.elevenlabs.io/v1/voices/'+encodeURIComponent(currentVoiceId()),{
-        headers:{'xi-api-key':process.env.ELEVENLABS_API_KEY},
+        headers:{'xi-api-key':String(process.env.ELEVENLABS_API_KEY || '').trim()},
         signal:AbortSignal.timeout(9000)
       });
       if (!voice.ok) {
@@ -47,7 +47,7 @@ export default async function handler(req, res){
     }
   }
   if (req.method !== 'POST') return res.status(405).json({error:'Method not allowed'});
-  if (!process.env.ELEVENLABS_API_KEY)
+  if (!String(process.env.ELEVENLABS_API_KEY || '').trim())
     return res.status(503).json({error:'AI voice has not been configured'});
   let body = req.body || {};
   if (typeof body === 'string') {try {body = JSON.parse(body)} catch {return res.status(400).json({error:'Invalid JSON'})}}
@@ -68,7 +68,7 @@ export default async function handler(req, res){
     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' +
       encodeURIComponent(voiceId) + '?output_format=mp3_44100_128', {
       method:'POST',
-      headers:{'xi-api-key':process.env.ELEVENLABS_API_KEY,'Content-Type':'application/json'},
+      headers:{'xi-api-key':String(process.env.ELEVENLABS_API_KEY || '').trim(),'Content-Type':'application/json'},
       body:JSON.stringify({
         text:input,
         model_id:model,
@@ -98,6 +98,7 @@ export default async function handler(req, res){
       else if(code===429)message='ElevenLabs giới hạn yêu cầu hoặc credits (429).';
       else if(code>=500)message='Máy chủ ElevenLabs hiện gặp lỗi ('+code+').';
       if(/free|subscription|payment|voice.*not.*available|plan|tier/i.test(detailCode))message='Gói ElevenLabs hiện không cho phép dùng giọng Tuyết qua API. Kiểm tra quyền API Text to Speech, gói hiện tại và Voice ID.';
+      if(detailCode==='invalid_api_key')message='API Key ElevenLabs không hợp lệ. Hãy kiểm tra hoặc tạo khóa API mới rồi thay biến ELEVENLABS_API_KEY trên Vercel.';
       if(detailCode)message+=' Mã: '+detailCode+'.';
       return res.status(code===429?429:502).json({error:message,provider_status:code,provider_code:detailCode||undefined});
     }
