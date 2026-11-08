@@ -566,6 +566,37 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
   }
 }
 
+
+/* Top 5: pin to the left wall above the teacher's head, leaving HUD untouched. */
+#stage .class-rank{
+  top:16.0%;left:2.1%;width:15.5%;height:18.2%;
+  padding:.32cqw .35cqw;overflow:hidden;
+}
+body #stage.stage-exact .class-rank,
+body.live-safe #stage.stage-exact .class-rank{
+  top:16.0%;left:2.1%;width:15.5%;height:18.2%;
+  padding:.32cqw .35cqw;overflow:hidden;
+}
+#stage .class-rank strong,
+body #stage.stage-exact .class-rank strong{
+  display:block;white-space:nowrap;overflow:hidden;text-overflow:clip;
+  font-size:clamp(7px,1.35cqw,15px);line-height:1.12;
+  margin-bottom:.14cqw;padding:.22cqw .08cqw;
+}
+#stage #miniLeaderboard,
+body #stage.stage-exact #miniLeaderboard,
+body.live-safe #stage.stage-exact #miniLeaderboard{
+  display:grid;gap:.12cqw;margin-top:.12cqw;
+  font-size:clamp(7px,1.28cqw,14px);
+  line-height:1.14;
+}
+#stage #miniLeaderboard>div{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.16cqw;min-height:2.28cqw;padding:.12cqw 0;
+  white-space:nowrap;overflow:hidden;
+}
+#stage #miniLeaderboard b{display:block;min-width:0;max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#stage #miniLeaderboard em{flex:none;white-space:nowrap;font-size:.96em}
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
 <div id="livePresentation">
 <div id="liveLaunchBar"><button type="button" id="launchLiveFullscreen">⛶ MỞ LIVE TOÀN MÀN HÌNH – ẨN THANH WEB</button><small>Nhấn nút này trước khi chia sẻ màn hình lên TikTok. Android Chrome hỗ trợ chế độ toàn màn hình.</small></div>
