@@ -1566,7 +1566,11 @@ function beginQuestionReading(){
   // Final backstop if iOS never reports speech completion; never freeze on the speaker icon.
   quizReadWatch=setTimeout(()=>{if(serial===quizReadSerial){stopSpeaking();done()}},60000);
   if(!aiActive()&&!neuralActive()&&!speechAvailable){done();return}
-  const greet=pendingVisitorInvitation ? 'Chào mừng các bạn mới đến với lớp học 12A. Mời các em vào lớp, ngồi ngay ngắn và trả lời câu hỏi nhé! ' : '';
+  const namedVisitors=pendingVisitorNames.splice(0,3);
+  const greet=pendingVisitorInvitation ?
+    (namedVisitors.length ?
+      'Chào mừng '+namedVisitors.map(n=>'em '+n).join(' và ')+' đến với lớp học 12A. Mời các em vào lớp, ngồi ngay ngắn và trả lời câu hỏi nhé! ' :
+      'Chào mừng các bạn mới đến với lớp học 12A. Mời các em vào lớp, ngồi ngay ngắn và trả lời câu hỏi nhé! ') : '';
   pendingVisitorInvitation=false;
   const instruction='Các bạn chú ý! Đáp án chỉ được tính sau khi đọc xong câu hỏi và đồng hồ bắt đầu đếm ngược. ';
   speakFromTap(greet+instruction+fullQuestionNarration(),done);
@@ -1711,10 +1715,15 @@ function notify(kind,text,spoken,readAloud=true){
   status(window.__classroomRealEvent?'TikTok LIVE thật: '+text:'Mô phỏng: '+text+'. Chưa kết nối TikTok LIVE thật.');
 }
 let pendingVisitorInvitation=false,lastVisitorNotice=0;
+const pendingVisitorNames=[];
 function onLiveVisitor(name,identityKey=''){
-  // TikTok sends a huge MEMBER event stream. Welcome the group once at the
-  // start of an upcoming question, never interrupt the question or Top 5.
+  // Batch arrivals so the teacher can greet real names before the next quiz
+  // without interrupting narration or endlessly announcing MEMBER events.
   if(document.getElementById('liveAutoJoin')?.checked)ensureStudent(name,0,identityKey);
+  const spoken=spokenStudentName(name);
+  if(spoken!=='học sinh' && !pendingVisitorNames.includes(spoken) && pendingVisitorNames.length<3){
+    pendingVisitorNames.push(spoken);
+  }
   if(Date.now()-lastVisitorNotice>=45000){
     lastVisitorNotice=Date.now();
     pendingVisitorInvitation=true;
@@ -1783,7 +1792,7 @@ function showRoundCorrectCount(){
 }
 window.classroomLiveEvent=function(event){
   if(!event||typeof event!=='object')return;
-  const displayName=event.nickname||event.displayName||event.name||event.handle||'Học sinh';
+  const displayName=liveTikTokName(event);
   const id=event.userId||event.handle||event.uniqueId||'';
   window.__classroomRealEvent=true;
   try{
@@ -2081,16 +2090,30 @@ function initNamePronunciations(){
     status('Đã lưu '+customNamePronunciations.size+' cách đọc tên. Áp dụng từ lần tuyên dương tiếp theo.');
   };
 }
+// Verified by the streamer from the LIVE viewer profile. Use the stable
+// account handle as a fallback if the unofficial connector lacks a nickname.
+const VERIFIED_TIKTOK_NAMES={qngasieucutedeth:'Quỳnh Nga'};
+function liveTikTokName(event){
+  const handle=nameSpeechKey(event?.handle||event?.uniqueId||'').replace(/\s+/g,'');
+  const verified=VERIFIED_TIKTOK_NAMES[handle];
+  if(verified)return verified;
+  const supplied=String(event?.nickname||event?.displayName||event?.name||'').trim();
+  if(supplied && !/^(học sinh|hoc sinh|student|unknown|user)$/i.test(supplied))return supplied;
+  const fallback=String(event?.handle||event?.uniqueId||'').trim();
+  return fallback||'Học sinh';
+}
 function spokenStudentName(name){
   const clean=String(name||'').normalize('NFC')
     .replace(/[\u{1F000}-\u{1FAFF}]/gu,' ')
     .replace(/[\u200b-\u200f\uFE0F]/g,'')
+    .replace(/[♡♥❤❣💗💖💕💞💓💘]/g,' ')
     .replace(/[_@.]+/g,' ')
     .replace(/([A-Za-z])([0-9])/g,'$1 $2')
     .replace(/\s+/g,' ').trim().slice(0,75);
   const key=nameSpeechKey(clean);
   if(!key)return 'học sinh';
   if(customNamePronunciations.has(key))return customNamePronunciations.get(key);
+  if(key==='quynh nga'||key==='qngasieucutedeth')return 'Quỳnh Nga';
   // Separate the syllables of Hương Nhỏ so Edge TTS keeps the ngang tone.
   if(key==='huong nho'||key==='huongnho')return 'Hương, Nhỏ';
   return clean.split(/\s+/).map(word=>{
