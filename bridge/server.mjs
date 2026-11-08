@@ -56,16 +56,34 @@ function info() {
   };
 }
 function providerRateLimited(error=''){
-  return /rate[_ -]*limit|too many connections|retry.after|429/i.test(String(error||''));
+  return /rate[_ -]*limit|too many connections|retry.after|429/i.test(String(error?.message||error||''));
+}
+function rateLimitDelay(error){
+  const nested=error?.exception||error?.cause||null;
+  const message=String(error?.message||nested?.message||error||'');
+  if(!providerRateLimited(message))return 0;
+  // tiktok-live-connector 2.5.0 exposes retryAfter in milliseconds and
+  // resetTime as a Unix timestamp in milliseconds, when supplied by signer.
+  const until=Number(error?.resetTime??nested?.resetTime);
+  if(Number.isFinite(until)&&until>Date.now())return Math.min(48*60*60*1000,until-Date.now());
+  const retryAfter=Number(error?.retryAfter??nested?.retryAfter);
+  if(Number.isFinite(retryAfter)&&retryAfter>0)
+    return Math.min(48*60*60*1000,retryAfter);
+  // Account-wide daily cap is not an hourly throttle. The provider does not
+  // give a confirmed reset timestamp in this error, so retry conservatively.
+  if(/rate_limit_account_day/i.test(message))return 24*60*60*1000;
+  if(/rate_limit_account_hour/i.test(message))return 60*60*1000;
+  return 60*60*1000;
+}
+function applyRateLimit(error){
+  const delay=rateLimitDelay(error);
+  if(!delay)return;
+  rateLimitUntil=Math.max(rateLimitUntil,Date.now()+delay);
+  console.warn('TikTok signing provider rate limited. Hold connections until',new Date(rateLimitUntil).toISOString());
 }
 function noteConnectionFailure(error=''){
   consecutiveFailures=Math.min(7,consecutiveFailures+1);
-  if(providerRateLimited(error)){
-    // The upstream error explicitly states rate_limit_account_hour.
-    // Leave the provider alone for an hour rather than hammering its connection API.
-    rateLimitUntil=Math.max(rateLimitUntil,Date.now()+60*60*1000);
-    console.warn('TikTok connection rate limited; backing off until',new Date(rateLimitUntil).toISOString());
-  }
+  applyRateLimit(error);
 }
 function planReconnect(waitMs=30000) {
   if(!username || reconnectTimer || restartingConnection || state==='connected' || state==='connecting')return;
@@ -118,8 +136,7 @@ async function monitorLiveRoom(){
   }catch(e){
     if(conn===currentConnection){
       lastRoomProbeError=trim(e?.exception?.message||e?.message||e,160);
-      if(providerRateLimited(lastRoomProbeError))
-        rateLimitUntil=Math.max(rateLimitUntil,Date.now()+60*60*1000);
+      applyRateLimit(e);
     }
     // TikTok's discovery endpoint can be rate-limited; a single failed check
     // is not proof that an existing LIVE stopped. Keep the working socket.
@@ -171,7 +188,7 @@ async function connectLive() {
   conn.on(ControlEvent.ERROR,err=>{
     if(currentConnection!==conn)return;
     lastError=trim(err?.exception?.message||err?.message||err,240);
-    if(providerRateLimited(lastError))rateLimitUntil=Math.max(rateLimitUntil,Date.now()+60*60*1000);
+    applyRateLimit(err);
     console.warn('TikTok connection reported an error:',lastError);
   });
   conn.on(ControlEvent.DISCONNECTED,()=>{
@@ -198,7 +215,7 @@ async function connectLive() {
     state=/offline|not.live|user.offline|room.is.not.live/i.test(lastError)?'offline':'error';
     roomId=null;connectedSince=null;
     console.warn('TikTok LIVE connection not ready:',lastError);
-    noteConnectionFailure(lastError);
+    noteConnectionFailure(error);
     planReconnect(state==='offline'?120000:60000);
   }
 }
