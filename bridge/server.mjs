@@ -25,7 +25,26 @@ function displayUser(evt) {
   const handle = trim(user.uniqueId || user.displayId || user.nickname || 'unknown',65);
   const nickname = trim(user.nickname || user.displayId || user.uniqueId || 'Học sinh',55);
   const userId = trim(user.id || user.userId || user.userIdStr || handle,100);
-  return { userId, handle, nickname };
+  // Extract a profile picture already delivered with the LIVE message.
+  // Never fetch a profile separately: TikTok's signer is rate-limited.
+  const candidates=[
+    user.avatarThumb?.urlList?.[0],user.avatarThumb?.url_list?.[0],
+    user.avatarMedium?.urlList?.[0],user.avatarMedium?.url_list?.[0],
+    user.avatarLarge?.urlList?.[0],user.avatarLarge?.url_list?.[0],
+    user.profilePictureUrl,user.userDetails?.profilePictureUrls?.[0],
+    evt?.profilePictureUrl
+  ];
+  let avatarUrl='';
+  for(const candidate of candidates){
+    if(typeof candidate!=='string'||candidate.length>1800)continue;
+    try{
+      const parsed=new URL(candidate);
+      if(parsed.protocol==='https:'&&!parsed.username&&!parsed.password){
+        avatarUrl=parsed.href;break;
+      }
+    }catch{}
+  }
+  return { userId, handle, nickname, avatarUrl };
 }
 function pushEvent(type, evt, details={}) {
   // Provider-level duplicate events are possible, especially around reconnects.

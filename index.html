@@ -619,7 +619,7 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 /* LIVE Top 5: placed in the empty pink area ABOVE the classroom.
    The actual scoreboard is outside #stage, so it cannot obscure the teacher,
    question, total-score HUD or any classroom element. */
-#livePresentation > .class-rank{
+#liveTopRow > .class-rank{
  position:relative;top:auto;left:auto;right:auto;bottom:auto;
  box-sizing:border-box;z-index:40;
  display:flex;flex-direction:column;flex:none;
@@ -630,33 +630,33 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
  box-shadow:0 4px 16px #8944774d, inset 0 0 0 1px #ffffff;
  overflow:hidden;font-size:13px;
 }
-#livePresentation > .class-rank > strong{
+#liveTopRow > .class-rank > strong{
  display:block;flex:none;margin:0 0 3px;padding:3px 8px;
  background:linear-gradient(90deg,#f34b92,#b82c88);color:#fff;
  border-radius:9px;text-align:center;white-space:nowrap;
  font-size:clamp(12px,1.7vw,16px);line-height:1.15;
 }
-#livePresentation > .class-rank #miniLeaderboard{
+#liveTopRow > .class-rank #miniLeaderboard{
  display:grid;flex:1 1 0%;height:auto;min-height:0;width:100%;
  grid-template-rows:repeat(5,minmax(0,1fr));gap:0;margin:0;
  font-size:clamp(11px,1.6vw,15px);line-height:1.08;
 }
-#livePresentation > .class-rank #miniLeaderboard > div{
+#liveTopRow > .class-rank #miniLeaderboard > div{
  display:flex;justify-content:space-between;align-items:center;
  gap:8px;min-height:0;max-height:100%;padding:0 4px;
  border-bottom:1px solid #e9cbdc;overflow:hidden;
 }
-#livePresentation > .class-rank #miniLeaderboard b{
+#liveTopRow > .class-rank #miniLeaderboard b{
  display:block;flex:1 1 0;min-width:0;max-width:none;
  color:#502747;font-size:var(--rank-name-size,inherit);
  line-height:1.05;white-space:normal;overflow-wrap:anywhere;
  overflow:hidden;text-overflow:clip;
 }
-#livePresentation > .class-rank #miniLeaderboard em{
+#liveTopRow > .class-rank #miniLeaderboard em{
  display:block;flex:none;color:#b52e72;font-style:normal;font-weight:950;
  white-space:nowrap;font-size:clamp(10px,1.55vw,14px);text-align:right;line-height:1.1;
 }
-#livePresentation > .class-rank .rank-waiting{opacity:.57}
+#liveTopRow > .class-rank .rank-waiting{opacity:.57}
 /* The original reference photo has an obsolete leaderboard painted into it.
    Mask only that rectangle with wall-like tones to prevent a second Top 5. */
 #stage.stage-exact #bakedRankCover{
@@ -694,23 +694,23 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 #stage.stage-exact #bakedRankCover b.minus{color:#ca3455}
 
 @media(max-width:700px) and (orientation:portrait){
- #livePresentation > .class-rank{
+ #liveTopRow > .class-rank{
    width:min(92vw,455px);height:clamp(132px,15.5svh,170px);
    margin:8px auto 10px;padding:4px 7px;
  }
- #livePresentation > .class-rank #miniLeaderboard{font-size:clamp(10px,2.75vw,14px)}
- #livePresentation > .class-rank #miniLeaderboard em{font-size:clamp(10px,2.5vw,13px)}
+ #liveTopRow > .class-rank #miniLeaderboard{font-size:clamp(10px,2.75vw,14px)}
+ #liveTopRow > .class-rank #miniLeaderboard em{font-size:clamp(10px,2.5vw,13px)}
 }
 #livePresentation:fullscreen{flex-direction:column;gap:1dvh}
-#livePresentation:fullscreen > .class-rank{
+#livePresentation:fullscreen #liveTopRow > .class-rank{
  width:min(89vw,530px);height:clamp(118px,14dvh,172px);
  margin:0!important;padding:4px 8px!important;
 }
-#livePresentation:fullscreen > .class-rank > strong{font-size:clamp(12px,1.7dvh,17px)}
-#livePresentation:fullscreen > .class-rank #miniLeaderboard{font-size:clamp(10px,1.5dvh,15px)}
-#livePresentation:fullscreen > .class-rank #miniLeaderboard em{font-size:clamp(10px,1.45dvh,14px)}
+#livePresentation:fullscreen #liveTopRow > .class-rank > strong{font-size:clamp(12px,1.7dvh,17px)}
+#livePresentation:fullscreen #liveTopRow > .class-rank #miniLeaderboard{font-size:clamp(10px,1.5dvh,15px)}
+#livePresentation:fullscreen #liveTopRow > .class-rank #miniLeaderboard em{font-size:clamp(10px,1.45dvh,14px)}
 @media(display-mode:fullscreen),(display-mode:standalone){
- body.live-safe #livePresentation > .class-rank{
+ body.live-safe #livePresentation #liveTopRow > .class-rank{
    width:min(89vw,530px);height:clamp(118px,14dvh,172px);
    margin:0 auto 1dvh!important;
  }
@@ -750,10 +750,96 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 #stage.stage-exact .question.rebus-question .rebus-art{
  font-size:clamp(25px,5.7cqw,58px);line-height:1.1;
 }
+
+/* Answered correctly: show that commenter's own TikTok avatar for exactly
+   five seconds, beside the existing Top 5 in the pink LIVE capture zone. */
+#liveTopRow{
+ position:relative;z-index:40;box-sizing:border-box;
+ display:flex;align-items:stretch;gap:7px;
+ width:min(98%,580px);height:clamp(146px,17svh,195px);
+ margin:8px auto 12px;flex:0 0 auto;
+}
+#liveTopRow > .class-rank{
+ position:relative;inset:auto;top:auto;left:auto;
+ flex:1 1 0%;width:auto!important;min-width:0;
+ height:100%!important;margin:0!important;
+}
+#liveTopRow > .class-rank #miniLeaderboard b{
+ line-height:1.08;
+}
+#liveTopRow > .class-rank #miniLeaderboard em{font-size:clamp(9px,1.45vw,13px)}
+#correctAvatarCard{
+ box-sizing:border-box;flex:0 0 22%;width:22%;min-width:0;
+ height:100%;margin:0; padding:5px 2px;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ gap:3px;overflow:hidden;
+ border:2px solid #ff9fca;border-radius:14px;
+ background:linear-gradient(135deg,#fff6d9,#ffe6f3);
+ box-shadow:0 4px 12px #9a47704d;
+ opacity:0;visibility:hidden;transform:scale(.92);
+ transition:opacity .18s ease,transform .18s ease,visibility .18s;
+ pointer-events:none;
+}
+#correctAvatarCard.is-visible{
+ opacity:1;visibility:visible;transform:scale(1);
+}
+#correctAvatarCard > strong{
+ color:#ae3372;font-size:clamp(8px,1.15vw,11px);
+ line-height:1.1;text-align:center;white-space:nowrap;
+}
+#correctAvatarImage,#correctAvatarInitials{
+ box-sizing:border-box;
+ width:min(66%,67px);aspect-ratio:1;flex:0 1 auto;
+ min-height:0;object-fit:cover;border-radius:50%;
+ border:2px solid #ed8cbb;background:#ffe2ee;
+ box-shadow:0 1px 7px #ba639b66;
+}
+#correctAvatarImage[hidden],#correctAvatarInitials[hidden]{display:none!important}
+#correctAvatarInitials{
+ display:grid;place-items:center;color:#a32e77;
+ font-size:clamp(14px,3vw,26px);font-weight:1000;
+}
+#correctAvatarName{
+ color:#542c4d;font-size:clamp(9px,1.25vw,12px);
+ line-height:1.1;font-weight:950;text-align:center;
+ max-width:100%;padding:0 2px;overflow-wrap:anywhere;
+ overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;
+ -webkit-line-clamp:2;line-clamp:2;
+}
+@media(max-width:700px) and (orientation:portrait){
+ #liveTopRow{
+  width:98vw;height:clamp(132px,15.5svh,170px);
+  margin:8px auto 10px;gap:6px;
+ }
+ #liveTopRow > .class-rank{padding:4px 5px}
+ #correctAvatarCard{padding:3px 1px;gap:3px}
+ #correctAvatarCard > strong{font-size:clamp(7px,2vw,10px)}
+ #correctAvatarImage,#correctAvatarInitials{width:min(72%,65px)}
+ #correctAvatarName{font-size:clamp(9px,2.35vw,11px)}
+ #liveTopRow > .class-rank #miniLeaderboard em{font-size:clamp(9px,2.2vw,12px)}
+}
+#livePresentation:fullscreen #liveTopRow{
+ width:min(96vw,600px);height:clamp(118px,14dvh,172px);
+ margin:0!important;
+}
+@media(display-mode:fullscreen),(display-mode:standalone){
+ body.live-safe #livePresentation #liveTopRow{
+  width:min(96vw,600px);height:clamp(118px,14dvh,172px);
+  margin:0 auto 1dvh!important;
+ }
+}
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
 <div id="livePresentation">
 <div id="liveLaunchBar"><button type="button" id="launchLiveFullscreen">⛶ MỞ LIVE TOÀN MÀN HÌNH – ẨN THANH WEB</button><small>Nhấn nút này trước khi chia sẻ màn hình lên TikTok. Android Chrome hỗ trợ chế độ toàn màn hình.</small></div>
+<div id="liveTopRow">
 <aside class="class-rank" aria-label="Bảng xếp hạng Top 5"><strong>🏆 TOP 5 HỌC SINH</strong><div id="miniLeaderboard">Chưa có lượt đúng</div></aside>
+<div id="correctAvatarCard" role="status" aria-live="polite" aria-atomic="true" aria-label="Học sinh vừa trả lời đúng">
+ <strong>🌟 TRẢ LỜI ĐÚNG</strong>
+ <img id="correctAvatarImage" referrerpolicy="no-referrer" alt="" hidden>
+ <div id="correctAvatarInitials" aria-hidden="true">✓</div>
+ <span id="correctAvatarName"></span>
+</div>
+</div>
 <main id="stage" aria-label="Lớp học vui vẻ 12A"><img id="exactReferenceImage" alt="" aria-hidden="true"><div id="bakedRankCover" aria-label="Thể lệ cộng trừ điểm">
   <strong>📋 THỂ LỆ</strong>
   <div><span>Nhanh nhất</span><b>+10đ</b></div>
@@ -2087,7 +2173,54 @@ function onGift(name,giftName,identityKey=''){
   setTimeout(()=>pop.remove(),1500);celebrate();
   notify('🎁',name+' đã tặng '+giftName+' (+10 điểm)','Cảm ơn em '+spokenStudentName(name)+' đã tặng quà. Mời em vào lớp!');
 }
-function onComment(name,comment,identityKey=''){
+// Lightweight profile image from the existing TikTok comment payload.
+// No extra TikTok API requests, lookups or signing calls are made.
+const correctAvatarQueue=[];
+let correctAvatarTimer=null,correctAvatarShowing=false,correctAvatarSerial=0;
+function safeProfileImageUrl(url){
+ try{
+  if(typeof url!=='string'||url.length>1800)return '';
+  const parsed=new URL(url);
+  return parsed.protocol==='https:'&&!parsed.username&&!parsed.password?parsed.href:'';
+ }catch{return ''}
+}
+function renderNextCorrectAvatar(){
+ if(correctAvatarShowing||!correctAvatarQueue.length)return;
+ const notice=correctAvatarQueue.shift();
+ const card=document.getElementById('correctAvatarCard');
+ const photo=document.getElementById('correctAvatarImage');
+ const fallback=document.getElementById('correctAvatarInitials');
+ const label=document.getElementById('correctAvatarName');
+ if(!card||!photo||!fallback||!label)return;
+ correctAvatarShowing=true;
+ const serial=++correctAvatarSerial;
+ const name=String(notice.name||'Học sinh').trim().slice(0,50);
+ label.textContent=name;
+ fallback.textContent=name.split(/\s+/).filter(Boolean).slice(0,2).map(word=>[...word][0]).join('').toUpperCase()||'✓';
+ fallback.hidden=false;photo.hidden=true;
+ photo.onload=null;photo.onerror=null;photo.removeAttribute('src');
+ const src=safeProfileImageUrl(notice.url);
+ if(src){
+   photo.onerror=()=>{if(serial===correctAvatarSerial){photo.hidden=true;fallback.hidden=false}};
+   photo.onload=()=>{if(serial===correctAvatarSerial){photo.hidden=false;fallback.hidden=true}};
+   photo.src=src;
+ }
+ card.classList.add('is-visible');
+ correctAvatarTimer=setTimeout(()=>{
+  if(serial!==correctAvatarSerial)return;
+  card.classList.remove('is-visible');
+  correctAvatarShowing=false;correctAvatarTimer=null;
+  // Let the fade-out finish before the next correct student appears.
+  setTimeout(renderNextCorrectAvatar,200);
+ },5000);
+}
+function showCorrectAvatar(name,avatarUrl=''){
+ // Small bounded queue prevents unbounded overlays during large LIVE bursts.
+ if(correctAvatarQueue.length>=12)correctAvatarQueue.shift();
+ correctAvatarQueue.push({name,url:avatarUrl});
+ renderNextCorrectAvatar();
+}
+function onComment(name,comment,identityKey='',avatarUrl=''){
   name=String(name||'Học sinh mới').trim().slice(0,25)||'Học sinh mới';
   comment=String(comment||'').trim().slice(0,150);
   if(!comment){status('Hãy nhập nội dung bình luận.',true);return}
@@ -2114,6 +2247,7 @@ function onComment(name,comment,identityKey=''){
     if(fastestCorrectNames.length<5)fastestCorrectNames.push(name);
     showRoundCorrectCount();
     saveCorrectRank();renderStudents();celebrate();
+    showCorrectAvatar(name,avatarUrl);
     // Do not pronounce each correct name immediately: announce Top 5 together after the timer.
     notify('✅',name+' trả lời đúng '+letter+' · hạng '+rank+' · +'+earned+' điểm','',false);
   }else{
@@ -2171,7 +2305,7 @@ window.classroomLiveEvent=function(event){
         return;
       }
       showRealCommentStatus('✅ Đã nhận '+realCommentSeen+' bình luận thật. Mới nhất: '+who+' — '+raw+'. Đang chấm đáp án.');
-      onComment(displayName,raw,id);
+      onComment(displayName,raw,id,event.avatarUrl||'');
     }
   }finally{window.__classroomRealEvent=false;}
 };
