@@ -113,10 +113,10 @@ async function restartConnection(reason='refresh TikTok room'){
 }
 // Periodically discover the creator's CURRENT room, not merely whether a
 // websocket claims to be open. An old connection can outlive a LIVE restart.
-async function monitorLiveRoom(){
+async function monitorLiveRoom(force=false){
   if(!username||restartingConnection||roomProbeInFlight||Date.now()<rateLimitUntil)return;
   if(state!=='connected'){
-    if(state!=='connecting'&&!reconnectTimer)planReconnect(state==='offline'?120000:45000);
+    if(state!=='connecting'&&!reconnectTimer)planReconnect(state==='offline'?600000:120000);
     return;
   }
   const conn=currentConnection;
@@ -124,6 +124,10 @@ async function monitorLiveRoom(){
     await restartConnection('stale or closed TikTok socket');
     return;
   }
+  // A healthy TikTok websocket already streams incoming events. Avoid
+  // repeated room discovery during active sessions: it may consume the
+  // third-party connector/signing service's daily allocation.
+  if(!force && lastEventAt && Date.now()-lastEventAt<5*60*1000)return;
   roomProbeInFlight=true;lastRoomCheckedAt=Date.now();
   try{
     const discovered=trim(await conn.fetchRoomId(username),80);
@@ -142,11 +146,14 @@ async function monitorLiveRoom(){
     // is not proof that an existing LIVE stopped. Keep the working socket.
   }finally{roomProbeInFlight=false}
 }
-const liveRoomMonitor=setInterval(()=>{void monitorLiveRoom()},60000);
+// Only a low-frequency safety check: socket stream-end/disconnect events
+// are the primary signal. The button can still check immediately on request.
+const liveRoomMonitor=setInterval(()=>{void monitorLiveRoom()},15*60*1000);
 liveRoomMonitor.unref?.();
 async function connectLive() {
   if(!username || restartingConnection || state==='connecting' || state==='connected')return;
   if(Date.now()<rateLimitUntil){planReconnect(rateLimitUntil-Date.now());return;}
+  const wasOffline=state==='offline';
   state='connecting';lastError='';nextRetryAt=0;
   // Only one TikTok socket per account: close the old room before creating the next.
   const old=currentConnection;
@@ -183,7 +190,7 @@ async function connectLive() {
     lastError='Phiên LIVE trước đã kết thúc. Đang đợi phòng LIVE mới.';
     consecutiveFailures=0;
     console.log('TikTok LIVE ended. Waiting for the next room.');
-    planReconnect(120000);
+    planReconnect(10*60*1000);
   });
   conn.on(ControlEvent.ERROR,err=>{
     if(currentConnection!==conn)return;
@@ -196,9 +203,19 @@ async function connectLive() {
     const ended=state==='offline';
     state=ended?'offline':'disconnected';roomId=null;connectedSince=null;
     if(!ended)noteConnectionFailure(lastError);
-    planReconnect(ended?120000:45000);
+    planReconnect(ended?10*60*1000:2*60*1000);
   });
   try{
+    // While offline, first check LIVE status rather than opening another
+    // signed WebSocket for a room that does not exist yet.
+    if(wasOffline){
+      const live=await conn.fetchIsLive(username);
+      if(currentConnection!==conn)return;
+      if(!live){
+        state='offline';lastError='Tài khoản chưa phát LIVE. Đang đợi phòng mới.';
+        planReconnect(10*60*1000);return;
+      }
+    }
     const connected=await conn.connect();
     if(currentConnection!==conn){try{await conn.disconnect()}catch{}return;}
     if(!conn.isConnected){
@@ -216,7 +233,7 @@ async function connectLive() {
     roomId=null;connectedSince=null;
     console.warn('TikTok LIVE connection not ready:',lastError);
     noteConnectionFailure(error);
-    planReconnect(state==='offline'?120000:60000);
+    planReconnect(state==='offline'?10*60*1000:2*60*1000);
   }
 }
 const allowedOrigins=new Set([
@@ -351,7 +368,14 @@ function handler(req,res){
     }
     // Do not restart a healthy stream when pressing the game's connect button.
     if(state==='connected'&&currentConnection?.isConnected){
-      if(!roomProbeInFlight)void monitorLiveRoom();
+      // Connected viewers may tap repeatedly; never let that create unlimited
+      // room lookups and exhaust the signing provider's daily allowance.
+      if(Date.now()-lastManualRestart<2*60*1000){
+        res.writeHead(202,headers);
+        res.end('{"ok":true,"state":"connected","message":"Đã kết nối. Tạm tránh kiểm tra phòng lặp lại."}');return;
+      }
+      lastManualRestart=Date.now();
+      if(!roomProbeInFlight)void monitorLiveRoom(true);
       res.writeHead(202,headers);res.end('{"ok":true,"state":"checking_room"}');return;
     }
     if(state==='connecting'||restartingConnection){
