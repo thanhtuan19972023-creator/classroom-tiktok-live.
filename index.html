@@ -571,48 +571,49 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
    background photo. The old board is hidden underneath the live board, with
    no exposed strips at its right/bottom. It starts BELOW the score HUD and
    ends ABOVE the teacher's hair. */
+/* Fit the complete Top 5 inside the original fixed panel. Percentage
+   heights plus a separate title previously pushed rank 4/5 out of view.
+   Flex with min-height:0 reserves five equal rows after the title. */
 #stage .class-rank,
 body #stage.stage-exact .class-rank,
 body.live-safe #stage.stage-exact .class-rank{
   top:18.6%;left:2%;width:22.0%;height:16.8%;
-  padding:.3cqw .4cqw;
-  overflow:hidden;z-index:23;
-  background:#fff9f0;
-  border:.28cqw solid #f45aa3;
+  box-sizing:border-box;display:flex;flex-direction:column;
+  padding:.25cqw .36cqw;overflow:hidden;z-index:23;
+  background:#fff9f0;border:.28cqw solid #f45aa3;
   border-radius:1.15cqw;
   box-shadow:0 0 0 .27cqw #fff7ed,0 .3cqw .65cqw #a44c8080;
 }
-#stage .class-rank strong,
-body #stage.stage-exact .class-rank strong{
-  display:block;white-space:nowrap;overflow:hidden;
-  font-size:clamp(8px,1.34cqw,17px);line-height:1.12;
-  margin-bottom:.13cqw;padding:.21cqw .1cqw;
+#stage .class-rank > strong,
+body #stage.stage-exact .class-rank > strong{
+  display:block;flex:0 0 auto;white-space:nowrap;overflow:hidden;
+  font-size:clamp(8px,1.32cqw,17px);line-height:1.05;
+  margin:0 0 .1cqw;padding:.18cqw .08cqw;
 }
-/* All five ranks are always visible; each name has two display lines.
-   Scale unusually long TikTok handles instead of truncating them. */
 #stage #miniLeaderboard,
 body #stage.stage-exact #miniLeaderboard,
 body.live-safe #stage.stage-exact #miniLeaderboard{
+  flex:1 1 0%;width:100%;height:auto;min-height:0;
   display:grid;grid-template-rows:repeat(5,minmax(0,1fr));
-  height:calc(100% - 2.2cqw);min-height:0;
-  gap:.06cqw;margin-top:.06cqw;
-  font-size:clamp(8px,1.24cqw,15px);line-height:1.06;
+  gap:0;margin:0;
+  font-size:clamp(8px,1.21cqw,15px);line-height:1;
 }
 #stage #miniLeaderboard>div{
   display:grid;grid-template-columns:minmax(0,1fr) auto;
-  align-items:center;column-gap:.15cqw;min-height:0;
-  padding:0 .02cqw;overflow:hidden;
+  align-items:center;gap:.12cqw;min-height:0;max-height:100%;
+  padding:0 .03cqw;margin:0;overflow:hidden;
   border-bottom:1px solid #e7d0d7;
 }
 #stage #miniLeaderboard b{
-  display:block;min-width:0;width:100%;max-width:none;
-  font-size:var(--rank-name-size,inherit);
+  display:block;min-width:0;max-width:none;width:100%;
+  font-size:var(--rank-name-size,inherit);font-weight:900;
   white-space:normal;overflow-wrap:anywhere;word-break:normal;
-  line-height:1.04;overflow:visible;text-overflow:clip;
+  line-height:1.04;overflow:hidden;text-overflow:clip;
 }
 #stage #miniLeaderboard em{
-  display:block;min-width:0;white-space:pre-line;flex:none;
-  text-align:right;font-size:.79em;line-height:1.06;
+  display:block;min-width:0;font-style:normal;font-weight:900;
+  white-space:pre-line;flex:none;text-align:right;
+  font-size:.8em;line-height:1.02;
 }
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
 <div id="livePresentation">
