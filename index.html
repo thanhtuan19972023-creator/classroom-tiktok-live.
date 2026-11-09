@@ -689,6 +689,41 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
    margin:0 auto 1dvh!important;
  }
 }
+
+/* New pictorial clue category: illustrated emoji/rebus instead of exposing
+   the answer in a sentence. Fits the original photo-backed blackboard. */
+#stage .chalk-top .subject-chip[data-category="Đuổi hình bắt chữ"]{display:none}
+#stage .chalk-top:has(.subject-chip[data-category="Đuổi hình bắt chữ"].is-current) .subject-chip:not(.is-current){display:none}
+#stage .chalk-top .subject-chip[data-category="Đuổi hình bắt chữ"].is-current{
+  display:inline-flex;background:linear-gradient(130deg,#c35cdf,#782db8);font-size:clamp(8px,1.5cqw,18px)
+}
+#stage .question.rebus-question{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ gap:.25cqw;min-height:0;overflow:hidden;
+ padding:.3cqw .45cqw;text-align:center;
+}
+#stage .question.rebus-question .rebus-title{
+ display:block;color:#fff5c3;font-size:clamp(9px,1.65cqw,18px);
+ font-weight:1000;line-height:1.03;letter-spacing:.08em;
+ text-shadow:0 .1cqw .2cqw #12392d;
+}
+#stage .question.rebus-question .rebus-art{
+ display:block;width:100%;font-family:"Apple Color Emoji","Noto Color Emoji","Segoe UI Emoji",sans-serif;
+ color:#fff;font-size:clamp(26px,6.5cqw,67px);line-height:1.08;
+ font-weight:500;white-space:nowrap;letter-spacing:.12cqw;
+ filter:drop-shadow(0 .2cqw .22cqw #001c17);
+}
+#stage.stage-exact .question.rebus-question{
+ display:flex;flex-direction:column;gap:0;justify-content:center;
+ background:linear-gradient(90deg,#0e5e48,#0a5741,#0c4b3c);
+ overflow:hidden;padding:0 .35cqw;
+}
+#stage.stage-exact .question.rebus-question .rebus-title{
+ font-size:clamp(8px,1.45cqw,16px);line-height:1.1;
+}
+#stage.stage-exact .question.rebus-question .rebus-art{
+ font-size:clamp(25px,5.7cqw,58px);line-height:1.1;
+}
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
 <div id="livePresentation">
 <div id="liveLaunchBar"><button type="button" id="launchLiveFullscreen">⛶ MỞ LIVE TOÀN MÀN HÌNH – ẨN THANH WEB</button><small>Nhấn nút này trước khi chia sẻ màn hình lên TikTok. Android Chrome hỗ trợ chế độ toàn màn hình.</small></div>
@@ -699,7 +734,7 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 <div class="ref-subtitle">💗 Đố vui kiến thức · Học mà chơi · Chơi mà học 💗</div>
 <div class="ref-live-demo">● LIVE DEMO</div>
 <div class="stage-decoration"></div><div class="stage-top"><span class="live">🎮 GAME LIVE</span></div>
-<div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 Tổng <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top"><span class="ref-chalkicon">📚</span><span class="subject-chip" data-category="Lịch sử">Lịch sử</span><span class="subject-chip" data-category="Văn học">Văn học</span><span class="subject-chip" data-category="Khoa học">Khoa học</span><span class="subject-chip" data-category="Địa lý">Địa lý</span><span class="subject-chip" data-category="Toán học">Toán</span><span class="subject-chip" data-category="Tiếng Nhật">Nhật</span><span id="topic" class="current-topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
+<div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 Tổng <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top"><span class="ref-chalkicon">📚</span><span class="subject-chip" data-category="Lịch sử">Lịch sử</span><span class="subject-chip" data-category="Văn học">Văn học</span><span class="subject-chip" data-category="Khoa học">Khoa học</span><span class="subject-chip" data-category="Địa lý">Địa lý</span><span class="subject-chip" data-category="Toán học">Toán</span><span class="subject-chip" data-category="Tiếng Nhật">Nhật</span><span class="subject-chip" data-category="Đuổi hình bắt chữ">🧩 Bắt chữ</span><span id="topic" class="current-topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
 <img class="teacher-art teacher-new" src="data:image/webp;base64,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" alt="Cô giáo Duyên áo dài trắng hoa anh đào" draggable="false"></div><div class="teachbubble" id="teacherSpeech">Các em chọn đáp án nhé! 💖</div><div class="teacherdesk"><div class="desk-top"></div><div class="desk-front">BÀN GIÁO VIÊN</div></div><div class="floorstripe"></div><div class="students" id="students"></div><div id="confetti"></div><div id="giftZone"></div></main><button type="button" id="exitLiveFullscreen">✕ Thoát toàn màn hình</button></div>
 <section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" type="button" id="liveSafeBtn" aria-pressed="false">📱 Khung LIVE gọn</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button><button class="gold" id="referencePickerBtn" type="button">🖼️ Dùng ảnh mẫu gốc</button><button class="secondary" id="referenceResetBtn" type="button" hidden>↩ Giao diện cũ</button><input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/*" id="referenceUpload" hidden></div><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Ấm áp, tự nhiên</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="edge-male" selected>🎬 Review phim AI – Nam trầm (miễn phí)</option><option value="edge-female">🎬 Review phim AI – Nữ tự nhiên (miễn phí)</option><option value="browser">🔊 Giọng tiếng Việt trên điện thoại (dự phòng)</option><option value="ai">🎙️ Giọng nữ miền Nam (ElevenLabs)</option></select></div><details class="field pronunciation-settings"><summary style="cursor:pointer;font-weight:800">🗣️ Chỉnh cách phát âm tên học sinh</summary>
 <label for="namePronunciationOverrides">Tên TikTok = Cách đọc (mỗi dòng một tên)</label>
@@ -714,7 +749,8 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 <label><input class="category-check" type="checkbox" value="Địa lý" checked> Địa lý</label>
 <label><input class="category-check" type="checkbox" value="Toán học" checked> Toán học</label>
 <label><input class="category-check" type="checkbox" value="Tiếng Nhật" checked> Tiếng Nhật</label>
-</div><small id="categorySummary">Đang dùng tất cả 6 chủ đề</small></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
+<label><input class="category-check" type="checkbox" value="Đuổi hình bắt chữ" checked> 🧩 Đuổi hình bắt chữ</label>
+</div><small id="categorySummary">Đang dùng tất cả 7 chủ đề</small></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
 
 <section class="panel" id="realLivePanel">
   <h2>📡 Kết nối TikTok LIVE thật</h2>
@@ -1291,7 +1327,86 @@ Số đếm 「ろく」 là số mấy?|6|7|9|2
 Số đếm 「なな」 là số mấy?|7|8|10|3
 Số đếm 「はち」 là số mấy?|8|9|1|4
 Số đếm 「きゅう」 là số mấy?|9|10|2|5
-Số đếm 「じゅう」 là số mấy?|10|1|3|6`
+Số đếm 「じゅう」 là số mấy?|10|1|3|6`,
+'Đuổi hình bắt chữ':`🐃 🎻|Đàn gảy tai trâu|Chọi trâu|Trâu đi cày|Trâu ăn cỏ
+🐟 ➡️ 🐉|Cá chép hóa rồng|Cá vượt thác|Rồng phun lửa|Cá về biển
+🐸 🪣|Ếch ngồi đáy giếng|Ếch gọi mưa|Ếch nhảy cao|Ếch bắt sâu
+🐈 🐭|Mèo bắt chuột|Mèo trèo cây|Chuột chạy đồng|Chó đuổi mèo
+🐝 🍯|Mật ong|Ong bướm|Đường phèn|Mật mía
+🌙 🍯|Tuần trăng mật|Ngắm trăng|Đêm trăng|Bánh trung thu
+🌈 ☁️|Cầu vồng|Mây ngũ sắc|Trời trong|Mưa phùn
+💧 🧊|Nước đá|Nước biển|Nước mắm|Nước ngọt
+🌋 🔥|Núi lửa|Núi băng|Động đất|Lũ quét
+🧊 🏔️|Núi băng|Núi lửa|Núi đá|Đồi cát
+🌞 🌧️|Nắng mưa|Mưa phùn|Nắng gắt|Gió mùa
+🦁 👑|Vua sư tử|Chúa tể rừng xanh|Hổ dữ|Voi chúa
+🔥 🏠|Cháy nhà|Xây nhà|Nhà mới|Sửa nhà
+🌻 ☀️|Hoa hướng dương|Hoa sen|Hoa cúc|Hoa hồng
+🐔 🥚|Gà đẻ trứng|Trứng vịt|Trứng rán|Gà gáy sáng
+🌳 🍎|Cây táo|Cây cam|Cây mận|Cây lê
+🌴 🥥|Cây dừa|Cây cau|Cây chuối|Cây đa
+🍯 🍋|Mật ong chanh|Nước cam|Trà sữa|Chanh muối
+🎣 🐟|Câu cá|Nuôi cá|Bán cá|Cá về nguồn
+🦷 🪥|Đánh răng|Nhổ răng|Khám răng|Sâu răng
+👂 🎵|Nghe nhạc|Hát karaoke|Đọc sách|Vẽ tranh
+🛏️ 🌙|Ngủ đêm|Ngủ trưa|Thức khuya|Dậy sớm
+💨 🪁|Thả diều|Thả chim|Thổi sáo|Chạy đua
+⚽ 🥅|Đá bóng|Bóng chuyền|Cầu lông|Bóng rổ
+🎂 🎁|Sinh nhật|Lễ cưới|Tân gia|Giáng sinh
+🚗 ⛽|Đổ xăng|Rửa xe|Sửa xe|Gửi xe
+🚑 🏥|Xe cứu thương|Xe cứu hỏa|Xe buýt|Xe tải
+🧑‍🍳 🍲|Đầu bếp|Thợ may|Bác sĩ|Thầy giáo
+👷 🧱|Thợ xây|Kỹ sư điện|Thợ sửa xe|Thợ mộc
+🚒 🔥|Chữa cháy|Xây nhà|Phun nước|Nấu cơm
+🔑 🚪|Mở cửa|Khóa xe|Đóng sách|Mở mắt
+🧠 💡|Ý tưởng|Trí nhớ|Sáng mắt|Đọc hiểu
+🎨 🖼️|Vẽ tranh|Chụp ảnh|Làm thơ|Gấp giấy
+🛒 🥬|Đi chợ|Đi học|Đi chơi|Đi làm
+🍚 🥢|Ăn cơm|Ăn mì|Ăn sáng|Ăn chay
+📺 🎬|Xem phim|Nghe nhạc|Đi xem kịch|Xem bóng đá
+🧳 ✈️|Du lịch|Đi bộ|Nghỉ học|Chuyển nhà
+🚂 🚉|Nhà ga|Bến xe|Sân bay|Bến cảng
+🚌 🏫|Xe đưa đón học sinh|Xe tải|Tàu điện|Taxi
+👩‍🌾 🌾|Nông dân|Ngư dân|Thợ điện|Thợ xây
+🐢 🐇 🏁|Rùa và thỏ|Mèo và chuột|Sói và cừu|Gà và vịt
+🎨 🐍 🦶|Vẽ rắn thêm chân|Rắn mất đầu|Đầu voi đuôi chuột|Mèo mả gà đồng
+🐘 👀 🧑‍🦯|Thầy bói xem voi|Cưỡi voi|Voi uống nước|Voi về rừng
+🪨 💦 🕳️|Nước chảy đá mòn|Có công mài sắt|Đá ném ao bèo|Đầu sóng ngọn gió
+🐜 🍚 🏠|Kiến tha lâu đầy tổ|Kiến bò miệng chén|Ăn như tằm|Có chí thì nên
+🐦 🪺|Chim về tổ|Cá về biển|Voi về rừng|Hổ về núi
+👀 ❤️|Yêu từ cái nhìn đầu tiên|Tình bạn|Nhớ nhà|Thương người
+🔥 🧊|Nóng lạnh|Nước đá|Trời rét|Cháy bỏng
+💗 🪨|Trái tim sắt đá|Tim đập nhanh|Đá quý|Đá lạnh
+👀 🦅|Mắt diều hâu|Mắt kính|Mắt cá chân|Chim sơn ca
+👑 🏰|Cung điện|Lâu đài ma|Nhà tranh|Nhà tù
+🪺 🥚 🐣|Trứng nở thành chim|Gà về tổ|Đẻ trứng vàng|Chim sa cá lặn
+🐟 🌊|Cá biển|Cá đồng|Cá cảnh|Cá sông
+⛅ ☔|Mưa bóng mây|Mưa đá|Mưa phùn|Mưa rào
+🌄 ☕|Cà phê sáng|Uống trà chiều|Ăn khuya|Cơm tối
+⏰ 🌄|Dậy sớm|Ngủ nướng|Thức khuya|Đi làm muộn
+🌏 🤝|Hòa bình thế giới|Trái Đất nóng lên|Du lịch toàn cầu|Cứu hộ
+🍌 🐒|Khỉ ăn chuối|Khỉ trèo cây|Chuối chín cây|Động vật hoang dã
+🎁 🎄|Quà Giáng sinh|Quà sinh nhật|Quà cưới|Quà tân gia
+⛈️ ⚡|Sấm sét|Giông bão|Mưa đá|Lốc xoáy
+👨‍⚕️ 🩺|Khám bệnh|Bán thuốc|Tập thể dục|Dạy học
+👨‍👩‍👧 🏠|Gia đình|Hàng xóm|Bạn bè|Học sinh
+🚀 🌙|Bay lên Mặt Trăng|Khám phá sao Hỏa|Vệ tinh nhân tạo|Du hành biển sâu
+🪄 🎩|Ảo thuật|Phép toán|Hóa học|Mỹ thuật
+👕 🧼|Giặt quần áo|May áo|Bán áo|Phơi áo
+🍜 🌙|Ăn khuya|Ăn sáng|Ăn trưa|Ăn tiệc
+🐕 🦴|Chó gặm xương|Chó giữ nhà|Chó săn|Chó chạy nhanh
+🐦 🎵|Chim hót|Chim lồng|Chim bay|Chim trốn
+🎮 👥|Chơi game cùng bạn|Đọc sách cùng nhau|Đi xem phim|Chạy bộ
+🌊 🏖️|Bãi biển|Hồ nước|Đảo hoang|Bãi cát sa mạc
+🎒 📚|Cặp sách|Giá sách|Đọc báo|Tủ sách
+🌳 🍃|Cây xanh|Cây khô|Cây chết|Gỗ mục
+📚 💡|Học hỏi|Đi làm|Thư giãn|Lười biếng
+🦋 🌸|Bướm đậu hoa|Ong lấy mật|Chim về tổ|Bướm phá kén
+🚴 💨|Đạp xe nhanh|Chạy bộ|Lái ô tô|Đi bộ
+🌧️ ☂️|Che mưa|Che nắng|Đi bơi|Tắm biển
+🔔 🏫|Trống trường|Chuông báo thức|Chuông cửa|Nhạc chuông
+☀️ 🌅|Bình minh|Hoàng hôn|Đêm khuya|Trăng tròn
+🌇 🌙|Hoàng hôn|Bình minh|Đêm trắng|Đêm giao thừa`
 };
 
 // Browser speech engine. iOS Safari needs the first speak() within a genuine touch event.
@@ -1716,7 +1831,9 @@ function spokenQuizValue(value){
 }
 function fullQuestionNarration(){
   if(!current)return '';
-  const question=spokenQuizValue(current.question);
+  // Never spell out pictograms: students must identify the picture themselves.
+  const isRebus=current.category==='Đuổi hình bắt chữ';
+  const question=isRebus?'Các em nhìn hình trên bảng và đoán cụm từ hoặc thành ngữ tương ứng.':spokenQuizValue(current.question);
   const punctuation=/[.!?]$/.test(question)?'':'?';
   const jpOptions=current.category==='Tiếng Nhật'&&
     options.every(a=>/[\u3040-\u30ff\u3400-\u9fff]/.test(String(a)));
@@ -2037,19 +2154,23 @@ try{const saved=JSON.parse(localStorage.getItem('classroom_correct_v5')||'[]');i
   person.correct=correct;person.points=Number.isFinite(Number(entry.points))&&entry.points!==undefined?
     Math.max(-100000000,Math.min(100000000,Number(entry.points))):correct*10;}}catch(e){}
 function saveCorrectRank(){try{localStorage.setItem('classroom_correct_v5',JSON.stringify(students.filter(s=>s.correct>0||s.points!==0).map(s=>({name:s.name,correct:s.correct,points:s.points,tiktokId:s.tiktokId||null}))))}catch(e){}}
-const ALL_SUBJECTS=['Lịch sử','Văn học','Khoa học','Địa lý','Toán học','Tiếng Nhật'];
+const ALL_SUBJECTS=['Lịch sử','Văn học','Khoa học','Địa lý','Toán học','Tiếng Nhật','Đuổi hình bắt chữ'];
+const OLD_ALL_SUBJECTS=ALL_SUBJECTS.filter(t=>t!=='Đuổi hình bắt chữ');
 const CATEGORY_STORE='classroom12a_checked_topics_v1';
 function activeSubjects(){return [...document.querySelectorAll('#categoryGroup .category-check:checked')].map(el=>el.value)}
 function saveCategoryChoices(){
  const selected=activeSubjects();
  try{localStorage.setItem(CATEGORY_STORE,JSON.stringify(selected))}catch(e){}
  const el=document.getElementById('categorySummary');
- if(el)el.textContent=selected.length===ALL_SUBJECTS.length?'Đang dùng tất cả 6 chủ đề':'Đã chọn '+selected.length+' chủ đề: '+selected.join(', ');
+ if(el)el.textContent=selected.length===ALL_SUBJECTS.length?'Đang dùng tất cả '+ALL_SUBJECTS.length+' chủ đề':'Đã chọn '+selected.length+' chủ đề: '+selected.join(', ');
 }
 function initCategoryChoices(){
  let saved=null;
  try{saved=JSON.parse(localStorage.getItem(CATEGORY_STORE)||'null')}catch(e){}
- const selected=Array.isArray(saved)?saved.filter(v=>ALL_SUBJECTS.includes(v)):ALL_SUBJECTS;
+ let selected=Array.isArray(saved)?saved.filter(v=>ALL_SUBJECTS.includes(v)):ALL_SUBJECTS;
+ // People who previously ticked all 6 subjects also receive the new 7th.
+ if(Array.isArray(saved)&&saved.length===OLD_ALL_SUBJECTS.length&&
+    OLD_ALL_SUBJECTS.every(subject=>saved.includes(subject)))selected=ALL_SUBJECTS;
  const choices=selected.length?selected:ALL_SUBJECTS;
  document.querySelectorAll('#categoryGroup .category-check').forEach(el=>{
    el.checked=choices.includes(el.value);
@@ -2248,7 +2369,17 @@ function quizDistractors(q,records){
 
 function newQuestion(){window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();stopSpeaking();const selectedSubjects=activeSubjects();const filtered=bank.filter(q=>selectedSubjects.includes(q.category));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const distractors=quizDistractors(current,bank);
 if(!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
-options=shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));$('question').textContent=current.question;$('questionNo').textContent=count;$('boardHint').textContent='📣 Bình luận A, B, C hoặc D để trả lời!';$('timer').textContent=seconds;$('options').innerHTML='';options.forEach((answer,i)=>{let b=document.createElement('button');b.className='option';let l=document.createElement('b');l.textContent=letters[i];let s=document.createElement('span');s.textContent=answer;b.append(l,s);b.onclick=()=>selectAnswer(i);$('options').appendChild(b)});setSpeech('Câu số '+count+' ✨');status('Câu '+count+': '+current.category+'. Chạm vào đáp án hoặc bắt đầu đếm ngược.');}
+options=shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));const questionEl=$('question');
+ questionEl.classList.toggle('rebus-question',current.category==='Đuổi hình bắt chữ');
+ questionEl.replaceChildren();
+ if(current.category==='Đuổi hình bắt chữ'){
+   const hint=document.createElement('span'),art=document.createElement('span');
+   hint.className='rebus-title';hint.textContent='🧩 ĐUỔI HÌNH BẮT CHỮ';
+   art.className='rebus-art';art.textContent=current.question;
+   art.setAttribute('role','img');art.setAttribute('aria-label','Hình gợi ý: '+current.question);
+   questionEl.append(hint,art);
+ }else{questionEl.textContent=current.question}
+ $('questionNo').textContent=count;$('boardHint').textContent='📣 Bình luận A, B, C hoặc D để trả lời!';$('timer').textContent=seconds;$('options').innerHTML='';options.forEach((answer,i)=>{let b=document.createElement('button');b.className='option';let l=document.createElement('b');l.textContent=letters[i];let s=document.createElement('span');s.textContent=answer;b.append(l,s);b.onclick=()=>selectAnswer(i);$('options').appendChild(b)});setSpeech('Câu số '+count+' ✨');status('Câu '+count+': '+current.category+'. Chạm vào đáp án hoặc bắt đầu đếm ngược.');}
 // Spoken names are separate from the TikTok IDs, displayed names and seats.
 const NAME_ACCENTS={
   tuan:'Tuấn',duyen:'Duyên',huong:'Hương',nho:'Nhỏ',nguyen:'Nguyễn',
