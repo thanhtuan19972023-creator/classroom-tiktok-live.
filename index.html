@@ -667,6 +667,32 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
  box-shadow:inset 0 0 .9cqw #ffffff60;
 }
 #bakedRankCover{display:none}
+
+/* The beige rectangle printed into the original classroom picture is now
+   a compact scoring-rules plaque. Top 5 remains in the pink area above. */
+#stage.stage-exact #bakedRankCover{
+  box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-around;
+  padding:.45cqw .5cqw;gap:.12cqw;
+  border:.24cqw solid #f6c682;border-radius:.65cqw;
+  background:linear-gradient(160deg,#fff6dd 0%,#fff0cf 100%);
+  box-shadow:0 .17cqw .65cqw #8b5b4660,inset 0 0 0 .18cqw #fff9e8;
+  color:#673a36;font-size:clamp(8px,1.24cqw,16px);
+  font-weight:850;line-height:1.07;
+  overflow:hidden;
+}
+#stage.stage-exact #bakedRankCover strong{
+  display:block;text-align:center;white-space:nowrap;
+  color:#9e3268;font-size:clamp(9px,1.65cqw,18px);
+  margin-bottom:.08cqw;line-height:1.12;
+}
+#stage.stage-exact #bakedRankCover div{
+  display:flex;justify-content:space-between;align-items:center;gap:.2cqw;
+  min-width:0;white-space:nowrap;
+}
+#stage.stage-exact #bakedRankCover span{min-width:0;flex:1}
+#stage.stage-exact #bakedRankCover b{flex:none;color:#127e4e;font-weight:1000}
+#stage.stage-exact #bakedRankCover b.minus{color:#ca3455}
+
 @media(max-width:700px) and (orientation:portrait){
  #livePresentation > .class-rank{
    width:min(94vw,470px);height:clamp(136px,17svh,185px);
@@ -728,7 +754,14 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 <div id="livePresentation">
 <div id="liveLaunchBar"><button type="button" id="launchLiveFullscreen">⛶ MỞ LIVE TOÀN MÀN HÌNH – ẨN THANH WEB</button><small>Nhấn nút này trước khi chia sẻ màn hình lên TikTok. Android Chrome hỗ trợ chế độ toàn màn hình.</small></div>
 <aside class="class-rank" aria-label="Bảng xếp hạng Top 5"><strong>🏆 TOP 5 HỌC SINH</strong><div id="miniLeaderboard">Chưa có lượt đúng</div></aside>
-<main id="stage" aria-label="Lớp học vui vẻ 12A"><img id="exactReferenceImage" alt="" aria-hidden="true"><div id="bakedRankCover" aria-hidden="true"></div><img id="photoTeacherBoardRepair" alt="" aria-hidden="true"><img id="photoTeacherHand" alt="" aria-hidden="true"><div id="photoSeatLabels" aria-hidden="true"></div>
+<main id="stage" aria-label="Lớp học vui vẻ 12A"><img id="exactReferenceImage" alt="" aria-hidden="true"><div id="bakedRankCover" aria-label="Thể lệ cộng trừ điểm">
+  <strong>📋 THỂ LỆ</strong>
+  <div><span>Nhanh nhất</span><b>+10đ</b></div>
+  <div><span>Nhanh nhì</span><b>+5đ</b></div>
+  <div><span>Nhanh ba</span><b>+2đ</b></div>
+  <div><span>Trả lời sai</span><b class="minus">−1đ</b></div>
+  <div><span>Quà tặng</span><b>+10đ</b></div>
+</div><img id="photoTeacherBoardRepair" alt="" aria-hidden="true"><img id="photoTeacherHand" alt="" aria-hidden="true"><div id="photoSeatLabels" aria-hidden="true"></div>
 <div class="ref-backdrop" aria-hidden="true"><div class="ref-books leftbooks">📚</div><div class="ref-books rightbooks">📚</div><div class="ref-window"></div><div class="ref-blossoms blossom-one">🌸🌸🌸</div><div class="ref-blossoms blossom-two">🌸🌸</div><div class="ref-plants leftplant">🌿</div><div class="ref-plants rightplant">🌿</div><div class="ref-globe">🌎</div><div class="ref-flowerpot">🌸</div></div>
 <div class="ref-title" aria-label="Lớp học vui vẻ 12A"><div class="ref-cap">🎓</div><strong>🏫 LỚP HỌC VUI VẺ <span>• 12A</span></strong></div>
 <div class="ref-subtitle">💗 Đố vui kiến thức · Học mà chơi · Chơi mà học 💗</div>
