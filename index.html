@@ -588,27 +588,31 @@ body #stage.stage-exact .class-rank strong{
   font-size:clamp(8px,1.34cqw,17px);line-height:1.12;
   margin-bottom:.13cqw;padding:.21cqw .1cqw;
 }
+/* All five ranks are always visible; each name has two display lines.
+   Scale unusually long TikTok handles instead of truncating them. */
 #stage #miniLeaderboard,
 body #stage.stage-exact #miniLeaderboard,
 body.live-safe #stage.stage-exact #miniLeaderboard{
-  display:grid;gap:.07cqw;margin-top:.08cqw;
-  font-size:clamp(8px,1.34cqw,15px);
-  line-height:1.09;
+  display:grid;grid-template-rows:repeat(5,minmax(0,1fr));
+  height:calc(100% - 2.2cqw);min-height:0;
+  gap:.06cqw;margin-top:.06cqw;
+  font-size:clamp(8px,1.24cqw,15px);line-height:1.06;
 }
 #stage #miniLeaderboard>div{
   display:grid;grid-template-columns:minmax(0,1fr) auto;
-  align-items:center;column-gap:.14cqw;
-  min-height:2.42cqw;padding:.08cqw .03cqw;
-  overflow:visible;border-bottom:1px solid #e7d0d7;
+  align-items:center;column-gap:.15cqw;min-height:0;
+  padding:0 .02cqw;overflow:hidden;
+  border-bottom:1px solid #e7d0d7;
 }
 #stage #miniLeaderboard b{
-  display:block;min-width:0;max-width:none;
+  display:block;min-width:0;width:100%;max-width:none;
+  font-size:var(--rank-name-size,inherit);
   white-space:normal;overflow-wrap:anywhere;word-break:normal;
-  line-height:1.06;
+  line-height:1.04;overflow:visible;text-overflow:clip;
 }
 #stage #miniLeaderboard em{
-  min-width:0;white-space:nowrap;flex:none;
-  text-align:right;font-size:.82em;
+  display:block;min-width:0;white-space:pre-line;flex:none;
+  text-align:right;font-size:.79em;line-height:1.06;
 }
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
 <div id="livePresentation">
@@ -2031,12 +2035,19 @@ function renderStudents(){
   const full=$('correctLeaderboard');if(full){full.replaceChildren();if(!ranked.length){const msg=document.createElement('p');msg.textContent='Chưa có ai trả lời đúng. Hãy thử bình luận A, B, C hoặc D.';full.appendChild(msg)}
     ranked.forEach((s,i)=>{const row=document.createElement('div'),place=document.createElement('span'),name=document.createElement('strong'),correct=document.createElement('em');
       row.className='rank-row';place.className='rank-medal';place.textContent=['🥇','🥈','🥉'][i]||String(i+1);name.textContent=s.name;correct.textContent=s.correct+' câu đúng · '+s.points+' điểm';row.append(place,name,correct);full.appendChild(row)})}
-  const panel=$('miniLeaderboard');if(panel){panel.replaceChildren();if(!ranked.length){panel.textContent='Chưa có lượt đúng'}
+  const panel=$('miniLeaderboard');if(panel){panel.replaceChildren();
     for(let i=0;i<5;i++){
       const student=ranked[i];
       const line=document.createElement('div'),name=document.createElement('b'),correct=document.createElement('em');
-      name.textContent=(i+1)+'. '+(student?student.name:'Chờ bạn');
-      correct.textContent=student?(student.correct+' ✓ · '+student.points+'đ'):'—';
+      const fullName=student?String(student.name):'Chờ bạn';
+      name.textContent=(i+1)+'. '+fullName;
+      name.title=fullName;
+      // Preserve the entire account name, even when it is a long TikTok handle.
+      const letters=[...fullName].length;
+      if(letters>46)name.style.setProperty('--rank-name-size','.76cqw');
+      else if(letters>34)name.style.setProperty('--rank-name-size','.9cqw');
+      else if(letters>25)name.style.setProperty('--rank-name-size','1.04cqw');
+      correct.textContent=student?(student.correct+' ✓\n'+student.points+'đ'):'—';
       if(!student)line.className='rank-waiting';
       line.append(name,correct);panel.appendChild(line);
     }}
