@@ -828,6 +828,33 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
   margin:0 auto 1dvh!important;
  }
 }
+
+/* Every ten completed questions: visible only between rounds. */
+#tenQuestionAwards[hidden]{display:none!important}
+#tenQuestionAwards{
+ box-sizing:border-box;position:absolute;left:50%;top:55%;z-index:90;
+ transform:translate(-50%,-50%);width:min(94%,460px);
+ max-height:76dvh;overflow:auto;
+ display:flex;flex-direction:column;align-items:stretch;gap:5px;
+ padding:13px 13px;border:3px solid #f4ba58;outline:3px solid #fff5d7;
+ border-radius:18px;background:linear-gradient(155deg,#fff9e7,#ffebf4 75%,#fff4df);
+ box-shadow:0 12px 45px #351f53b5,0 0 24px #ffde8fa1;
+ text-align:center;color:#513248;
+}
+#tenQuestionAwards .award-confetti{font-size:24px;line-height:1.1}
+#tenQuestionAwards h3{margin:0 0 4px;font-size:clamp(15px,3.8vw,23px);color:#b42b77;line-height:1.16}
+#tenQuestionAwards p{margin:0;line-height:1.3;overflow-wrap:anywhere}
+#awardCount{font-size:clamp(13px,3.4vw,17px);font-weight:900}
+#awardNames{font-size:clamp(11px,2.8vw,14px)}
+#tenQuestionAwards .award-heading{color:#a86b31;font-size:clamp(12px,3vw,16px)}
+#awardWinners{list-style:none;padding:0;margin:0;display:grid;gap:4px}
+#awardWinners li{display:flex;align-items:center;justify-content:space-between;
+ gap:6px;background:#fffdf6;border-radius:8px;border:1px solid #f3d5aa;
+ padding:5px 8px;text-align:left;font-weight:900;font-size:clamp(11px,2.8vw,14px)}
+#awardWinners li span{min-width:0;overflow-wrap:anywhere}
+#awardWinners li b{color:#bb3877;white-space:nowrap}
+#tenQuestionAwards small{color:#88677b;font-size:11px}
+#livePresentation:fullscreen #tenQuestionAwards{width:min(93vw,470px);max-height:80dvh}
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
 <div id="livePresentation">
 <div id="liveLaunchBar"><button type="button" id="launchLiveFullscreen">⛶ MỞ LIVE TOÀN MÀN HÌNH – ẨN THANH WEB</button><small>Nhấn nút này trước khi chia sẻ màn hình lên TikTok. Android Chrome hỗ trợ chế độ toàn màn hình.</small></div>
@@ -840,6 +867,15 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
  <span id="correctAvatarName"></span>
 </div>
 </div>
+<section id="tenQuestionAwards" aria-label="Điểm danh và khen thưởng mỗi 10 câu" hidden>
+ <div class="award-confetti">🏆 ✨ 🎉</div>
+ <h3 id="awardTitle">🌟 ĐIỂM DANH & TUYÊN DƯƠNG</h3>
+ <p id="awardCount"></p>
+ <p id="awardNames"></p>
+ <strong class="award-heading">🏅 HỌC SINH TIÊU BIỂU</strong>
+ <ol id="awardWinners"></ol>
+ <small>Tuyên dương không cộng thêm điểm.</small>
+</section>
 <main id="stage" aria-label="Lớp học vui vẻ 12A"><img id="exactReferenceImage" alt="" aria-hidden="true"><div id="bakedRankCover" aria-label="Thể lệ cộng trừ điểm">
   <strong>📋 THỂ LỆ</strong>
   <div><span>Nhanh nhất</span><b>+10đ</b></div>
@@ -2034,6 +2070,7 @@ function ensureStudent(name,points,identityKey=''){
     student={name,points,correct:0,id:Date.now()+Math.random(),tiktokId:key||null};
     students.push(student); // Insertion order is the stable seat assignment.
   }
+  markTenQuestionAttendance(student);
   renderStudents();
   const tile=[...$('students').children].find(el=>el.dataset.id===String(student.id));
   if(tile){tile.classList.add('active');setTimeout(()=>tile.classList.remove('active'),1300)}
@@ -2313,7 +2350,61 @@ window.classroomLiveEvent=function(event){
 const $=id=>document.getElementById(id);const core=Object.entries(DATA).flatMap(([category,lines])=>lines.trim().split('\n').map(line=>{const [question,answer,...distractors]=line.split('|');return {question,answer,category,distractors}}));let extras=[];try{extras=JSON.parse(localStorage.getItem('classroom_extra')||'[]')}catch(e){};let bank=[...core,...extras];$('bankCount').textContent='('+bank.length+' câu)';let count=0,current=null,options=[],selected=-1,locked=false,seconds=20,tick=null,nextTimer=null,score=0,answeredThisQuestion=new Set(),correctTotalThisQuestion=0,fastestCorrectNames=[],students=[];
 // Grace period collects TikTok events that were posted before the clock hit zero
 // but reached the game on the next Render poll. Never score later timestamps.
-let roundGraceActive=false,roundGraceTimer=null,honorSpeechActive=false; // Every pictured seat is permanent; real TikTok viewers replace "Chờ bạn" labels, not student artwork.
+let roundGraceActive=false,roundGraceTimer=null,honorSpeechActive=false;
+// Record people who actually joined, commented, or gifted in this block.
+// Never count old saved student records as present in today's roll call.
+const tenQuestionAttendance=new Map();
+let lastTenQuestionAward=0,awardHideTimer=null;
+function markTenQuestionAttendance(student){
+ if(student?.id!=null)tenQuestionAttendance.set(String(student.id),student);
+}
+function hideTenQuestionAwards(){
+ clearTimeout(awardHideTimer);awardHideTimer=null;
+ const el=document.getElementById('tenQuestionAwards');if(el)el.hidden=true;
+}
+function showTenQuestionAwards(){
+ if(count<10||count%10!==0||count===lastTenQuestionAward)return '';
+ lastTenQuestionAward=count;
+ const present=[...tenQuestionAttendance.values()];
+ const ranked=present.slice().sort((a,b)=>
+  Number(b.points||0)-Number(a.points||0)||
+  Number(b.correct||0)-Number(a.correct||0)||
+  String(a.name).localeCompare(String(b.name),'vi'));
+ const top=ranked.filter(s=>Number(s.correct)>0||Number(s.points)>0).slice(0,5);
+ const box=$('tenQuestionAwards'),list=$('awardWinners');
+ if(!box||!list)return '';
+ hideTenQuestionAwards();
+ $('awardTitle').textContent='🌟 ĐIỂM DANH & TUYÊN DƯƠNG · CÂU '+count;
+ $('awardCount').textContent='📋 Có mặt: '+present.length+' học sinh tham gia';
+ $('awardNames').textContent=present.length?
+  'Điểm danh: '+present.slice(0,12).map(s=>s.name).join(' · ')+
+   (present.length>12?' · và '+(present.length-12)+' bạn khác':''):
+  'Chưa có học sinh tham gia trong 10 câu vừa rồi.';
+ list.replaceChildren();
+ if(!top.length){
+  const li=document.createElement('li');li.textContent='Cùng cố gắng ở lượt tiếp theo nhé!';list.append(li);
+ }else for(const [i,student] of top.entries()){
+  const li=document.createElement('li'),name=document.createElement('span'),pts=document.createElement('b');
+  name.textContent=['🥇 ','🥈 ','🥉 ','🏅 ','🏅 '][i]+student.name;
+  pts.textContent=student.points+'đ · '+student.correct+' câu đúng';
+  li.append(name,pts);list.append(li);
+ }
+ box.hidden=false;
+ awardHideTimer=setTimeout(hideTenQuestionAwards,60000);
+ liveLog('🏅','Hoàn thành '+count+' câu. Điểm danh '+present.length+' học sinh, tuyên dương '+top.length+' bạn.');
+ const spoken=present.slice(0,6).map(s=>spokenStudentName(s.name));
+ const rollCall=spoken.length?'Điểm danh có: '+spoken.join(', ')+
+   (present.length>6?', và '+(present.length-6)+' bạn khác.':'.'):
+   'Chưa có học sinh điểm danh lần này.';
+ const praise=top.slice(0,3).map((s,i)=>
+  ['Dẫn đầu','Hạng nhì','Hạng ba'][i]+' là em '+spokenStudentName(s.name)+', '+s.points+' điểm.'
+ ).join(' ');
+ return 'Cả lớp chú ý! Chúng ta vừa hoàn thành '+count+' câu hỏi. '+
+  rollCall+' Bây giờ là phần tuyên dương học sinh tiêu biểu. '+
+  (praise||'Mời cả lớp cố gắng hơn trong lượt câu hỏi tiếp theo.')+
+  ' Xin chúc mừng và cảm ơn tất cả các em đã tham gia!';
+}
+ // Every pictured seat is permanent; real TikTok viewers replace "Chờ bạn" labels, not student artwork.
 // Only correct answers are persisted; simulated gifts and total game points remain separate.
 try{const saved=JSON.parse(localStorage.getItem('classroom_correct_v5')||'[]');if(Array.isArray(saved))for(const entry of saved.slice(0,500)){if(!entry||typeof entry.name!=='string')continue;const name=entry.name.trim().slice(0,25),correct=Number(entry.correct);if(!name||!Number.isSafeInteger(correct)||correct<0||correct>999999)continue;const key=String(entry.tiktokId||'').trim().toLowerCase().slice(0,100);
   let person=key?students.find(s=>s.tiktokId===key):students.find(s=>!s.tiktokId&&s.name.toLocaleLowerCase('vi')===name.toLocaleLowerCase('vi'));
@@ -2534,7 +2625,7 @@ function quizDistractors(q,records){
  if(unique.length<3)return null;return shuffle(unique).slice(0,3);
 }
 
-function newQuestion(){window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();stopSpeaking();const selectedSubjects=activeSubjects();const filtered=bank.filter(q=>selectedSubjects.includes(q.category));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const distractors=quizDistractors(current,bank);
+function newQuestion(){if(count>0&&count%10===0)tenQuestionAttendance.clear();hideTenQuestionAwards();window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();stopSpeaking();const selectedSubjects=activeSubjects();const filtered=bank.filter(q=>selectedSubjects.includes(q.category));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const distractors=quizDistractors(current,bank);
 if(!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
 options=shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));const questionEl=$('question');
  questionEl.classList.toggle('rebus-question',current.category==='Đuổi hình bắt chữ');
@@ -2642,7 +2733,8 @@ function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQu
   const answerLine=(index===correct?'Chính xác! Giỏi lắm! ':'Hết giờ suy nghĩ. ')+
     'Đáp án đúng là '+letters[correct]+': '+spokenQuizValue(current.answer)+'.';
   const honorsLine=correctAnswerHonors();
-  // Preserve a snapshot of every winner before making any network voice calls.
+  const awardSpeech=showTenQuestionAwards();
+  // Roll call begins only AFTER the correct answer and that round's winners.
   honorSpeechActive=Boolean(voiceEnabled);
   showRoundCorrectCount();
   if($('autonext').checked){
@@ -2653,11 +2745,21 @@ function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQu
       advanced=true;honorSpeechActive=false;clearTimeout(nextTimer);
       nextTimer=setTimeout(()=>{newQuestion();beginQuestionReading()},1500);
     };
-    nextTimer=setTimeout(()=>{stopSpeaking();goNext()},90000);
-    if(voiceEnabled)say(answerLine,()=>sayVietnamese(honorsLine,goNext));
-    else goNext();
+    nextTimer=setTimeout(()=>{stopSpeaking();goNext()},115000);
+    if(voiceEnabled){
+      say(answerLine,()=>sayVietnamese(honorsLine,()=>{
+        if(awardSpeech)sayVietnamese(awardSpeech,()=>{
+          honorSpeechActive=false;setTimeout(goNext,2400);
+        });else goNext();
+      }));
+    }else if(awardSpeech){
+      clearTimeout(nextTimer);nextTimer=setTimeout(goNext,10000);
+    }else goNext();
   }else if(voiceEnabled){
-    say(answerLine,()=>sayVietnamese(honorsLine,()=>{honorSpeechActive=false}));
+    say(answerLine,()=>sayVietnamese(honorsLine,()=>{
+      if(awardSpeech)sayVietnamese(awardSpeech,()=>{honorSpeechActive=false});
+      else honorSpeechActive=false;
+    }));
   }
 }function selectAnswer(i){if(!current||locked)return;selected=i;finishAnswer(i)}function countdown(){
  if(!current||locked)return;
