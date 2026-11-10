@@ -18,6 +18,33 @@ let restartingConnection=false, roomProbeInFlight=false, lastManualRestart=0;
 let lastRoomProbeError='', lastRoomCheckedAt=0;
 // Provider account-hour limits must not trigger rapid reconnect loops.
 let rateLimitUntil=0, nextRetryAt=0, consecutiveFailures=0;
+
+// Optional second egress via the existing Vercel project, without another
+// paid TikTok provider. This public-page probe may also be blocked by TikTok.
+// It never requests cookies or credentials. Enforce a bounded retry interval.
+const ALT_ROOM_LOOKUP='https://classroom-tiktok-live.vercel.app/api/room-probe';
+let alternateRoomCheckedAt=0,alternateRoomStatus='not_attempted',alternateRoomConnected=false;
+async function findAlternateRoomId(){
+ if(username!=='con5doiten'){alternateRoomStatus='unsupported_creator';return '';}
+ if(Date.now()-alternateRoomCheckedAt<3*60*1000)return '';
+ alternateRoomCheckedAt=Date.now();
+ const ctl=new AbortController(),timeout=setTimeout(()=>ctl.abort(),10500);
+ try{
+  const reply=await fetch(ALT_ROOM_LOOKUP,{signal:ctl.signal,redirect:'error',headers:{accept:'application/json'}});
+  if(!reply.ok){alternateRoomStatus='VERCEL_HTTP_'+reply.status;return '';}
+  const data=await reply.json();
+  if(data?.creator!=='@'+username){alternateRoomStatus='CREATOR_MISMATCH';return '';}
+  if(typeof data?.roomId==='string' && /^\d{15,25}$/.test(data.roomId)){
+   alternateRoomStatus='ROOM_ID_FOUND';
+   return data.roomId;
+  }
+  alternateRoomStatus=String(data?.reason||'NO_ROOM_ID').replace(/[^A-Z0-9_]/gi,'').slice(0,70);
+  return '';
+ }catch(e){
+  alternateRoomStatus=e?.name==='AbortError'?'TIMEOUT':'VERCEL_UNREACHABLE';
+  return '';
+ }finally{clearTimeout(timeout)}
+}
 // Source-by-source diagnostic codes for TikTok Room ID discovery failures.
 // Expose classifications only: NEVER output API keys, tokens, cookies or URLs.
 let lastRoomLookupDiagnostics=[], lastRoomLookupAt=0;
@@ -105,6 +132,7 @@ function info() {
     checkingNewRoom:roomProbeInFlight, lastRoomCheckedAt, lastRoomProbeError,
     rateLimitUntil, nextRetryAt,
     lastRoomLookupAt, lastRoomLookupDiagnostics,
+    alternateRoomCheckedAt,alternateRoomStatus,alternateRoomConnected,
     time:Date.now()
   };
 }
@@ -216,7 +244,7 @@ async function connectLive() {
   const conn=new TikTokLiveConnection(username,{
     signApiKey:String(process.env.SIGN_API_KEY||'').trim()||undefined,
     processInitialData:false,
-    fetchRoomInfoOnConnect:true,
+    fetchRoomInfoOnConnect:false,
     enableExtendedGiftInfo:false
   });
   currentConnection=conn;
@@ -263,15 +291,44 @@ async function connectLive() {
   try{
     // While offline, first check LIVE status rather than opening another
     // signed WebSocket for a room that does not exist yet.
+    let alternateId='';
     if(wasOffline){
-      const live=await conn.fetchIsLive(username);
+      // An HTTP 403 from Render can incorrectly say a clearly live creator
+      // is offline. Ask independent Vercel egress once, only if needed.
+      let live=null;
+      try{live=await conn.fetchIsLive(username)}
+      catch(e){captureRoomLookupErrors(e);applyRateLimit(e);
+        if(Date.now()<rateLimitUntil)throw e}
       if(currentConnection!==conn)return;
-      if(!live){
-        state='offline';lastError='Tài khoản chưa phát LIVE. Đang đợi phòng mới.';
+      if(live!==true && Date.now()>=rateLimitUntil)alternateId=await findAlternateRoomId();
+      if(currentConnection!==conn)return;
+      if(live!==true&&!alternateId){
+        state='offline';
+        lastError='Chưa xác định được phòng LIVE (Render hoặc Vercel đều chưa cung cấp Room ID).';
         planReconnect(10*60*1000);return;
       }
     }
-    const connected=await conn.connect();
+    let connected;
+    alternateRoomConnected=false;
+    if(alternateId){
+      connected=await conn.connect(alternateId);
+      alternateRoomConnected=true;
+    }else{
+      try{connected=await conn.connect()}
+      catch(originalError){
+        captureRoomLookupErrors(originalError);
+        applyRateLimit(originalError);
+        // Only ask the secondary service when the failure is a ROOM ID
+        // lookup, never after signing-service rate limits or socket errors.
+        const lookupError=/room\s*id|isn.t online|user.offline/i.test(String(originalError?.message||originalError));
+        if(!lookupError||Date.now()<rateLimitUntil)throw originalError;
+        const found=await findAlternateRoomId();
+        if(currentConnection!==conn)return;
+        if(!found)throw originalError;
+        connected=await conn.connect(found);
+        alternateRoomConnected=true;
+      }
+    }
     if(currentConnection!==conn){try{await conn.disconnect()}catch{}return;}
     if(!conn.isConnected){
       state='disconnected';noteConnectionFailure(lastError);planReconnect(45000);return;
@@ -280,7 +337,8 @@ async function connectLive() {
     consecutiveFailures=0;rateLimitUntil=0;nextRetryAt=0;
     state='connected';roomId=trim(connected?.roomId||conn.roomId||'',80);
     connectedSince=Date.now();lastError='';lastRoomProbeError='';
-    console.log('Connected to public TikTok LIVE @'+username);
+    console.log('Connected to public TikTok LIVE @'+username+
+      (alternateRoomConnected?' using alternate room lookup':' using primary room lookup'));
   }catch(error){
     if(currentConnection!==conn)return;
     lastError=trim(error?.message||error,240);
