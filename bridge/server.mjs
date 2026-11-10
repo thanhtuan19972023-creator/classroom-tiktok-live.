@@ -18,6 +18,39 @@ let restartingConnection=false, roomProbeInFlight=false, lastManualRestart=0;
 let lastRoomProbeError='', lastRoomCheckedAt=0;
 // Provider account-hour limits must not trigger rapid reconnect loops.
 let rateLimitUntil=0, nextRetryAt=0, consecutiveFailures=0;
+// Source-by-source diagnostic codes for TikTok Room ID discovery failures.
+// Expose classifications only: NEVER output API keys, tokens, cookies or URLs.
+let lastRoomLookupDiagnostics=[], lastRoomLookupAt=0;
+function diagnoseSourceError(err){
+  const raw=String(err?.message||'');
+  const lower=raw.toLowerCase();
+  let reason=/rate.?limit|too many requests/.test(lower)?'RATE_LIMIT':
+    /captcha|challenge|verify|verification/.test(lower)?'TIKTOK_CHALLENGE':
+    /user_not_found|user.not.found/.test(lower)?'USER_NOT_FOUND':
+    /isn.t online|not.live|user.offline|useroffline/.test(lower)?'SOURCE_REPORTS_OFFLINE':
+    /\b403\b|forbidden|access denied/.test(lower)?'HTTP_403':
+    /\b404\b|not found/.test(lower)?'HTTP_404':
+    /\b429\b/.test(lower)?'HTTP_429':
+    /timeout|timed out/.test(lower)?'TIMEOUT':
+    /json|invalid response|unexpected token|parse/.test(lower)?'INVALID_RESPONSE':
+    /socket|network|fetch failed|connection reset/.test(lower)?'NETWORK_ERROR':'UNKNOWN';
+  const code=typeof err?.status==='number'?err.status:
+    typeof err?.statusCode==='number'?err.statusCode:
+    typeof err?.response?.statusCode==='number'?err.response.statusCode:0;
+  if(code>=400&&code<=599)reason='HTTP_'+code;
+  const route=String(err?.config?.routeId||err?.routeId||err?.name||'unknown')
+    .replace(/[^a-zA-Z0-9_.-]/g,'').slice(0,65);
+  return {source:route,reason};
+}
+function captureRoomLookupErrors(err){
+  const nodes=Array.isArray(err?.config?.requestErrs)?err.config.requestErrs:
+    Array.isArray(err?.requestErrs)?err.requestErrs:[];
+  if(!nodes.length)return;
+  lastRoomLookupAt=Date.now();
+  lastRoomLookupDiagnostics=nodes.slice(0,5).map(diagnoseSourceError);
+  console.warn('TikTok Room ID source diagnostics (no secrets):',JSON.stringify(lastRoomLookupDiagnostics));
+}
+
 
 function trim(value, max=120) { return String(value ?? '').trim().slice(0,max); }
 function displayUser(evt) {
@@ -71,6 +104,7 @@ function info() {
     roomId, connectedSince, lastEventAt, lastError, cursor:lastId,
     checkingNewRoom:roomProbeInFlight, lastRoomCheckedAt, lastRoomProbeError,
     rateLimitUntil, nextRetryAt,
+    lastRoomLookupAt, lastRoomLookupDiagnostics,
     time:Date.now()
   };
 }
@@ -180,6 +214,7 @@ async function connectLive() {
   if(old){try{await old.disconnect()}catch(e){console.warn('Old socket cleanup:',trim(e?.message||e,120))}}
   if(restartingConnection||Date.now()<rateLimitUntil){state='disconnected';planReconnect(60000);return;}
   const conn=new TikTokLiveConnection(username,{
+    signApiKey:String(process.env.SIGN_API_KEY||'').trim()||undefined,
     processInitialData:false,
     fetchRoomInfoOnConnect:true,
     enableExtendedGiftInfo:false
@@ -214,6 +249,7 @@ async function connectLive() {
   conn.on(ControlEvent.ERROR,err=>{
     if(currentConnection!==conn)return;
     lastError=trim(err?.exception?.message||err?.message||err,240);
+    captureRoomLookupErrors(err);
     applyRateLimit(err);
     console.warn('TikTok connection reported an error:',lastError);
   });
@@ -248,6 +284,7 @@ async function connectLive() {
   }catch(error){
     if(currentConnection!==conn)return;
     lastError=trim(error?.message||error,240);
+    captureRoomLookupErrors(error);
     state=/offline|not.live|user.offline|room.is.not.live/i.test(lastError)?'offline':'error';
     roomId=null;connectedSince=null;
     console.warn('TikTok LIVE connection not ready:',lastError);
