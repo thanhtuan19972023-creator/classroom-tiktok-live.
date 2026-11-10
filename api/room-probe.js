@@ -22,7 +22,7 @@ function pickRoomId(source){
 export default async function handler(req,res){
  res.setHeader('Content-Type','application/json; charset=utf-8');
  res.setHeader('X-Content-Type-Options','nosniff');
- res.setHeader('Cache-Control','public,s-maxage=90,stale-while-revalidate=120');
+ res.setHeader('Cache-Control','public,s-maxage=15');
  if(req.method!=='GET'){
   res.statusCode=405;return res.end(JSON.stringify({error:'GET only'}));
  }
