@@ -2390,12 +2390,13 @@ function scheduleVisitorGreeting(delay=1200){
     lastVisitorNotice=Date.now();
     pendingVisitorInvitation=false;
     const names=pendingVisitorNames.splice(0,2);
-    const message=names.length
+    const greeting=names.length
       ?'Chào mừng '+names.map(n=>'em '+n).join(' và ')+
        ' vào lớp mười hai A. Mời các em ngồi ngay ngắn và trả lời nhé!'
       :'Chào mừng các bạn mới vào lớp mười hai A. Mời các em ngồi ngay ngắn và trả lời nhé!';
+    const followInvite=' Mong bạn hãy cho chủ phòng một pho lô, để chủ phòng có thêm động lực làm tiếp những trò chơi thú vị hơn nha!';
     liveLog('👋','Đã nhận khách mới vào LIVE. Đang mời vào lớp.');
-    say(message);
+    say(greeting+followInvite);
   },Math.max(200,delay));
 }
 function onLiveVisitor(name,identityKey=''){
