@@ -2425,6 +2425,19 @@ function showCorrectAvatar(name,avatarUrl=''){
  correctAvatarQueue.push({name,url:avatarUrl});
  renderNextCorrectAvatar();
 }
+// Hide the previous winner when a new question starts or the game resets.
+function clearCorrectAvatar(){
+ ++correctAvatarSerial;
+ correctAvatarQueue.length=0;
+ clearTimeout(correctAvatarTimer);
+ correctAvatarTimer=null;correctAvatarShowing=false;
+ const card=document.getElementById('correctAvatarCard');
+ if(card)card.classList.remove('is-visible');
+ const photo=document.getElementById('correctAvatarImage');
+ if(photo){photo.onload=null;photo.onerror=null;photo.hidden=true;photo.removeAttribute('src')}
+ const fallback=document.getElementById('correctAvatarInitials');
+ if(fallback)fallback.hidden=false;
+}
 // Compare the COMPLETE arranged sentence. Accents, casing and punctuation are
 // ignored for Vietnamese TikTok typing, but WORD ORDER must match.
 function normalizeWordOrderAnswer(value){
@@ -2433,9 +2446,55 @@ function normalizeWordOrderAnswer(value){
   .toLowerCase().replace(/[^a-z0-9]+/g,' ')
   .trim().replace(/\s+/g,' ');
 }
-function onWordOrderComment(name,comment,identityKey='',avatarUrl=''){
+// Store answers privately until the timer expires. Announce results only
+// after the Render polling grace, including pre-deadline delayed comments.
+function recordRoundAnswer(student,name,answer,isCorrect,avatarUrl='',receivedAt=Date.now()){
+ const timestamp=Number(receivedAt);
+ roundAnswers.push({
+  student,name,answer,correct:Boolean(isCorrect),avatarUrl,
+  timestamp:Number.isFinite(timestamp)&&timestamp>0?timestamp:Date.now(),
+  order:roundAnswers.length
+ });
+ liveLog('📝',name+' đã gửi đáp án (chờ hết giờ)');
+ const node=document.getElementById('realRoundStats');
+ if(node)node.textContent='📝 Đã nhận '+roundAnswers.length+' đáp án · Chờ hết giờ công bố kết quả';
+}
+function settleRoundAnswers(){
+ if(!roundAnswers.length){showRoundCorrectCount();return 0}
+ // Poll arrival order can differ from original TikTok submission order.
+ const ordered=roundAnswers.slice().sort((a,b)=>a.timestamp-b.timestamp||a.order-b.order);
+ let firstCorrect=null;
+ correctTotalThisQuestion=0;fastestCorrectNames=[];
+ for(const entry of ordered){
+  const student=entry.student;
+  if(entry.correct){
+   const rank=++correctTotalThisQuestion;
+   const earned=[10,5,2][rank-1]||0;
+   student.correct=(student.correct||0)+1;
+   student.points+=earned;
+   if(fastestCorrectNames.length<5)fastestCorrectNames.push(entry.name);
+   if(!firstCorrect)firstCorrect=entry;
+   liveLog('✅',entry.name+' trả lời đúng · hạng '+rank+' · +'+earned+' điểm');
+  }else{
+   student.points-=1;
+   liveLog('❌',entry.name+' trả lời sai · −1 điểm');
+  }
+ }
+ roundAnswers.length=0;
+ saveCorrectRank();renderStudents();showRoundCorrectCount();
+ if(firstCorrect){
+  celebrate();
+  // Show the fastest correct learner once per completed round, for 5 seconds.
+  showCorrectAvatar(firstCorrect.name,firstCorrect.avatarUrl);
+ }
+ return firstCorrect?5000:0;
+}
+function onWordOrderComment(name,comment,identityKey='',avatarUrl='',receivedAt=Date.now()){
  if(!current||current.category!=='Sắp xếp từ'||locked||(!tick&&!roundGraceActive)){
-   liveLog('💬',name+': '+comment+' (chưa đến giờ chấm)');return;
+  liveLog('💬',name+': '+comment+' (chưa đến giờ chấm)');return;
+ }
+ if(window.__liveQuestionDeadline&&receivedAt>window.__liveQuestionDeadline){
+  liveLog('⌛',name+' gửi đáp án sau khi hết giờ');return;
  }
  const attempt=normalizeWordOrderAnswer(comment);
  const expected=normalizeWordOrderAnswer(current.answer);
@@ -2445,78 +2504,50 @@ function onWordOrderComment(name,comment,identityKey='',avatarUrl=''){
  wantedWords.forEach(w=>remaining.set(w,(remaining.get(w)||0)+1));
  let overlap=0;
  for(const w of actualWords){
-   const n=remaining.get(w)||0;
-   if(n>0){overlap++;remaining.set(w,n-1)}
+  const n=remaining.get(w)||0;
+  if(n>0){overlap++;remaining.set(w,n-1)}
  }
- // Only treat a message as an attempted answer when it resembles the word
- // tiles; normal LIVE greetings or unrelated comments never incur -1.
+ // Ignore normal LIVE greetings and comments unrelated to the word tiles.
  if(actualWords.length<Math.max(2,wantedWords.length-2)||
     actualWords.length>wantedWords.length+2||
     overlap<Math.max(2,Math.ceil(wantedWords.length*.6))){
-   liveLog('💬',name+': '+comment);return;
+  liveLog('💬',name+': '+comment);return;
  }
  const student=ensureStudent(name,0,identityKey);
  const identity=String(student.id);
  if(answeredThisQuestion.has(identity)){
-   liveLog('↩️',name+' đã trả lời câu này rồi');return;
+  liveLog('↩️',name+' đã trả lời câu này rồi');return;
  }
  answeredThisQuestion.add(identity);
- if(attempt===expected){
-   student.correct=(student.correct||0)+1;
-   const rank=correctTotalThisQuestion+1,earned=[10,5,2][rank-1]||0;
-   student.points+=earned;
-   correctTotalThisQuestion++;
-   if(fastestCorrectNames.length<5)fastestCorrectNames.push(name);
-   showRoundCorrectCount();saveCorrectRank();renderStudents();celebrate();
-   showCorrectAvatar(name,avatarUrl);
-   notify('✅',name+' đã sắp xếp đúng · hạng '+rank+' · +'+earned+' điểm','',false);
- }else{
-   student.points-=1;saveCorrectRank();renderStudents();
-   notify('❌',name+' sắp xếp sai thứ tự · −1 điểm','',false);
- }
+ recordRoundAnswer(student,name,comment,attempt===expected,avatarUrl,receivedAt);
 }
-function onComment(name,comment,identityKey='',avatarUrl=''){
-  name=String(name||'Học sinh mới').trim().slice(0,25)||'Học sinh mới';
-  comment=String(comment||'').trim().slice(0,150);
-  if(!comment){status('Hãy nhập nội dung bình luận.',true);return}
-  // Accept an answer only when the whole comment is a concise A/B/C/D choice.
-  const normalized=comment.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();
-  if(current?.category==='Sắp xếp từ'){
-    onWordOrderComment(name,comment,identityKey,avatarUrl);
-    return;
-  }
-  const match=normalized.match(/^(?:(?:EM\s+)?(?:CHON|DAP\s*AN|TRA\s*LOI|CAU\s*TRA\s*LOI)\s*[:\-]?\s*)?([ABCD])(?:[.!?]|\s+(?:NHE|A|NHA|OI|LA\s+DUNG))?$/);
-  if(!match){notify('💬',name+': '+comment,'Bạn '+name+' bình luận: '+comment);return}
-  const letter=match[1];
-  if(!current||locked||(!tick&&!roundGraceActive)){notify('💬',name+': '+comment,'Bình luận '+letter+' chưa được tính. Đợi đồng hồ bắt đầu đếm giờ.');return}
-  const student=ensureStudent(name,0,identityKey);
-  // Deduplicate against the actual seated student, not a nickname/userId
-  // that can vary between the JOIN, COMMENT and GIFT events.
-  const identity=String(student.id);
-  if(answeredThisQuestion.has(identity)){liveLog('↩️',name+' đã trả lời câu này rồi');status(name+' đã trả lời câu này. Mỗi người chỉ được tính một lượt mỗi câu.');return}
-  answeredThisQuestion.add(identity);
-  const correctLetter=letters[options.indexOf(current.answer)];
-  if(letter===correctLetter){
-    student.correct=(student.correct||0)+1;
-    // Rank by the first valid correct answer per TikTok account.
-    const rank=correctTotalThisQuestion+1;
-    const earned=[10,5,2][rank-1]||0;
-    student.points+=earned;
-    correctTotalThisQuestion++;
-    if(fastestCorrectNames.length<5)fastestCorrectNames.push(name);
-    showRoundCorrectCount();
-    saveCorrectRank();renderStudents();celebrate();
-    showCorrectAvatar(name,avatarUrl);
-    // Do not pronounce each correct name immediately: announce Top 5 together after the timer.
-    notify('✅',name+' trả lời đúng '+letter+' · hạng '+rank+' · +'+earned+' điểm','',false);
-  }else{
-    // One scored answer per student per question, including wrong replies.
-    // Negative scores are intentional and persist across game reloads.
-    student.points-=1;
-    saveCorrectRank();renderStudents();
-    notify('❌',name+' trả lời '+letter+' · sai −1 điểm',
-      'Bạn '+spokenStudentName(name)+' trả lời chưa đúng, bị trừ 1 điểm.',false);
-  }
+function onComment(name,comment,identityKey='',avatarUrl='',receivedAt=Date.now()){
+ name=String(name||'Học sinh mới').trim().slice(0,25)||'Học sinh mới';
+ comment=String(comment||'').trim().slice(0,150);
+ if(!comment){status('Hãy nhập nội dung bình luận.',true);return}
+ const normalized=comment.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();
+ if(current?.category==='Sắp xếp từ'){
+  onWordOrderComment(name,comment,identityKey,avatarUrl,receivedAt);
+  return;
+ }
+ const match=normalized.match(/^(?:(?:EM\s+)?(?:CHON|DAP\s*AN|TRA\s*LOI|CAU\s*TRA\s*LOI)\s*[:\-]?\s*)?([ABCD])(?:[.!?]|\s+(?:NHE|A|NHA|OI|LA\s+DUNG))?$/);
+ if(!match){notify('💬',name+': '+comment,'Bạn '+name+' bình luận: '+comment);return}
+ const letter=match[1];
+ if(!current||locked||(!tick&&!roundGraceActive)){
+  notify('💬',name+': '+comment,'Bình luận '+letter+' chưa được tính. Đợi đồng hồ bắt đầu đếm giờ.');return;
+ }
+ if(window.__liveQuestionDeadline&&receivedAt>window.__liveQuestionDeadline){
+  liveLog('⌛',name+' gửi đáp án sau khi hết giờ');return;
+ }
+ const student=ensureStudent(name,0,identityKey);
+ const identity=String(student.id);
+ if(answeredThisQuestion.has(identity)){
+  liveLog('↩️',name+' đã trả lời câu này rồi');
+  status(name+' đã gửi đáp án. Mỗi người chỉ được tính một lượt mỗi câu.');return;
+ }
+ answeredThisQuestion.add(identity);
+ const correctLetter=letters[options.indexOf(current.answer)];
+ recordRoundAnswer(student,name,letter,letter===correctLetter,avatarUrl,receivedAt);
 }
 // Count comments received from TikTok separately from answers awarded points.
 let realCommentSeen=0,realLastCommentAt=0;
@@ -2564,7 +2595,7 @@ window.classroomLiveEvent=function(event){
         return;
       }
       showRealCommentStatus('✅ Đã nhận '+realCommentSeen+' bình luận thật. Mới nhất: '+who+' — '+raw+'. Đang chấm đáp án.');
-      onComment(displayName,raw,id,event.avatarUrl||'');
+      onComment(displayName,raw,id,event.avatarUrl||'',receivedAt);
     }
   }finally{window.__classroomRealEvent=false;}
 };
@@ -2573,6 +2604,7 @@ const $=id=>document.getElementById(id);const core=Object.entries(DATA).flatMap(
 // Grace period collects TikTok events that were posted before the clock hit zero
 // but reached the game on the next Render poll. Never score later timestamps.
 let roundGraceActive=false,roundGraceTimer=null,honorSpeechActive=false;
+let roundAnswers=[];
 // Record people who actually joined, commented, or gifted in this block.
 // Never count old saved student records as present in today's roll call.
 const tenQuestionAttendance=new Map();
@@ -2850,7 +2882,7 @@ function quizDistractors(q,records){
  if(unique.length<3)return null;return shuffle(unique).slice(0,3);
 }
 
-function newQuestion(){if(count>0&&count%10===0)tenQuestionAttendance.clear();hideTenQuestionAwards();window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();stopSpeaking();const selectedSubjects=activeSubjects();const filtered=bank.filter(q=>selectedSubjects.includes(q.category));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const isWordOrder=current.category==='Sắp xếp từ';
+function newQuestion(){if(count>0&&count%10===0)tenQuestionAttendance.clear();hideTenQuestionAwards();window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();clearCorrectAvatar();roundAnswers.length=0;stopSpeaking();const selectedSubjects=activeSubjects();const filtered=bank.filter(q=>selectedSubjects.includes(q.category));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const isWordOrder=current.category==='Sắp xếp từ';
 const distractors=isWordOrder?[]:quizDistractors(current,bank);
 if(!isWordOrder&&!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
 options=isWordOrder?[]:shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));
@@ -2978,7 +3010,7 @@ function correctAnswerHonors(){
   if(remaining>0)phrases.push('Và còn '+remaining+' học sinh trả lời đúng nữa. Chúc mừng tất cả các em!');
   return phrases.join(' ');
 }
-function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQuizReading();stopSpeaking();clearTimeout(roundGraceTimer);roundGraceTimer=null;roundGraceActive=false;locked=true;clearInterval(tick);tick=null;$('timer').classList.remove('running','time-warning');const wordMode=current.category==='Sắp xếp từ';
+function finishAnswer(index=-1){if(locked)return;if(tick&&seconds>0){status('Đang đếm ngược. Kết quả chỉ hiện sau khi hết giờ.');return;}stopCountdownWarning();cancelQuizReading();stopSpeaking();clearTimeout(roundGraceTimer);roundGraceTimer=null;roundGraceActive=false;locked=true;clearInterval(tick);tick=null;$('timer').classList.remove('running','time-warning');const avatarHoldMs=settleRoundAnswers();const avatarHideAt=Date.now()+avatarHoldMs+200;const wordMode=current.category==='Sắp xếp từ';
  const correct=options.indexOf(current.answer);
  [...$('options').children].forEach((b,i)=>{if(i===correct)b.classList.add('correct');else if(i===index)b.classList.add('wrong')});
  if(wordMode){
@@ -3006,7 +3038,7 @@ function finishAnswer(index=-1){if(locked)return;stopCountdownWarning();cancelQu
     const goNext=()=>{
       if(advanced||quizSerial!==quizReadSerial||!locked)return;
       advanced=true;honorSpeechActive=false;clearTimeout(nextTimer);
-      nextTimer=setTimeout(()=>{newQuestion();beginQuestionReading()},1500);
+      nextTimer=setTimeout(()=>{newQuestion();beginQuestionReading()},Math.max(1500,avatarHideAt-Date.now()));
     };
     nextTimer=setTimeout(()=>{stopSpeaking();goNext()},115000);
     if(voiceEnabled){
