@@ -526,8 +526,8 @@ async function handleAccountSwitch(req,res,headers){
   if(selected===username){
     reply(200,{ok:true,username:'@'+username,state,unchanged:true});return;
   }
-  if(switchingAccount||restartingConnection||state==='connecting'){
-    reply(409,{error:'Máy chủ đang kết nối. Hãy thử chuyển nick sau khi hoàn tất.'});return;
+  if(switchingAccount||restartingConnection){
+    reply(409,{error:'Máy chủ đang chuyển tài khoản. Hãy thử lại sau khi hoàn tất.'});return;
   }
   if(now-lastAccountSwitchAt<30000){
     reply(429,{error:'Chỉ chuyển nick tối đa một lần mỗi 30 giây.'});return;
