@@ -2212,14 +2212,11 @@ function beginQuestionReading(){
   // Final backstop if iOS never reports speech completion; never freeze on the speaker icon.
   quizReadWatch=setTimeout(()=>{if(serial===quizReadSerial){stopSpeaking();done()}},60000);
   if(!aiActive()&&!neuralActive()&&!speechAvailable){done();return}
-  const namedVisitors=pendingVisitorNames.splice(0,3);
-  const greet=pendingVisitorInvitation ?
-    (namedVisitors.length ?
-      'Chào mừng '+namedVisitors.map(n=>'em '+n).join(' và ')+' đến với lớp học 12A. Mời các em vào lớp, ngồi ngay ngắn và trả lời câu hỏi nhé! ' :
-      'Chào mừng các bạn mới đến với lớp học 12A. Mời các em vào lớp, ngồi ngay ngắn và trả lời câu hỏi nhé! ') : '';
-  pendingVisitorInvitation=false;
+  // Arrival greetings use a separate short, batched announcer.
+  // Never prepend visitors to the quiz narration: that made greetings wait
+  // an entire round and delayed the countdown on every new question.
   const instruction='Các bạn chú ý! Đáp án chỉ được tính sau khi đọc xong câu hỏi và đồng hồ bắt đầu đếm ngược. Nếu trả lời sai sẽ bị trừ 1 điểm. ';
-  speakFromTap(greet+instruction+fullQuestionNarration(),done);
+  speakFromTap(instruction+fullQuestionNarration(),done);
 }
 function liveLog(kind,text){
   let item=document.createElement('li');item.textContent=kind+' '+text;
@@ -2361,21 +2358,67 @@ function notify(kind,text,spoken,readAloud=true){
   }
   status(window.__classroomRealEvent?'TikTok LIVE thật: '+text:'Mô phỏng: '+text+'. Chưa kết nối TikTok LIVE thật.');
 }
-let pendingVisitorInvitation=false,lastVisitorNotice=0;
+// Welcome visitors promptly without ever cutting off the question, result
+// or final five-second countdown. Batch arrivals, avoid repeated MEMBER spam.
+let pendingVisitorInvitation=false,lastVisitorNotice=0,visitorGreetingTimer=null;
 const pendingVisitorNames=[];
+const recentlyWelcomedVisitors=new Map();
+function scheduleVisitorGreeting(delay=1200){
+  if(visitorGreetingTimer)return;
+  visitorGreetingTimer=setTimeout(()=>{
+    visitorGreetingTimer=null;
+    if(!pendingVisitorInvitation)return;
+    if(!voiceEnabled){
+      pendingVisitorInvitation=false;
+      pendingVisitorNames.length=0;
+      return;
+    }
+    // The teacher's question, its timer transition, and the winners' names
+    // have priority. Reading over them can break onended -> countdown.
+    const audioBusy=Boolean(activeSpeech||speechQueue.length||aiSource||aiAbort);
+    const inCriticalAudio=readingQuiz||honorSpeechActive||roundGraceActive||
+      (tick&&seconds<=8);
+    if(audioBusy||inCriticalAudio){
+      scheduleVisitorGreeting(1200);
+      return;
+    }
+    const cooldown=15000-(Date.now()-lastVisitorNotice);
+    if(cooldown>0){
+      scheduleVisitorGreeting(cooldown);
+      return;
+    }
+    lastVisitorNotice=Date.now();
+    pendingVisitorInvitation=false;
+    const names=pendingVisitorNames.splice(0,2);
+    const message=names.length
+      ?'Chào mừng '+names.map(n=>'em '+n).join(' và ')+
+       ' vào lớp mười hai A. Mời các em ngồi ngay ngắn và trả lời nhé!'
+      :'Chào mừng các bạn mới vào lớp mười hai A. Mời các em ngồi ngay ngắn và trả lời nhé!';
+    liveLog('👋','Đã nhận khách mới vào LIVE. Đang mời vào lớp.');
+    say(message);
+  },Math.max(200,delay));
+}
 function onLiveVisitor(name,identityKey=''){
-  // Batch arrivals so the teacher can greet real names before the next quiz
-  // without interrupting narration or endlessly announcing MEMBER events.
   if(document.getElementById('liveAutoJoin')?.checked)ensureStudent(name,0,identityKey);
   const spoken=spokenStudentName(name);
-  if(spoken!=='học sinh' && !pendingVisitorNames.includes(spoken) && pendingVisitorNames.length<3){
+  const stableId=studentIdentityKey(identityKey)||studentNameKey(spoken);
+  const now=Date.now();
+  // Some TikTok viewers produce many repeated JOIN events.
+  if(stableId&&now-(recentlyWelcomedVisitors.get(stableId)||0)<3*60*1000)return;
+  if(stableId)recentlyWelcomedVisitors.set(stableId,now);
+  if(recentlyWelcomedVisitors.size>200){
+    for(const [id,seenAt] of recentlyWelcomedVisitors){
+      if(now-seenAt>3*60*1000)recentlyWelcomedVisitors.delete(id);
+    }
+    while(recentlyWelcomedVisitors.size>240){
+      recentlyWelcomedVisitors.delete(recentlyWelcomedVisitors.keys().next().value);
+    }
+  }
+  if(spoken!=='học sinh'&&!pendingVisitorNames.includes(spoken)&&pendingVisitorNames.length<2){
     pendingVisitorNames.push(spoken);
   }
-  if(Date.now()-lastVisitorNotice>=45000){
-    lastVisitorNotice=Date.now();
-    pendingVisitorInvitation=true;
-    liveLog('👋','Có học sinh mới ghé LIVE. Sẽ mời vào lớp trước câu hỏi tiếp theo.');
-  }
+  pendingVisitorInvitation=true;
+  scheduleVisitorGreeting();
 }
 function onJoin(name,identityKey=''){
   name=String(name||'Học sinh mới').trim().slice(0,25)||'Học sinh mới';
@@ -3597,6 +3640,8 @@ function liveBridgeStart(forceReconnect=false){
  void liveBridgePoll();
 }
 function liveBridgeStop(){
+ clearTimeout(visitorGreetingTimer);visitorGreetingTimer=null;
+ pendingVisitorInvitation=false;pendingVisitorNames.length=0;
  liveBridgeActive=false;liveBridgeInstance='';liveBridgeCursor=0;
  if(liveBridgePolling){clearInterval(liveBridgePolling);liveBridgePolling=null}
  liveBridgeBadge(false);
