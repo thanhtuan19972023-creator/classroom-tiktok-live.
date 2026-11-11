@@ -1,11 +1,11 @@
 // Lớp học vui vẻ 12A — TikTok LIVE event bridge.
 // TikTok-Live-Connector is an unofficial project. Public LIVE only; NO login cookies.
 import http from 'node:http';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash, timingSafeEqual } from 'node:crypto';
 import { TikTokLiveConnection, WebcastEvent, ControlEvent } from 'tiktok-live-connector';
 import { EdgeTTS } from '@andresaya/edge-tts';
 
-const username = String(process.env.TIKTOK_USERNAME || '').trim().replace(/^@/, '').toLowerCase();
+let username = String(process.env.TIKTOK_USERNAME || '').trim().replace(/^@/, '').toLowerCase();
 const port = Number(process.env.PORT || 10000);
 const instanceId = randomUUID();
 const eventHistory = [];
@@ -16,6 +16,8 @@ let currentConnection = null, reconnectTimer = null, lastError = '';
 let connectedSince = null, lastEventAt = null, roomId = null;
 let restartingConnection=false, roomProbeInFlight=false, lastManualRestart=0;
 let lastRoomProbeError='', lastRoomCheckedAt=0;
+let switchingAccount=false,lastAccountSwitchAt=0;
+const accountAuthFailures=new Map();
 // Provider account-hour limits must not trigger rapid reconnect loops.
 let rateLimitUntil=0, nextRetryAt=0, consecutiveFailures=0;
 // One bounded, read-only key diagnostic per process start. Never expose key material.
@@ -148,6 +150,7 @@ function info() {
   return {
     ready:true, source:'unofficial_tiktok_live_connector', instanceId,
     apiKeyCheck,apiKeyCheckedAt,
+    nickSwitchEnabled:String(process.env.LIVE_ADMIN_PASSWORD||'').length>=12,
     username:username ? '@'+username : null, state, connected:state==='connected',
     roomId, connectedSince, lastEventAt, lastError, cursor:lastId,
     checkingNewRoom:roomProbeInFlight, lastRoomCheckedAt, lastRoomProbeError,
@@ -461,6 +464,104 @@ async function handleFreeNeuralVoice(req,res,headers){
     }
   }finally{voiceInFlight--}
 }
+
+function adminPasswordMatches(provided,expected){
+  // Compare fixed-length hashes so neither content nor length leaks through
+  // the comparison. Never echo the password or the signing API key.
+  const digest=value=>createHash('sha256').update(value).digest();
+  return timingSafeEqual(digest(provided),digest(expected));
+}
+async function handleAccountSwitch(req,res,headers){
+  const origin=String(req.headers.origin||'');
+  const reply=(status,body)=>{
+    if(res.writableEnded)return;
+    res.writeHead(status,headers);
+    res.end(JSON.stringify(body));
+  };
+  if(!origin||!allowedOrigins.has(origin)){
+    reply(403,{error:'Chỉ điều khiển tài khoản từ trang game 12A.'});return;
+  }
+  const password=String(process.env.LIVE_ADMIN_PASSWORD||'');
+  if(password.length<12){
+    reply(503,{error:'Chưa thiết lập LIVE_ADMIN_PASSWORD trên Render (ít nhất 12 ký tự).'});return;
+  }
+  const addr=trim(String(req.headers['x-forwarded-for']||req.socket.remoteAddress||'unknown').split(',')[0],100);
+  const now=Date.now();
+  // Limit guesses even if the endpoint is exposed on the public internet.
+  let attempts=accountAuthFailures.get(addr);
+  if(!attempts||now-attempts.started>10*60*1000){
+    attempts={started:now,count:0};accountAuthFailures.set(addr,attempts);
+  }
+  if(attempts.count>=6){
+    reply(429,{error:'Thử sai mật khẩu quá nhiều lần. Vui lòng thử lại sau 10 phút.'});return;
+  }
+  const presented=String(req.headers['x-live-admin-key']||'');
+  if(!presented||presented.length>256||!adminPasswordMatches(presented,password)){
+    attempts.count++;
+    if(accountAuthFailures.size>250){
+      for(const [key,value] of accountAuthFailures){
+        if(now-value.started>10*60*1000)accountAuthFailures.delete(key);
+      }
+    }
+    reply(401,{error:'Mật khẩu quản trị không đúng.'});return;
+  }
+  accountAuthFailures.delete(addr);
+  let body='';
+  try{
+    for await(const chunk of req){
+      body+=chunk.toString('utf8');
+      if(body.length>1024){
+        reply(413,{error:'Yêu cầu quá dài.'});return;
+      }
+    }
+  }catch{
+    reply(400,{error:'Không đọc được yêu cầu.'});return;
+  }
+  let proposed;
+  try{proposed=JSON.parse(body)}catch{reply(400,{error:'Dữ liệu nick không hợp lệ.'});return;}
+  const selected=String(proposed?.username||'').trim().replace(/^@/,'').toLowerCase();
+  if(!/^(?!.*\.$)[a-z0-9._]{2,24}$/.test(selected)){
+    reply(400,{error:'Nick TikTok cần có 2–24 ký tự, chỉ gồm chữ, số, dấu chấm hoặc gạch dưới.'});return;
+  }
+  if(selected===username){
+    reply(200,{ok:true,username:'@'+username,state,unchanged:true});return;
+  }
+  if(switchingAccount||restartingConnection||state==='connecting'){
+    reply(409,{error:'Máy chủ đang kết nối. Hãy thử chuyển nick sau khi hoàn tất.'});return;
+  }
+  if(now-lastAccountSwitchAt<30000){
+    reply(429,{error:'Chỉ chuyển nick tối đa một lần mỗi 30 giây.'});return;
+  }
+  if(Date.now()<rateLimitUntil){
+    reply(429,{error:'Euler Stream đang giới hạn kết nối. Hãy đợi hết thời gian giới hạn.'});return;
+  }
+  switchingAccount=true;
+  restartingConnection=true;
+  const previous=currentConnection;
+  currentConnection=null;
+  const previousName=username;
+  username=selected; // Switch is in memory only; Render restart uses TIKTOK_USERNAME again.
+  state='disconnected';roomId=null;connectedSince=null;lastEventAt=null;
+  lastError='';lastRoomProbeError='';lastRoomCheckedAt=0;
+  lastRoomLookupAt=0;lastRoomLookupDiagnostics=[];
+  alternateRoomCheckedAt=0;alternateRoomConnected=false;alternateRoomStatus='not_attempted';
+  consecutiveFailures=0;nextRetryAt=0;
+  lastAccountSwitchAt=Date.now();lastManualRestart=0;
+  eventHistory.length=0;recentMessageIds.clear();
+  if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null;}
+  console.log('Admin switched public TikTok LIVE account:', '@'+previousName, '->', '@'+username);
+  try{
+    if(previous)await previous.disconnect();
+  }catch(e){
+    console.warn('Previous TikTok connection cleanup:',trim(e?.message||e,90));
+  }finally{
+    restartingConnection=false;
+    switchingAccount=false;
+  }
+  reply(202,{ok:true,username:'@'+username,state:'connecting'});
+  void connectLive();
+}
+
 function handler(req,res){
   const origin=trim(req.headers.origin||'',250);
   if(origin && !allowedOrigins.has(origin)){
@@ -476,7 +577,7 @@ function handler(req,res){
   if(origin){
     headers['Access-Control-Allow-Origin']=origin;
     headers['Access-Control-Allow-Methods']='GET, POST, OPTIONS';
-    headers['Access-Control-Allow-Headers']='Content-Type';
+    headers['Access-Control-Allow-Headers']='Content-Type, X-Live-Admin-Key';
   }
   if(req.method==='OPTIONS'){
     res.writeHead(204,headers);res.end();return;
@@ -485,6 +586,10 @@ function handler(req,res){
   if(url.pathname==='/api/voice'){
     if(req.method!=='POST'){res.writeHead(405,headers);res.end('{"error":"POST only"}');return;}
     void handleFreeNeuralVoice(req,res,headers);return;
+  }
+  if(url.pathname==='/api/switch-account'){
+    if(req.method!=='POST'){res.writeHead(405,headers);res.end('{"error":"POST only"}');return;}
+    void handleAccountSwitch(req,res,headers);return;
   }
   // The game's "Kết nối LIVE thật" button can recover a stuck previous room.
   // Require its approved browser origin and cap calls to once per 30 seconds.
