@@ -2586,7 +2586,7 @@ window.classroomLiveEvent=function(event){
         showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Mới nhất: '+who+' — '+raw+'. Câu hỏi chưa bắt đầu, chưa chấm.');
         return;
       }
-      if(receivedAt<window.__liveQuestionStartedAt-1000){
+      if(receivedAt<window.__liveQuestionStartedAt){
         showRealCommentStatus('💬 Đã nhận '+realCommentSeen+' bình luận thật. Bình luận trước câu hiện tại, không tính điểm: '+who+' — '+raw);
         return;
       }
