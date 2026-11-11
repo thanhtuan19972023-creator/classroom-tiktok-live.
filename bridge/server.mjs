@@ -18,6 +18,26 @@ let restartingConnection=false, roomProbeInFlight=false, lastManualRestart=0;
 let lastRoomProbeError='', lastRoomCheckedAt=0;
 // Provider account-hour limits must not trigger rapid reconnect loops.
 let rateLimitUntil=0, nextRetryAt=0, consecutiveFailures=0;
+// One bounded, read-only key diagnostic per process start. Never expose key material.
+let apiKeyCheck='pending',apiKeyCheckedAt=0;
+async function validateEulerKey(){
+  const key=String(process.env.SIGN_API_KEY||'').trim();
+  if(!key){apiKeyCheck='missing';apiKeyCheckedAt=Date.now();return;}
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),7000);
+  try{
+    const response=await fetch('https://api.eulerstream.com/accounts/me',{
+      headers:{'x-api-key':key,'accept':'application/json'},
+      signal:controller.signal
+    });
+    apiKeyCheck=response.status===200?'accepted':'HTTP_'+response.status;
+  }catch{
+    apiKeyCheck='network_error';
+  }finally{
+    clearTimeout(timeout);
+    apiKeyCheckedAt=Date.now();
+  }
+}
 
 // Optional second egress via the existing Vercel project, without another
 // paid TikTok provider. This public-page probe may also be blocked by TikTok.
@@ -127,6 +147,7 @@ function pushEvent(type, evt, details={}) {
 function info() {
   return {
     ready:true, source:'unofficial_tiktok_live_connector', instanceId,
+    apiKeyCheck,apiKeyCheckedAt,
     username:username ? '@'+username : null, state, connected:state==='connected',
     roomId, connectedSince, lastEventAt, lastError, cursor:lastId,
     checkingNewRoom:roomProbeInFlight, lastRoomCheckedAt, lastRoomProbeError,
@@ -524,6 +545,7 @@ function handler(req,res){
 }
 http.createServer(handler).listen(port,'0.0.0.0',()=>{
   console.log('Lớp học vui vẻ 12A bridge ready on port',port,'username:',username?'@'+username:'not set');
+  void validateEulerKey();
   if(username)void connectLive();
 });
 function shutdown(){
