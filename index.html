@@ -251,6 +251,12 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 .category-grid label:has(input:checked){background:#d8f1e8;border-color:#49ac84}
 .category-grid input{width:18px;height:18px;accent-color:#138b61;flex:0 0 auto}
 #categorySummary{display:block;margin-top:7px}
+.n3-skill-panel{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:10px;border:1px solid #9ccadc;border-radius:12px;background:#edf8ff}
+.n3-skill-panel[hidden]{display:none!important}
+.n3-skill-panel>strong{grid-column:1/-1;color:#15506f;font-size:.87rem}
+.n3-skill-panel label{margin:0;padding:8px 10px;font-size:.9rem;background:#fff;border:1px solid #bddde8;border-radius:9px;color:#183b51}
+.n3-skill-panel label:has(input:checked){background:#d5f1e6;border-color:#39a789}
+.n3-skill-panel input{accent-color:#138b61}
 .current-topic{display:none}
 .question{
  color:#ffe5ab;font-size:clamp(13px,3.6cqw,40px);font-weight:1000;
@@ -980,7 +986,14 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 <label><input class="category-check" type="checkbox" value="Địa lý" checked> Địa lý</label>
 <label><input class="category-check" type="checkbox" value="Toán học" checked> Toán học</label>
 <label><input class="category-check" type="checkbox" value="Tiếng Nhật" checked> Tiếng Nhật</label>
-<label><input class="category-check" type="checkbox" value="Tiếng Nhật N3" checked> 🇯🇵 Tiếng Nhật N3 · Sou Matome</label>
+<label><input class="category-check" type="checkbox" value="Tiếng Nhật N3" id="n3Master" checked> 🇯🇵 Tiếng Nhật N3 · Sou Matome</label>
+<div id="n3SkillPanel" class="n3-skill-panel" role="group" aria-label="Chọn dạng câu hỏi tiếng Nhật N3">
+ <strong>Chọn dạng câu hỏi N3:</strong>
+ <label><input class="n3-skill-check" type="checkbox" value="vocab" checked> 📘 Từ vựng</label>
+ <label><input class="n3-skill-check" type="checkbox" value="kanji" checked> 🈶 Kanji</label>
+ <label><input class="n3-skill-check" type="checkbox" value="reading" checked> 📖 Đọc hiểu</label>
+ <label><input class="n3-skill-check" type="checkbox" value="grammar" checked> ✏️ Ngữ pháp</label>
+</div>
 <label><input class="category-check" type="checkbox" value="Đuổi hình bắt chữ" checked> 🧩 Đuổi hình bắt chữ</label>
 <label><input class="category-check" type="checkbox" value="Sắp xếp từ" checked> 🔀 Sắp xếp từ</label>
 </div><small id="categorySummary">Đang dùng tất cả 9 chủ đề</small></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
@@ -1577,141 +1590,205 @@ Số đếm 「きゅう」 là số mấy?|9|10|2|5
 Số đếm 「じゅう」 là số mấy?|10|1|3|6`,
 // N3 practice questions are original, inspired by Sou Matome's skill areas,
 // not taken or reproduced from the copyrighted textbook.
-'Tiếng Nhật N3':`「予定」 có nghĩa là gì?|Dự định, kế hoạch|Kết quả|Tai nạn|Mức lương
-「延期」 có nghĩa là gì?|Hoãn sang thời điểm khác|Xác nhận lịch|Kết thúc ngay|Bắt đầu sớm
-「中止」 có nghĩa là gì?|Hủy, ngừng thực hiện|Tiếp tục thực hiện|Đặt chỗ trước|Điểm danh
-「変更」 có nghĩa là gì?|Thay đổi|Bảo quản|Kiểm tra|Vận chuyển
-「混雑」 có nghĩa là gì?|Đông đúc, chen chúc|Vắng vẻ|Yên tĩnh|Sạch sẽ
-「周辺」 có nghĩa là gì?|Khu vực xung quanh|Bên trong căn phòng|Phía dưới mặt đất|Điểm cuối cùng
-「到着」 có nghĩa là gì?|Đến nơi|Xuất phát|Đi lạc|Trở về nhà
-「出発」 có nghĩa là gì?|Xuất phát, khởi hành|Đến đích|Đứng chờ|Trễ chuyến
-「確認」 có nghĩa là gì?|Xác nhận, kiểm tra lại|Từ chối|Bỏ quên|Báo nghỉ
-「提出」 có nghĩa là gì?|Nộp tài liệu, bài làm|Mượn đồ|In lại tài liệu|Giấu đồ
-「準備」 có nghĩa là gì?|Chuẩn bị|Làm hỏng|Tránh né|Hoàn tiền
-「予約」 có nghĩa là gì?|Đặt trước|Hủy bỏ|Nhận hàng|Thanh toán nợ
-「解決」 có nghĩa là gì?|Giải quyết vấn đề|Tăng chi phí|Đăng ký tham gia|Chuyển nhà
-「連絡」 có nghĩa là gì?|Liên lạc, báo tin|Giải thích chi tiết|Đăng ký khóa học|Đo khoảng cách
-「相談」 có nghĩa là gì?|Trao đổi, xin ý kiến|Tranh cãi dữ dội|Đặt hàng|Đoán mò
-「見学」 có nghĩa là gì?|Tham quan để tìm hiểu|Đi mua sắm|Đi khám bệnh|Thi viết
-「間に合う」 có nghĩa là gì?|Kịp giờ|Bị lỡ giờ|Nhầm đường|Không cần thiết
-「慣れる」 có nghĩa là gì?|Trở nên quen với|Bỗng quên mất|Từ bỏ hoàn toàn|Bị đau
-「増える」 có nghĩa là gì?|Tăng lên|Giảm xuống|Giữ nguyên|Biến mất
-「減る」 có nghĩa là gì?|Giảm xuống|Tăng lên|Xuất hiện|Chuyển hướng
-「比べる」 có nghĩa là gì?|So sánh|Chia đều|Thay thế|Giấu đi
-「選ぶ」 có nghĩa là gì?|Lựa chọn|Sửa chữa|Đánh rơi|Dọn dẹp
-「運ぶ」 có nghĩa là gì?|Mang, vận chuyển|Vẽ tranh|Tính toán|Đọc thầm
-「壊れる」 có nghĩa là gì?|Bị hỏng|Được hoàn thành|Trở nên nổi tiếng|Bắt đầu mọc
-「直す」 có nghĩa là gì?|Sửa cho đúng, sửa chữa|Làm cho rơi|Bán tháo|Dự đoán
-「支払う」 có nghĩa là gì?|Chi trả tiền|Vay mượn sách|Mời vào nhà|Giữ bí mật
-「招待」 có nghĩa là gì?|Mời tham dự|Trừng phạt|Báo cáo|Đưa đón
-「目的」 có nghĩa là gì?|Mục đích|Hậu quả|Trạng thái|Địa chỉ
-「原因」 có nghĩa là gì?|Nguyên nhân|Giải pháp|Kết luận|Thời hạn
-「結果」 có nghĩa là gì?|Kết quả|Nguyên nhân|Dự tính|Cảnh báo
-「状況」 có nghĩa là gì?|Tình hình, trạng thái|Phương hướng|Mẫu đơn|Tốc độ
-「必要」 có nghĩa là gì?|Cần thiết|Nguy hiểm|Nổi tiếng|Chính xác
-「途中」 có nghĩa là gì?|Giữa chừng, dọc đường|Ở đích cuối|Trước khi bắt đầu|Ngoài trời
-「そろそろ」 có nghĩa là gì?|Sắp đến lúc|Đột nhiên|Mãi mãi|Ngày hôm qua
-「しばらく」 có nghĩa là gì?|Một lúc, một thời gian|Ngay lập tức|Không bao giờ|Mỗi sáng
-「とうとう」 có nghĩa là gì?|Cuối cùng rồi cũng|Vẫn chưa bao giờ|Thường xuyên|Hình như
-「すっかり」 có nghĩa là gì?|Hoàn toàn, hết hẳn|Một chút thôi|Một cách bí mật|Ngẫu nhiên
-「なるべく」 có nghĩa là gì?|Cố gắng hết mức có thể|Tuyệt đối cấm|Thỉnh thoảng|Vừa mới
-「せっかく」 có nghĩa là gì?|Đã cất công, khó khăn mới có|Chưa từng làm|Vô tình gặp|Làm ngay lập tức
-「たいてい」 có nghĩa là gì?|Thường, phần lớn trường hợp|Không bao giờ|Chỉ một lần|Bất chợt
-Cách đọc của 「経験」 là gì?|けいけん|けんけい|きょうけん|けいげん
-Cách đọc của 「連絡」 là gì?|れんらく|れいらく|れんがく|れんやく
-Cách đọc của 「地震」 là gì?|じしん|ちしん|じじん|ちじん
-Cách đọc của 「事故」 là gì?|じこ|しこ|じこう|しご
-Cách đọc của 「約束」 là gì?|やくそく|やくぞく|ようそく|やくしょく
-Cách đọc của 「安全」 là gì?|あんぜん|あんせん|やすぜん|あんねん
-Cách đọc của 「危険」 là gì?|きけん|きげん|あぶけん|きかん
-Cách đọc của 「便利」 là gì?|べんり|びんり|べりん|べんじ
-Cách đọc của 「不便」 là gì?|ふべん|ふびん|ぶべん|ふへん
-Cách đọc của 「説明」 là gì?|せつめい|せつみょう|ぜつめい|せっめい
-Cách đọc của 「参加」 là gì?|さんか|ざんか|さんが|さんけ
-Cách đọc của 「運転」 là gì?|うんてん|うんでん|うんせん|うんたん
-Cách đọc của 「交通」 là gì?|こうつう|こうとう|こうどう|こつう
-Cách đọc của 「遅刻」 là gì?|ちこく|じこく|ちこう|じこう
-Cách đọc của 「忘れ物」 là gì?|わすれもの|わすれぶつ|ぼうれもの|わするもの
-Cách đọc của 「書類」 là gì?|しょるい|しゅるい|しょうるい|しょれい
-Cách đọc của 「計画」 là gì?|けいかく|けいがく|けっかく|けいこう
-Cách đọc của 「研究」 là gì?|けんきゅう|けんきょう|げんきゅう|けんくう
-Cách đọc của 「環境」 là gì?|かんきょう|かんけい|かんきゅう|かんじょう
-Cách đọc của 「住所」 là gì?|じゅうしょ|じゅしょう|じょうしょ|じゅうじょ
-Cách đọc của 「受付」 là gì?|うけつけ|うけづけ|うけつき|じゅつけ
-Cách đọc của 「修理」 là gì?|しゅうり|しゅり|しょうり|しゅうじ
-Cách đọc của 「予習」 là gì?|よしゅう|よしょう|よじゅう|よならい
-Cách đọc của 「復習」 là gì?|ふくしゅう|ふくしょう|ふうしゅう|ふくじゅう
-Cách đọc của 「募集」 là gì?|ぼしゅう|もじゅう|ぼしょう|もじょう
-Cách đọc của 「確認」 là gì?|かくにん|かくじん|かきにん|かくねん
-Cách đọc của 「変更」 là gì?|へんこう|へんごう|べんこう|へいこう
-Cách đọc của 「対象」 là gì?|たいしょう|だいしょう|たいそう|たいじょう
-Cách đọc của 「検査」 là gì?|けんさ|けんしゃ|げんさ|けんざ
-Cách đọc của 「条件」 là gì?|じょうけん|じょけん|しょうけん|じょうげん
-「健康のために、毎朝走る（　）しています。」|ように|たびに|ところに|せいで
-「来月から日本語学校に通う（　）しました。」|ことに|ように|ために|ところに
-「会議は午後３時から始まる（　）なりました。」|ことに|つもりに|ために|たびに
-「試験に合格する（　）、毎日勉強しています。」|ために|たびに|せいで|かわりに
-「漢字が読める（　）、毎日練習しています。」|ように|たびに|として|ばかり
-「昼ご飯を食べた（　）なのに、もうおなかがすいた。」|ばかり|つもり|おかげ|とおり
-「この店は安い（　）、料理もおいしい。」|うえに|ために|かわりに|たびに
-「窓を開けた（　）、鳥が入ってきた。」|とたんに|うちに|ほどに|かわりに
-「音楽を聞き（　）、宿題をします。」|ながら|ために|ばかり|にして
-「日本にいる（　）、京都へ行きたい。」|うちに|とおりに|ばかりに|によって
-「出かけている（　）、荷物が届いた。」|間に|ように|ために|おかげで
-「旅行する（　）、新しい発見があります。」|たびに|まま|とたん|ため
-「薬を飲んだ（　）、熱が下がった。」|おかげで|せいで|ばかりで|つもりで
-「雨が強かった（　）、試合が中止になった。」|せいで|おかげで|として|に対して
-「ニュース（　）、明日は雪が降るそうです。」|によると|に対して|として|に比べて
-「去年（　）、今年は暑い日が多い。」|に比べて|に対して|にとって|として
-「彼は医者（　）、多くの人を助けています。」|として|に対して|によって|にとって
-「この薬を飲めば、必ず治る（　）。」|わけではありません|ようにします|ためでした|ままでした
-「田中さんはもう家に着いた（　）です。」|はず|つもり|せい|たび
-「危険なので、ここで泳ぐ（　）。」|べきではありません|つもりではありません|たびではありません|おかげではありません
-「もう締め切りを過ぎたので、申し込める（　）。」|わけがありません|ためにありません|おかげでありません|うちにありません
-「彼は若い（　）、しっかりしています。」|わりに|せいで|ために|ままに
-「時間がない（　）、手伝ってくれました。」|にもかかわらず|について|として|のために
-「仕事は難しかった（　）、最後までやりとげた。」|ものの|ばかり|はず|せい
-「人口が増える（　）、交通も混雑してきた。」|につれて|に対して|にとって|として
-「先生が説明した（　）、やってください。」|とおりに|ために|らしい|らしく
-「電気をつけた（　）、寝てしまった。」|まま|ために|はず|うちに
-「朝ご飯を食べ（　）、学校へ行きました。」|ずに|ばかり|ほど|にして
-「母の（　）、私が買い物に行きました。」|代わりに|ために|うちに|に比べて
-「漢字は勉強すればする（　）、覚えやすくなります。」|ほど|ばかり|うち|きり
-「試験の（　）、急におなかが痛くなった。」|最中に|うちに|おかげで|かわりに
-「会議中は携帯電話を使わない（　）してください。」|ように|ために|ばかり|ほど
-「最近、日本語の新聞が読める（　）。」|ようになりました|ことにしました|ものにしました|ようにしました
-「もう遅いので、帰る（　）ありません。」|しか|ほど|せいで|うちに
-「熱があるなら、無理して学校へ行く（　）。」|ことはありません|ばかりです|しかありません|うちです
-「彼が知らない（　）。昨日説明したんです。」|はずがありません|ためにありません|おかげでありません|うちにありません
-「明日の試験に（　）、今夜は早く寝ます。」|備えて|比べて|対して|よって
-「外出中に地震が起きた（　）、ここへ避難してください。」|場合は|ばかり|ために|ように
-「日本に来て（　）、毎日が忙しいです。」|以来|ために|うちに|ばかり
-「この説明は子ども（　）、少し難しい。」|にとって|によって|に対して|として
-「天気（　）、試合を中止することもあります。」|によっては|としては|にとっては|だけには
-「この仕事を引き受けた（　）、最後まで責任を持ちます。」|からには|おかげで|せいで|ばかりに
-「彼は経験が豊富なので、きっと成功する（　）。」|に違いありません|ばかりです|ものです|最中です
-「この道は狭い（　）、交通量が多い。」|うえに|せいで|として|たびに
-「駅まで歩く（　）、バスで行ったほうが早いです。」|より|ために|ばかり|うちに
-「図書館は月曜日が休みです。火曜日から日曜日まで開いています。」休みはいつですか。|月曜日|火曜日|土曜日|日曜日
-「今日は雨のため、運動会は来週に延期されました。」運動会はいつ行いますか。|来週|今日|昨日|先月
-「会議は９時から１０時半までです。」会議が終わるのは何時ですか。|１０時半|９時|９時半|１１時半
-「この店では、日曜日だけ午後６時に閉まります。ほかの日は午後８時までです。」日曜日は何時に閉まりますか。|午後６時|午後８時|午前６時|午前８時
-「田中さんは風邪をひいたので、今日は会社を休んでいます。」なぜ休んでいますか。|風邪をひいたから|旅行中だから|電車が遅れたから|仕事が終わったから
-「バスが遅れていたので、駅まで歩きました。」駅へどうやって行きましたか。|歩いて|バスで|電車で|車で
-「申込書は金曜日までに受付へ出してください。」申込書はどこへ出しますか。|受付|図書館|教室|郵便局
-「商品に問題があれば、買ってから７日以内に連絡してください。」連絡する期限は？|７日以内|１か月以内|１年以内|当日だけ
-「明日の遠足は朝８時に学校の前に集まります。」どこに集まりますか。|学校の前|駅の中|公園の入口|教室の中
-「兄は去年から大阪に住んでいます。私は今も名古屋に住んでいます。」兄はどこに住んでいますか。|大阪|名古屋|東京|京都
-「来週の試験は筆記だけです。面接は再来週に行います。」面接はいつですか。|再来週|来週|今週|昨日
-「この道は工事中です。車は通れませんが、人は歩けます。」何が通れませんか。|車|歩く人|自転車を押す人|犬
-「仕事が終わったら、まず部長に報告してから帰ってください。」最初にすることは何ですか。|部長に報告する|家に帰る|買い物する|電車に乗る
-「昨日は残業で遅くなったため、友達との約束をキャンセルしました。」約束をやめた理由は何ですか。|残業で遅くなったから|風邪をひいたから|雨が降ったから|電車が止まったから
-「冷蔵庫の牛乳は明日までです。開けたら今日中に飲んでください。」開けた牛乳はいつまでに飲みますか。|今日中|明日の夜|来週|来月
-「この駐車場は午後１０時から午前６時まで使えません。」使えない時間はいつですか。|午後１０時から午前６時|午前６時から正午|正午から午後６時|午後６時から午後８時
-「部屋を予約したい方は、名前と電話番号をメールで送ってください。」何を送りますか。|名前と電話番号|名前と住所|写真と住所|年齢と写真
-「今月は電車の定期券を買ったので、先月より交通費が安くなりました。」何が安くなりましたか。|交通費|家賃|食費|電気代
-「今週末は店が混雑する見込みなので、早めに予約してください。」何を勧めていますか。|早めに予約する|予約しない|週末に休む|閉店を待つ
-「工場では安全のため、作業前に必ず機械を点検してください。」いつ点検しますか。|作業前|作業後だけ|昼休みだけ|休日だけ`,
+'Tiếng Nhật N3':`@vocab@「予定」 có nghĩa là gì?|Dự định, kế hoạch|Kết quả|Tai nạn|Mức lương
+@vocab@「延期」 có nghĩa là gì?|Hoãn sang thời điểm khác|Xác nhận lịch|Kết thúc ngay|Bắt đầu sớm
+@vocab@「中止」 có nghĩa là gì?|Hủy, ngừng thực hiện|Tiếp tục thực hiện|Đặt chỗ trước|Điểm danh
+@vocab@「変更」 có nghĩa là gì?|Thay đổi|Bảo quản|Kiểm tra|Vận chuyển
+@vocab@「混雑」 có nghĩa là gì?|Đông đúc, chen chúc|Vắng vẻ|Yên tĩnh|Sạch sẽ
+@vocab@「周辺」 có nghĩa là gì?|Khu vực xung quanh|Bên trong căn phòng|Phía dưới mặt đất|Điểm cuối cùng
+@vocab@「到着」 có nghĩa là gì?|Đến nơi|Xuất phát|Đi lạc|Trở về nhà
+@vocab@「出発」 có nghĩa là gì?|Xuất phát, khởi hành|Đến đích|Đứng chờ|Trễ chuyến
+@vocab@「確認」 có nghĩa là gì?|Xác nhận, kiểm tra lại|Từ chối|Bỏ quên|Báo nghỉ
+@vocab@「提出」 có nghĩa là gì?|Nộp tài liệu, bài làm|Mượn đồ|In lại tài liệu|Giấu đồ
+@vocab@「準備」 có nghĩa là gì?|Chuẩn bị|Làm hỏng|Tránh né|Hoàn tiền
+@vocab@「予約」 có nghĩa là gì?|Đặt trước|Hủy bỏ|Nhận hàng|Thanh toán nợ
+@vocab@「解決」 có nghĩa là gì?|Giải quyết vấn đề|Tăng chi phí|Đăng ký tham gia|Chuyển nhà
+@vocab@「連絡」 có nghĩa là gì?|Liên lạc, báo tin|Giải thích chi tiết|Đăng ký khóa học|Đo khoảng cách
+@vocab@「相談」 có nghĩa là gì?|Trao đổi, xin ý kiến|Tranh cãi dữ dội|Đặt hàng|Đoán mò
+@vocab@「見学」 có nghĩa là gì?|Tham quan để tìm hiểu|Đi mua sắm|Đi khám bệnh|Thi viết
+@vocab@「間に合う」 có nghĩa là gì?|Kịp giờ|Bị lỡ giờ|Nhầm đường|Không cần thiết
+@vocab@「慣れる」 có nghĩa là gì?|Trở nên quen với|Bỗng quên mất|Từ bỏ hoàn toàn|Bị đau
+@vocab@「増える」 có nghĩa là gì?|Tăng lên|Giảm xuống|Giữ nguyên|Biến mất
+@vocab@「減る」 có nghĩa là gì?|Giảm xuống|Tăng lên|Xuất hiện|Chuyển hướng
+@vocab@「比べる」 có nghĩa là gì?|So sánh|Chia đều|Thay thế|Giấu đi
+@vocab@「選ぶ」 có nghĩa là gì?|Lựa chọn|Sửa chữa|Đánh rơi|Dọn dẹp
+@vocab@「運ぶ」 có nghĩa là gì?|Mang, vận chuyển|Vẽ tranh|Tính toán|Đọc thầm
+@vocab@「壊れる」 có nghĩa là gì?|Bị hỏng|Được hoàn thành|Trở nên nổi tiếng|Bắt đầu mọc
+@vocab@「直す」 có nghĩa là gì?|Sửa cho đúng, sửa chữa|Làm cho rơi|Bán tháo|Dự đoán
+@vocab@「支払う」 có nghĩa là gì?|Chi trả tiền|Vay mượn sách|Mời vào nhà|Giữ bí mật
+@vocab@「招待」 có nghĩa là gì?|Mời tham dự|Trừng phạt|Báo cáo|Đưa đón
+@vocab@「目的」 có nghĩa là gì?|Mục đích|Hậu quả|Trạng thái|Địa chỉ
+@vocab@「原因」 có nghĩa là gì?|Nguyên nhân|Giải pháp|Kết luận|Thời hạn
+@vocab@「結果」 có nghĩa là gì?|Kết quả|Nguyên nhân|Dự tính|Cảnh báo
+@vocab@「状況」 có nghĩa là gì?|Tình hình, trạng thái|Phương hướng|Mẫu đơn|Tốc độ
+@vocab@「必要」 có nghĩa là gì?|Cần thiết|Nguy hiểm|Nổi tiếng|Chính xác
+@vocab@「途中」 có nghĩa là gì?|Giữa chừng, dọc đường|Ở đích cuối|Trước khi bắt đầu|Ngoài trời
+@vocab@「そろそろ」 có nghĩa là gì?|Sắp đến lúc|Đột nhiên|Mãi mãi|Ngày hôm qua
+@vocab@「しばらく」 có nghĩa là gì?|Một lúc, một thời gian|Ngay lập tức|Không bao giờ|Mỗi sáng
+@vocab@「とうとう」 có nghĩa là gì?|Cuối cùng rồi cũng|Vẫn chưa bao giờ|Thường xuyên|Hình như
+@vocab@「すっかり」 có nghĩa là gì?|Hoàn toàn, hết hẳn|Một chút thôi|Một cách bí mật|Ngẫu nhiên
+@vocab@「なるべく」 có nghĩa là gì?|Cố gắng hết mức có thể|Tuyệt đối cấm|Thỉnh thoảng|Vừa mới
+@vocab@「せっかく」 có nghĩa là gì?|Đã cất công, khó khăn mới có|Chưa từng làm|Vô tình gặp|Làm ngay lập tức
+@vocab@「たいてい」 có nghĩa là gì?|Thường, phần lớn trường hợp|Không bao giờ|Chỉ một lần|Bất chợt
+@kanji@Cách đọc của 「経験」 là gì?|けいけん|けんけい|きょうけん|けいげん
+@kanji@Cách đọc của 「連絡」 là gì?|れんらく|れいらく|れんがく|れんやく
+@kanji@Cách đọc của 「地震」 là gì?|じしん|ちしん|じじん|ちじん
+@kanji@Cách đọc của 「事故」 là gì?|じこ|しこ|じこう|しご
+@kanji@Cách đọc của 「約束」 là gì?|やくそく|やくぞく|ようそく|やくしょく
+@kanji@Cách đọc của 「安全」 là gì?|あんぜん|あんせん|やすぜん|あんねん
+@kanji@Cách đọc của 「危険」 là gì?|きけん|きげん|あぶけん|きかん
+@kanji@Cách đọc của 「便利」 là gì?|べんり|びんり|べりん|べんじ
+@kanji@Cách đọc của 「不便」 là gì?|ふべん|ふびん|ぶべん|ふへん
+@kanji@Cách đọc của 「説明」 là gì?|せつめい|せつみょう|ぜつめい|せっめい
+@kanji@Cách đọc của 「参加」 là gì?|さんか|ざんか|さんが|さんけ
+@kanji@Cách đọc của 「運転」 là gì?|うんてん|うんでん|うんせん|うんたん
+@kanji@Cách đọc của 「交通」 là gì?|こうつう|こうとう|こうどう|こつう
+@kanji@Cách đọc của 「遅刻」 là gì?|ちこく|じこく|ちこう|じこう
+@kanji@Cách đọc của 「忘れ物」 là gì?|わすれもの|わすれぶつ|ぼうれもの|わするもの
+@kanji@Cách đọc của 「書類」 là gì?|しょるい|しゅるい|しょうるい|しょれい
+@kanji@Cách đọc của 「計画」 là gì?|けいかく|けいがく|けっかく|けいこう
+@kanji@Cách đọc của 「研究」 là gì?|けんきゅう|けんきょう|げんきゅう|けんくう
+@kanji@Cách đọc của 「環境」 là gì?|かんきょう|かんけい|かんきゅう|かんじょう
+@kanji@Cách đọc của 「住所」 là gì?|じゅうしょ|じゅしょう|じょうしょ|じゅうじょ
+@kanji@Cách đọc của 「受付」 là gì?|うけつけ|うけづけ|うけつき|じゅつけ
+@kanji@Cách đọc của 「修理」 là gì?|しゅうり|しゅり|しょうり|しゅうじ
+@kanji@Cách đọc của 「予習」 là gì?|よしゅう|よしょう|よじゅう|よならい
+@kanji@Cách đọc của 「復習」 là gì?|ふくしゅう|ふくしょう|ふうしゅう|ふくじゅう
+@kanji@Cách đọc của 「募集」 là gì?|ぼしゅう|もじゅう|ぼしょう|もじょう
+@kanji@Cách đọc của 「確認」 là gì?|かくにん|かくじん|かきにん|かくねん
+@kanji@Cách đọc của 「変更」 là gì?|へんこう|へんごう|べんこう|へいこう
+@kanji@Cách đọc của 「対象」 là gì?|たいしょう|だいしょう|たいそう|たいじょう
+@kanji@Cách đọc của 「検査」 là gì?|けんさ|けんしゃ|げんさ|けんざ
+@kanji@Cách đọc của 「条件」 là gì?|じょうけん|じょけん|しょうけん|じょうげん
+@grammar@「健康のために、毎朝走る（　）しています。」|ように|たびに|ところに|せいで
+@grammar@「来月から日本語学校に通う（　）しました。」|ことに|ように|ために|ところに
+@grammar@「会議は午後３時から始まる（　）なりました。」|ことに|つもりに|ために|たびに
+@grammar@「試験に合格する（　）、毎日勉強しています。」|ために|たびに|せいで|かわりに
+@grammar@「漢字が読める（　）、毎日練習しています。」|ように|たびに|として|ばかり
+@grammar@「昼ご飯を食べた（　）なのに、もうおなかがすいた。」|ばかり|つもり|おかげ|とおり
+@grammar@「この店は安い（　）、料理もおいしい。」|うえに|ために|かわりに|たびに
+@grammar@「窓を開けた（　）、鳥が入ってきた。」|とたんに|うちに|ほどに|かわりに
+@grammar@「音楽を聞き（　）、宿題をします。」|ながら|ために|ばかり|にして
+@grammar@「日本にいる（　）、京都へ行きたい。」|うちに|とおりに|ばかりに|によって
+@grammar@「出かけている（　）、荷物が届いた。」|間に|ように|ために|おかげで
+@grammar@「旅行する（　）、新しい発見があります。」|たびに|まま|とたん|ため
+@grammar@「薬を飲んだ（　）、熱が下がった。」|おかげで|せいで|ばかりで|つもりで
+@grammar@「雨が強かった（　）、試合が中止になった。」|せいで|おかげで|として|に対して
+@grammar@「ニュース（　）、明日は雪が降るそうです。」|によると|に対して|として|に比べて
+@grammar@「去年（　）、今年は暑い日が多い。」|に比べて|に対して|にとって|として
+@grammar@「彼は医者（　）、多くの人を助けています。」|として|に対して|によって|にとって
+@grammar@「この薬を飲めば、必ず治る（　）。」|わけではありません|ようにします|ためでした|ままでした
+@grammar@「田中さんはもう家に着いた（　）です。」|はず|つもり|せい|たび
+@grammar@「危険なので、ここで泳ぐ（　）。」|べきではありません|つもりではありません|たびではありません|おかげではありません
+@grammar@「もう締め切りを過ぎたので、申し込める（　）。」|わけがありません|ためにありません|おかげでありません|うちにありません
+@grammar@「彼は若い（　）、しっかりしています。」|わりに|せいで|ために|ままに
+@grammar@「時間がない（　）、手伝ってくれました。」|にもかかわらず|について|として|のために
+@grammar@「仕事は難しかった（　）、最後までやりとげた。」|ものの|ばかり|はず|せい
+@grammar@「人口が増える（　）、交通も混雑してきた。」|につれて|に対して|にとって|として
+@grammar@「先生が説明した（　）、やってください。」|とおりに|ために|らしい|らしく
+@grammar@「電気をつけた（　）、寝てしまった。」|まま|ために|はず|うちに
+@grammar@「朝ご飯を食べ（　）、学校へ行きました。」|ずに|ばかり|ほど|にして
+@grammar@「母の（　）、私が買い物に行きました。」|代わりに|ために|うちに|に比べて
+@grammar@「漢字は勉強すればする（　）、覚えやすくなります。」|ほど|ばかり|うち|きり
+@grammar@「試験の（　）、急におなかが痛くなった。」|最中に|うちに|おかげで|かわりに
+@grammar@「会議中は携帯電話を使わない（　）してください。」|ように|ために|ばかり|ほど
+@grammar@「最近、日本語の新聞が読める（　）。」|ようになりました|ことにしました|ものにしました|ようにしました
+@grammar@「もう遅いので、帰る（　）ありません。」|しか|ほど|せいで|うちに
+@grammar@「熱があるなら、無理して学校へ行く（　）。」|ことはありません|ばかりです|しかありません|うちです
+@grammar@「彼が知らない（　）。昨日説明したんです。」|はずがありません|ためにありません|おかげでありません|うちにありません
+@grammar@「明日の試験に（　）、今夜は早く寝ます。」|備えて|比べて|対して|よって
+@grammar@「外出中に地震が起きた（　）、ここへ避難してください。」|場合は|ばかり|ために|ように
+@grammar@「日本に来て（　）、毎日が忙しいです。」|以来|ために|うちに|ばかり
+@grammar@「この説明は子ども（　）、少し難しい。」|にとって|によって|に対して|として
+@grammar@「天気（　）、試合を中止することもあります。」|によっては|としては|にとっては|だけには
+@grammar@「この仕事を引き受けた（　）、最後まで責任を持ちます。」|からには|おかげで|せいで|ばかりに
+@grammar@「彼は経験が豊富なので、きっと成功する（　）。」|に違いありません|ばかりです|ものです|最中です
+@grammar@「この道は狭い（　）、交通量が多い。」|うえに|せいで|として|たびに
+@grammar@「駅まで歩く（　）、バスで行ったほうが早いです。」|より|ために|ばかり|うちに
+@reading@「図書館は月曜日が休みです。火曜日から日曜日まで開いています。」休みはいつですか。|月曜日|火曜日|土曜日|日曜日
+@reading@「今日は雨のため、運動会は来週に延期されました。」運動会はいつ行いますか。|来週|今日|昨日|先月
+@reading@「会議は９時から１０時半までです。」会議が終わるのは何時ですか。|１０時半|９時|９時半|１１時半
+@reading@「この店では、日曜日だけ午後６時に閉まります。ほかの日は午後８時までです。」日曜日は何時に閉まりますか。|午後６時|午後８時|午前６時|午前８時
+@reading@「田中さんは風邪をひいたので、今日は会社を休んでいます。」なぜ休んでいますか。|風邪をひいたから|旅行中だから|電車が遅れたから|仕事が終わったから
+@reading@「バスが遅れていたので、駅まで歩きました。」駅へどうやって行きましたか。|歩いて|バスで|電車で|車で
+@reading@「申込書は金曜日までに受付へ出してください。」申込書はどこへ出しますか。|受付|図書館|教室|郵便局
+@reading@「商品に問題があれば、買ってから７日以内に連絡してください。」連絡する期限は？|７日以内|１か月以内|１年以内|当日だけ
+@reading@「明日の遠足は朝８時に学校の前に集まります。」どこに集まりますか。|学校の前|駅の中|公園の入口|教室の中
+@reading@「兄は去年から大阪に住んでいます。私は今も名古屋に住んでいます。」兄はどこに住んでいますか。|大阪|名古屋|東京|京都
+@reading@「来週の試験は筆記だけです。面接は再来週に行います。」面接はいつですか。|再来週|来週|今週|昨日
+@reading@「この道は工事中です。車は通れませんが、人は歩けます。」何が通れませんか。|車|歩く人|自転車を押す人|犬
+@reading@「仕事が終わったら、まず部長に報告してから帰ってください。」最初にすることは何ですか。|部長に報告する|家に帰る|買い物する|電車に乗る
+@reading@「昨日は残業で遅くなったため、友達との約束をキャンセルしました。」約束をやめた理由は何ですか。|残業で遅くなったから|風邪をひいたから|雨が降ったから|電車が止まったから
+@reading@「冷蔵庫の牛乳は明日までです。開けたら今日中に飲んでください。」開けた牛乳はいつまでに飲みますか。|今日中|明日の夜|来週|来月
+@reading@「この駐車場は午後１０時から午前６時まで使えません。」使えない時間はいつですか。|午後１０時から午前６時|午前６時から正午|正午から午後６時|午後６時から午後８時
+@reading@「部屋を予約したい方は、名前と電話番号をメールで送ってください。」何を送りますか。|名前と電話番号|名前と住所|写真と住所|年齢と写真
+@reading@「今月は電車の定期券を買ったので、先月より交通費が安くなりました。」何が安くなりましたか。|交通費|家賃|食費|電気代
+@reading@「今週末は店が混雑する見込みなので、早めに予約してください。」何を勧めていますか。|早めに予約する|予約しない|週末に休む|閉店を待つ
+@reading@「工場では安全のため、作業前に必ず機械を点検してください。」いつ点検しますか。|作業前|作業後だけ|昼休みだけ|休日だけ
+@vocab+@「会議の時間を（　）したいので、部長に相談した。」|変更|完成|停電|発明
+@vocab+@「予算が足りず、旅行の計画は（　）になった。」|中止|開始|参加|到着
+@vocab+@「この地域では最近、外国人観光客が（　）している。」|増加|減少|出発|完成
+@vocab+@「大雨の影響で、屋外のイベントは（　）された。」|延期|歓迎|整理|配達
+@vocab+@「機械を動かす前に、安全を（　）してください。」|確認|招待|見学|解決
+@vocab+@「報告書の（　）は金曜日なので、木曜日までに完成させよう。」|締め切り|見送り|取り消し|目印
+@vocab+@「説明が（　）で、何をすればいいか分からなかった。」|あいまい|正確|明確|具体的
+@vocab+@「会社までの最も速い（　）を調べてから出発した。」|経路|機能|記録|材料
+@vocab+@「このサービスは、利用者の（　）に応じて内容を変えられます。」|希望|故障|階段|交通
+@vocab+@「部品が届かないため、工場の作業が（　）している。」|中断|上達|増加|完成
+@vocab+@「工場では毎朝、機械の（　）を行っている。」|点検|交通|出席|利用
+@vocab+@「同じミスを防ぐため、作業の手順を（　）した。」|改善|解散|到着|招待
+@vocab+@「この薬の説明は専門用語が多く、少し（　）だ。」|複雑|安全|簡単|便利
+@vocab+@「駅前の道路は通勤時間になると（　）する。」|混雑|検査|通訳|連絡
+@vocab+@「新しいルールの（　）を全員に知らせた。」|内容|体温|乗客|景色
+@vocab+@「突然の変更を聞いて、みんなが（　）した。」|困惑|感謝|満足|安心
+@kanji+@「締め切り」の読み方は？|しめきり|しまりきり|じめきり|しめぎり
+@kanji+@「見積もり」の読み方は？|みつもり|みつずもり|けんつもり|みつのり
+@kanji+@「承認」の読み方は？|しょうにん|じょうにん|しょうじん|しゅうにん
+@kanji+@「設備」の読み方は？|せつび|せつぴ|しつび|せちび
+@kanji+@「納期」の読み方は？|のうき|なっき|おさき|のうご
+@kanji+@「効率」の読み方は？|こうりつ|こりつ|こうそつ|ごうりつ
+@kanji+@「状況」の読み方は？|じょうきょう|じょうけい|しょうきょう|じょうこう
+@kanji+@「経費」の読み方は？|けいひ|きょうひ|けいび|けいふ
+@kanji+@「判断」の読み方は？|はんだん|ばんだん|はんたん|ほんだん
+@kanji+@「責任」の読み方は？|せきにん|せきじん|しゃくにん|せつにん
+@kanji+@「改善」の読み方は？|かいぜん|かいせん|がいぜん|かいねん
+@kanji+@「期限」の読み方は？|きげん|きかん|ぎけん|きねん
+@kanji+@「優先」の読み方は？|ゆうせん|ゆせん|ゆうぜん|ゆうさき
+@kanji+@「資料」の読み方は？|しりょう|じりょう|しりゅう|しりょ
+@kanji+@「調整」の読み方は？|ちょうせい|ちょうぜい|じょうせい|ちょうしょう
+@kanji+@「手続き」の読み方は？|てつづき|てつつき|しゅぞくき|てつずけ
+@grammar+@「この仕事は経験が（　）、だれでも応募できます。」|なくても|ないのに|ないばかり|ないまま
+@grammar+@「日本語が上手になる（　）、毎日ニュースを聞いています。」|ように|たびに|わりに|とたんに
+@grammar+@「財布を忘れた（　）、昼ご飯が買えなかった。」|せいで|おかげで|うえに|たびに
+@grammar+@「電車の遅れ（　）、会議に間に合いませんでした。」|によって|にとって|として|に比べて
+@grammar+@「早く寝た（　）、朝は起きられなかった。」|のに|うちに|とおり|ついでに
+@grammar+@「週末は映画を見る（　）、家で勉強することにした。」|かわりに|とおりに|につれて|おかげで
+@grammar+@「ドアを開けた（　）、猫が飛び出してきた。」|とたんに|わりに|によって|ものの
+@grammar+@「この仕事は難しい（　）、やりがいがある。」|ものの|ばかり|ことに|ついでに
+@grammar+@「荷物は明日届く（　）ですが、まだ連絡がありません。」|はず|ため|ところ|せい
+@grammar+@「仕事が増える（　）、帰る時間が遅くなった。」|につれて|ついでに|として|ように
+@grammar+@「この装置は使い方（　）、危険なこともあります。」|によっては|だけには|としては|にとっては
+@grammar+@「説明を聞いた（　）、まだよく分かりません。」|ものの|たびに|せいで|とたんに
+@grammar+@「急いでいた（　）、大切な書類を忘れてしまった。」|せいで|ついでに|たびに|として
+@grammar+@「この時計は古い（　）、まだ正確に動きます。」|わりに|ために|おかげで|ついでに
+@grammar+@「部長に相談した（　）、計画を変更することになった。」|結果|最中|たび|かわり
+@grammar+@「天気予報（　）、明日は台風が近づくそうです。」|によると|にとって|に対して|として
+@reading+@「職場では作業前に機械を確認します。異常があった場合は、自分で直さず担当者に知らせてください。」異常があったら？|担当者に知らせる|自分ですぐ直す|そのまま使う|帰宅する
+@reading+@「予約した商品は来週の水曜日から受け取れます。ただし、日曜日は店が休みです。」受け取り開始は？|来週の水曜日|今週の水曜日|来週の日曜日|今週の日曜日
+@reading+@「会社の研修は全員参加ですが、出張中の社員はオンラインで受けてもかまいません。」出張中の社員は？|オンラインで参加できる|必ず会場へ行く|研修が免除される|後日しか参加できない
+@reading+@「雨の日は自転車で来ないでください。駅から出る無料のバスをご利用ください。」雨の日のおすすめは？|無料のバスを使う|自転車で来る|歩いて山を越える|タクシーだけを使う
+@reading+@「この図書館では本を三週間借りられます。返却が遅れる場合は、期限前に連絡が必要です。」遅れそうなときは？|期限前に連絡する|連絡せず返す|三か月待つ|借り直せない
+@reading+@「今日は機械の検査があるため、午前中は工場に入れません。作業は午後一時から再開します。」作業再開は？|午後一時|午前八時|正午|午後五時
+@reading+@「会議資料は印刷しません。参加者は各自、開始前に共有フォルダーからダウンロードしてください。」資料はどうする？|開始前にダウンロード|当日印刷して配る|会議後に受け取る|受付で紙をもらう
+@reading+@「店長は金曜日まで休みです。急ぎの相談は副店長が対応します。」木曜日に急ぎで相談する相手は？|副店長|店長|配達員|お客様
+@reading+@「先月は残業が多かったですが、今月は仕事が減り、毎日ほぼ定時に帰れています。」今月の様子は？|残業が少ない|残業が増えた|仕事が急に増えた|毎日出張している
+@reading+@「このレストランは予約なしでも入れますが、週末の夜は席が埋まりやすいそうです。」週末の夜は？|予約すると安心|必ず空席がある|店が休みになる|予約できない
+@reading+@「申し込みはネットでできます。ただし、参加費の支払いは会場で現金のみです。」参加費の払い方は？|会場で現金払い|ネットでカード払い|銀行振込だけ|無料で参加できる
+@reading+@「列車は事故の影響で十五分遅れています。乗り換えの方は駅員にご相談ください。」乗り換えが心配なら？|駅員に相談する|すぐ家へ帰る|別の切符を買う|何もしないで待つ
+@reading+@「今週のテストでは辞書を使ってもいいですが、スマートフォンは電源を切ってください。」許されているのは？|辞書を使うこと|スマホで調べること|友達に聞くこと|写真を撮ること
+@reading+@「資料は一人一部ずつ持っていってください。足りない場合は、受付で新しいものをもらえます。」資料が足りないときは？|受付でもらう|一人で二部持つ|自分で買う|取りに来ない
+@reading+@「明日は午後から雨になる予報です。午前中に洗濯を済ませておいたほうがよさそうです。」洗濯はいつ？|午前中|夜遅く|明後日|来週
+@reading+@「工事のため東側の入口は使えません。しばらくの間、西側の入口からお入りください。」入る場所は？|西側の入口|東側の入口|非常口|裏の駐車場`,
 'Đuổi hình bắt chữ':`🐃 🎻|Đàn gảy tai trâu|Chọi trâu|Trâu đi cày|Trâu ăn cỏ
 🐟 ➡️ 🐉|Cá chép hóa rồng|Cá vượt thác|Rồng phun lửa|Cá về biển
 🐸 🪣|Ếch ngồi đáy giếng|Ếch gọi mưa|Ếch nhảy cao|Ếch bắt sâu
@@ -2812,7 +2889,7 @@ window.classroomLiveEvent=function(event){
   }finally{window.__classroomRealEvent=false;}
 };
 
-const $=id=>document.getElementById(id);const core=Object.entries(DATA).flatMap(([category,lines])=>lines.trim().split('\n').map(line=>{const [question,answer,...distractors]=line.split('|');return {question,answer,category,distractors}}));let extras=[];try{extras=JSON.parse(localStorage.getItem('classroom_extra')||'[]')}catch(e){};let bank=[...core,...extras];$('bankCount').textContent='('+bank.length+' câu)';let count=0,current=null,options=[],selected=-1,locked=false,seconds=20,tick=null,nextTimer=null,score=0,answeredThisQuestion=new Set(),correctTotalThisQuestion=0,fastestCorrectNames=[],students=[];
+const $=id=>document.getElementById(id);const core=Object.entries(DATA).flatMap(([category,lines])=>lines.trim().split('\n').map(line=>{const [rawQuestion,answer,...distractors]=line.split('|');const n3Match=category==='Tiếng Nhật N3'?rawQuestion.match(/^@(vocab|kanji|grammar|reading)(\+)?@/):null;const question=n3Match?rawQuestion.slice(n3Match[0].length):rawQuestion;return {question,answer,category,distractors,n3Skill:n3Match?.[1]||null,n3Hard:Boolean(n3Match?.[2])}}));let extras=[];try{extras=JSON.parse(localStorage.getItem('classroom_extra')||'[]')}catch(e){};let bank=[...core,...extras];$('bankCount').textContent='('+bank.length+' câu)';let count=0,current=null,options=[],selected=-1,locked=false,seconds=20,tick=null,nextTimer=null,score=0,answeredThisQuestion=new Set(),correctTotalThisQuestion=0,fastestCorrectNames=[],students=[];
 // Grace period collects TikTok events that were posted before the clock hit zero
 // but reached the game on the next Render poll. Never score later timestamps.
 let roundGraceActive=false,roundGraceTimer=null,honorSpeechActive=false;
@@ -2882,12 +2959,34 @@ const ALL_SUBJECTS=['Lịch sử','Văn học','Khoa học','Địa lý','Toán 
 const PREVIOUS_ALL_SUBJECTS=ALL_SUBJECTS.filter(t=>t!=='Tiếng Nhật N3');
 const OLD_ALL_SUBJECTS=PREVIOUS_ALL_SUBJECTS.filter(t=>t!=='Sắp xếp từ');
 const CATEGORY_STORE='classroom12a_checked_topics_v1';
+const N3_SKILLS=['vocab','kanji','reading','grammar'];
+const N3_SKILL_NAMES={vocab:'Từ vựng',kanji:'Kanji',reading:'Đọc hiểu',grammar:'Ngữ pháp'};
+const N3_SKILL_STORE='classroom12a_n3_skills_v1';
+function activeN3Skills(){return [...document.querySelectorAll('#n3SkillPanel .n3-skill-check:checked')].map(el=>el.value)}
+function refreshN3SkillPanel(){const panel=$('n3SkillPanel');if(panel)panel.hidden=!$('n3Master')?.checked}
+function initN3SkillChoices(){
+ let saved=null;
+ try{saved=JSON.parse(localStorage.getItem(N3_SKILL_STORE)||'null')}catch(e){}
+ const selected=Array.isArray(saved)&&saved.some(v=>N3_SKILLS.includes(v))?saved:N3_SKILLS;
+ document.querySelectorAll('#n3SkillPanel .n3-skill-check').forEach(el=>{
+   el.checked=selected.includes(el.value);
+   el.addEventListener('change',()=>{
+     if(!activeN3Skills().length){el.checked=true;status('Chọn ít nhất một dạng câu hỏi N3.',true);return}
+     try{localStorage.setItem(N3_SKILL_STORE,JSON.stringify(activeN3Skills()))}catch(e){}
+     saveCategoryChoices();
+     if($('n3Master')?.checked){newQuestion();if(voiceEnabled)beginQuestionReading()}
+   });
+ });
+ refreshN3SkillPanel();saveCategoryChoices();
+}
 function activeSubjects(){return [...document.querySelectorAll('#categoryGroup .category-check:checked')].map(el=>el.value)}
 function saveCategoryChoices(){
  const selected=activeSubjects();
  try{localStorage.setItem(CATEGORY_STORE,JSON.stringify(selected))}catch(e){}
  const el=document.getElementById('categorySummary');
- if(el)el.textContent=selected.length===ALL_SUBJECTS.length?'Đang dùng tất cả '+ALL_SUBJECTS.length+' chủ đề':'Đã chọn '+selected.length+' chủ đề: '+selected.join(', ');
+ if(el){const main=selected.length===ALL_SUBJECTS.length?'Đang dùng tất cả '+ALL_SUBJECTS.length+' chủ đề':'Đã chọn '+selected.length+' chủ đề: '+selected.join(', ');
+  const n3=selected.includes('Tiếng Nhật N3')?' · N3: '+activeN3Skills().map(v=>N3_SKILL_NAMES[v]).join(', '):'';
+  el.textContent=main+n3;}
 }
 function initCategoryChoices(){
  let saved=null;
@@ -2906,12 +3005,12 @@ function initCategoryChoices(){
      if(!activeSubjects().length){
        el.checked=true;status('Chọn ít nhất một chủ đề.',true);return;
      }
-     saveCategoryChoices();newQuestion();if(voiceEnabled)beginQuestionReading();
+     refreshN3SkillPanel();saveCategoryChoices();newQuestion();if(voiceEnabled)beginQuestionReading();
    });
  });
  $('selectAllCategories').onclick=()=>{
    document.querySelectorAll('#categoryGroup .category-check').forEach(el=>{el.checked=true});
-   saveCategoryChoices();newQuestion();if(voiceEnabled)beginQuestionReading();
+   refreshN3SkillPanel();saveCategoryChoices();newQuestion();if(voiceEnabled)beginQuestionReading();
  };
  saveCategoryChoices();
 }
@@ -3113,7 +3212,7 @@ function fitN3Question(){
  }
 }
 window.addEventListener('resize',()=>{if($('question')?.classList.contains('n3-question'))requestAnimationFrame(fitN3Question)});
-function newQuestion(){if(count>0&&count%10===0)tenQuestionAttendance.clear();hideTenQuestionAwards();window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();clearCorrectAvatar();roundAnswers.length=0;stopSpeaking();const selectedSubjects=activeSubjects();const filtered=bank.filter(q=>selectedSubjects.includes(q.category));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const isWordOrder=current.category==='Sắp xếp từ';
+function newQuestion(){if(count>0&&count%10===0)tenQuestionAttendance.clear();hideTenQuestionAwards();window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();clearCorrectAvatar();roundAnswers.length=0;stopSpeaking();const selectedSubjects=activeSubjects();const enabledN3=activeN3Skills();const filtered=bank.filter(q=>selectedSubjects.includes(q.category)&&(q.category!=='Tiếng Nhật N3'||enabledN3.includes(q.n3Skill)));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);const weighted=filtered.flatMap(q=>q.n3Hard?[q,q]:[q]);let candidate=weighted[Math.floor(Math.random()*weighted.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const isWordOrder=current.category==='Sắp xếp từ';
 const distractors=isWordOrder?[]:quizDistractors(current,bank);
 if(!isWordOrder&&!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
 options=isWordOrder?[]:shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));
@@ -3386,7 +3485,7 @@ $('resetBtn').onclick=()=>{if(!confirm('Đặt lại điểm, học sinh và câ
     }
   };
 })();
-initCategoryChoices();initNamePronunciations();renderStudents();voiceState();loadVietnameseVoices();if(speechAvailable)window.speechSynthesis.onvoiceschanged=loadVietnameseVoices;newQuestion();
+initCategoryChoices();initN3SkillChoices();initNamePronunciations();renderStudents();voiceState();loadVietnameseVoices();if(speechAvailable)window.speechSynthesis.onvoiceschanged=loadVietnameseVoices;newQuestion();
 
 /* The reference is selected once from Photos and saved privately on this iPhone.
    Keeping the real source pixels intact avoids the blurry clipped teacher hand
