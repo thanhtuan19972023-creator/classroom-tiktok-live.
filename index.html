@@ -937,6 +937,16 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
  font-size:clamp(10px,2.1cqw,25px);
  padding:.36cqw .6cqw;
 }
+
+/* Music break after the attendance ceremony every ten questions. */
+#tenQuestionMusic[hidden]{display:none!important}
+#tenQuestionMusic{position:absolute;inset:19% 5% auto;z-index:95;max-width:460px;margin:auto;padding:18px 14px;text-align:center;border:3px solid #fff2c8;border-radius:20px;background:linear-gradient(150deg,#50306e,#a53378 65%,#ec7d7c);color:#fff;box-shadow:0 12px 40px #1e1639ba;overflow-wrap:anywhere}
+#tenQuestionMusic .music-emoji{font-size:clamp(36px,9vw,58px)}
+#tenQuestionMusic h3{margin:6px 0;font-size:clamp(17px,4.5vw,24px);line-height:1.3}
+#tenQuestionMusic p{margin:8px 0;font-size:clamp(12px,3vw,16px)}
+#tenQuestionMusic .music-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:10px}
+#tenQuestionMusic button{padding:9px 12px;border:2px solid white;border-radius:12px;background:#fff4d3;color:#53305c;font-weight:900;cursor:pointer}
+#tenQuestionMusic button:last-child{background:#49375c;color:#fff}
 </style></head><body><div class="wrap"><header><div><strong>🏫 LỚP HỌC VUI VẺ • 12A</strong><br><small>Đố vui · Tương tác cùng người xem</small></div><div class="pill">● LIVE DEMO</div></header>
 <div id="livePresentation">
 <div id="liveLaunchBar"><button type="button" id="launchLiveFullscreen">⛶ MỞ LIVE TOÀN MÀN HÌNH – ẨN THANH WEB</button><small>Nhấn nút này trước khi chia sẻ màn hình lên TikTok. Android Chrome hỗ trợ chế độ toàn màn hình.</small></div>
@@ -958,6 +968,14 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
  <ol id="awardWinners"></ol>
  <small>Tuyên dương không cộng thêm điểm.</small>
 </section>
+<section id="tenQuestionMusic" aria-label="Giải lao âm nhạc sau 10 câu hỏi" hidden>
+ <div class="music-emoji" aria-hidden="true">🎶 💃 🕺 🎶</div>
+ <h3>GIẢI LAO ÂM NHẠC</h3>
+ <strong>🎵 Không môn đăng hộ đối</strong>
+ <p id="tenSongStatus" aria-live="polite">Đang chuẩn bị bài hát...</p>
+ <div class="music-actions"><button id="tenSongPlay" type="button">▶ Phát nhạc</button><button id="tenSongSkip" type="button">⏭ Bỏ qua</button></div>
+</section>
+<audio id="tenSongAudio" preload="none" playsinline></audio>
 <main id="stage" aria-label="Lớp học vui vẻ 12A"><img id="exactReferenceImage" alt="" aria-hidden="true"><div id="bakedRankCover" aria-label="Thể lệ cộng trừ điểm">
   <strong>📋 THỂ LỆ</strong>
   <div><span>Nhanh nhất</span><b>+10đ</b></div>
@@ -973,7 +991,17 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 <div class="stage-decoration"></div><div class="stage-top"><span class="live">🎮 GAME LIVE</span></div>
 <div class="hanging-light llight"></div><div class="hanging-light rlight"></div><div class="hud"><span>🏆 Tổng <span id="totalScore">0</span> điểm</span><span>📚 Câu <span id="questionNo">1</span></span><span>👦👧 <span id="studentCount">6</span> học sinh</span></div><div class="window left"></div><div class="window right"></div><section class="board"><div class="chalk-top"><span class="ref-chalkicon">📚</span><span class="subject-chip" data-category="Lịch sử">Lịch sử</span><span class="subject-chip" data-category="Văn học">Văn học</span><span class="subject-chip" data-category="Khoa học">Khoa học</span><span class="subject-chip" data-category="Địa lý">Địa lý</span><span class="subject-chip" data-category="Toán học">Toán</span><span class="subject-chip" data-category="Tiếng Nhật">Nhật</span><span class="subject-chip" data-category="Đuổi hình bắt chữ">🧩 Bắt chữ</span><span class="subject-chip" data-category="Sắp xếp từ">🔀 Xếp từ</span><span id="topic" class="current-topic"></span></div><div id="question" class="question">Đang chuẩn bị câu hỏi...</div><div class="options" id="options"></div><div class="board-bottom"><span id="boardHint">Chọn đáp án A, B, C hoặc D</span><span id="timer" class="timer">20</span></div></section><div class="teacher" aria-label="Cô giáo trẻ trưởng thành áo dài trắng, dáng thon đang chỉ lên bảng">
 <img class="teacher-art teacher-new" src="data:image/webp;base64,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" alt="Cô giáo Duyên áo dài trắng hoa anh đào" draggable="false"></div><div class="teachbubble" id="teacherSpeech">Các em chọn đáp án nhé! 💖</div><div class="teacherdesk"><div class="desk-top"></div><div class="desk-front">BÀN GIÁO VIÊN</div></div><div class="floorstripe"></div><div class="students" id="students"></div><div id="confetti"></div><div id="giftZone"></div></main><button type="button" id="exitLiveFullscreen">✕ Thoát toàn màn hình</button></div>
-<section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" type="button" id="liveSafeBtn" aria-pressed="false">📱 Khung LIVE gọn</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button><button class="gold" id="referencePickerBtn" type="button">🖼️ Dùng ảnh mẫu gốc</button><button class="secondary" id="referenceResetBtn" type="button" hidden>↩ Giao diện cũ</button><input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/*" id="referenceUpload" hidden></div><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Ấm áp, tự nhiên</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="edge-male" selected>🎬 Review phim AI – Nam trầm (miễn phí)</option><option value="edge-female">🎬 Review phim AI – Nữ tự nhiên (miễn phí)</option><option value="browser">🔊 Giọng tiếng Việt trên điện thoại (dự phòng)</option><option value="ai">🎙️ Giọng nữ miền Nam (ElevenLabs)</option></select></div><details class="field pronunciation-settings"><summary style="cursor:pointer;font-weight:800">🗣️ Chỉnh cách phát âm tên học sinh</summary>
+<section class="panel"><h2>🎮 Điều khiển trò chơi</h2><div class="actions"><button class="gold" id="nextBtn">➜ Câu tiếp theo</button><button id="startBtn">▶ Bắt đầu</button><button class="secondary" id="revealBtn">✔ Hiện đáp án</button><button class="secondary" id="fullscreenBtn">⛶ Toàn màn hình</button><button class="secondary" type="button" id="liveSafeBtn" aria-pressed="false">📱 Khung LIVE gọn</button><button class="secondary" id="voiceBtn">🔊 Bật giọng đọc</button><button class="secondary" id="repeatBtn">🔁 Đọc câu hỏi</button><button class="secondary" id="testVoiceBtn">🔊 NGHE THỬ GIỌNG</button><button class="gold" id="referencePickerBtn" type="button">🖼️ Dùng ảnh mẫu gốc</button><button class="secondary" id="referenceResetBtn" type="button" hidden>↩ Giao diện cũ</button><input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/*" id="referenceUpload" hidden></div><details class="field"><summary style="cursor:pointer;font-weight:900">🎵 Nhạc giải lao sau mỗi 10 câu</summary>
+ <label style="display:flex;gap:7px;align-items:center;margin-top:10px"><input id="tenSongEnabled" type="checkbox" checked> Tự phát nhạc sau phần điểm danh và tuyên dương</label>
+ <label for="tenSongFile">Chọn tệp nhạc bạn có quyền sử dụng (MP3, M4A...)</label>
+ <input id="tenSongFile" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav">
+ <small id="tenSongSelected">Chưa chọn tệp trên thiết bị.</small>
+ <label for="tenSongUrl">Hoặc liên kết trực tiếp HTTPS tới tệp âm thanh hợp lệ</label>
+ <input id="tenSongUrl" type="url" inputmode="url" autocomplete="url" placeholder="https://.../nhac.mp3">
+ <label for="tenSongSeconds">Thời lượng giải lao</label>
+ <select id="tenSongSeconds"><option value="0" selected>Phát hết bài</option><option value="30">30 giây</option><option value="60">60 giây</option></select>
+ <small>Chỉ phát khi có tệp hoặc liên kết hợp lệ. Chọn file trên iPhone cần làm lại sau khi tải lại trang. Một số trình duyệt yêu cầu chạm ▶ để bắt đầu nghe; kiểm tra âm thanh khi LIVE.</small>
+ </details><div class="field"><label for="voiceStyle">🎙️ Cách đọc</label><select id="voiceStyle"><option value="warm">Ấm áp, tự nhiên</option><option value="cheerful">Vui tươi, truyền cảm</option><option value="clear">Rõ chữ, chậm rãi</option></select><label for="voiceChoice">Giọng tiếng Việt</label><select id="voiceChoice"><option value="">Tự chọn giọng tốt nhất</option></select></div><div class="field"><label for="ttsEngine">✨ Nguồn giọng</label><select id="ttsEngine"><option value="edge-male" selected>🎬 Review phim AI – Nam trầm (miễn phí)</option><option value="edge-female">🎬 Review phim AI – Nữ tự nhiên (miễn phí)</option><option value="browser">🔊 Giọng tiếng Việt trên điện thoại (dự phòng)</option><option value="ai">🎙️ Giọng nữ miền Nam (ElevenLabs)</option></select></div><details class="field pronunciation-settings"><summary style="cursor:pointer;font-weight:800">🗣️ Chỉnh cách phát âm tên học sinh</summary>
 <label for="namePronunciationOverrides">Tên TikTok = Cách đọc (mỗi dòng một tên)</label>
 <textarea id="namePronunciationOverrides" rows="3" spellcheck="false" placeholder="huong nho = Hương, Nhỏ&#10;tuan = Tuấn&#10;duyen = Duyên"></textarea>
 <div class="actions"><button id="namePronunciationSave" type="button" class="secondary">💾 Lưu cách đọc tên</button></div>
@@ -2907,6 +2935,95 @@ let roundAnswers=[];
 // Never count old saved student records as present in today's roll call.
 const tenQuestionAttendance=new Map();
 let lastTenQuestionAward=0,awardHideTimer=null;
+
+/* User-supplied, authorized audio only. Never embed or fetch a protected song. */
+const TEN_SONG_URL_KEY='classroom_12a_ten_song_url';
+const TEN_SONG_ENABLED_KEY='classroom_12a_ten_song_enabled';
+const TEN_SONG_SECONDS_KEY='classroom_12a_ten_song_seconds';
+let tenSongFileUrl='',tenSongOnFinish=null,tenSongTimer=null,tenSongDelayTimer=null;
+function configuredTenSongSource(){
+ if(tenSongFileUrl)return tenSongFileUrl;
+ const raw=String($('tenSongUrl')?.value||'').trim();
+ if(!raw)return '';
+ if(raw.startsWith('/')&&!raw.startsWith('//'))return raw;
+ try{const u=new URL(raw,location.href);return u.protocol==='https:'?u.href:''}catch(e){return ''}
+}
+function tenSongAvailable(){return Boolean($('tenSongEnabled')?.checked&&configuredTenSongSource())}
+function saveTenSongSettings(){
+ try{
+  localStorage.setItem(TEN_SONG_URL_KEY,String($('tenSongUrl').value||'').trim());
+  localStorage.setItem(TEN_SONG_ENABLED_KEY,$('tenSongEnabled').checked?'1':'0');
+  localStorage.setItem(TEN_SONG_SECONDS_KEY,$('tenSongSeconds').value);
+ }catch(e){}
+}
+function endTenSongBreak(advance=true){
+ const done=tenSongOnFinish;tenSongOnFinish=null;
+ clearTimeout(tenSongTimer);tenSongTimer=null;
+ clearTimeout(tenSongDelayTimer);tenSongDelayTimer=null;
+ const audio=$('tenSongAudio');
+ if(audio){audio.pause();audio.onended=null;audio.onerror=null;audio.removeAttribute('src');audio.load()}
+ const overlay=$('tenQuestionMusic');if(overlay)overlay.hidden=true;
+ honorSpeechActive=false;
+ if(advance&&typeof done==='function')done();
+}
+function playTenSongAudio(){
+ const audio=$('tenSongAudio');if(!audio?.getAttribute('src'))return;
+ const p=audio.play();
+ if(p&&typeof p.then==='function')p.then(()=>{
+  $('tenSongStatus').textContent='🎶 Đang phát bài hát, cả lớp cùng thư giãn nhé!';
+  clearTimeout(tenSongTimer);
+  const sec=Number($('tenSongSeconds').value)||0;
+  tenSongTimer=setTimeout(()=>endTenSongBreak(),sec>0?sec*1000:7*60*1000);
+ }).catch(()=>{
+  $('tenSongStatus').textContent='📱 Chạm ▶ Phát nhạc để nghe trên iPhone. Tự bỏ qua nếu không thể phát.';
+  clearTimeout(tenSongTimer);
+  tenSongTimer=setTimeout(()=>endTenSongBreak(),20000);
+ });
+}
+function startTenSongBreak(after){
+ if(!tenSongAvailable()){if(typeof after==='function')after();return false}
+ endTenSongBreak(false);
+ clearTimeout(nextTimer);nextTimer=null;
+ tenSongOnFinish=after||null;
+ hideTenQuestionAwards();
+ honorSpeechActive=true;
+ const audio=$('tenSongAudio');
+ audio.src=configuredTenSongSource();audio.volume=0.9;
+ audio.onended=()=>endTenSongBreak();
+ audio.onerror=()=>{
+  $('tenSongStatus').textContent='⚠️ Không mở được file nhạc. Game sẽ tiếp tục.';
+  clearTimeout(tenSongTimer);tenSongTimer=setTimeout(()=>endTenSongBreak(),2500);
+ };
+ $('tenSongStatus').textContent='🎵 Ca khúc: Không môn đăng hộ đối';
+ $('tenQuestionMusic').hidden=false;
+ liveLog('🎶','Giải lao âm nhạc sau '+count+' câu hỏi.');
+ playTenSongAudio();
+ return true;
+}
+function initTenSongSettings(){
+ try{
+  $('tenSongUrl').value=localStorage.getItem(TEN_SONG_URL_KEY)||'';
+  $('tenSongEnabled').checked=localStorage.getItem(TEN_SONG_ENABLED_KEY)!=='0';
+  $('tenSongSeconds').value=localStorage.getItem(TEN_SONG_SECONDS_KEY)||'0';
+ }catch(e){}
+ $('tenSongUrl').addEventListener('change',saveTenSongSettings);
+ $('tenSongEnabled').addEventListener('change',saveTenSongSettings);
+ $('tenSongSeconds').addEventListener('change',saveTenSongSettings);
+ $('tenSongFile').addEventListener('change',event=>{
+  const file=event.target.files?.[0];if(!file)return;
+  if(!file.type.startsWith('audio/')&&!/\.(mp3|m4a|aac|wav|ogg)$/i.test(file.name)){
+    status('Vui lòng chọn tệp âm thanh MP3 hoặc M4A.',true);return;
+  }
+  if(tenSongFileUrl)URL.revokeObjectURL(tenSongFileUrl);
+  tenSongFileUrl=URL.createObjectURL(file);
+  $('tenSongSelected').textContent='✅ Đã chọn: '+file.name+' (chỉ dùng trong phiên này)';
+  saveTenSongSettings();
+ });
+ $('tenSongPlay').addEventListener('click',playTenSongAudio);
+ $('tenSongSkip').addEventListener('click',()=>endTenSongBreak());
+}
+initTenSongSettings();
+
 function markTenQuestionAttendance(student){
  if(student?.id!=null)tenQuestionAttendance.set(String(student.id),student);
 }
@@ -3221,7 +3338,7 @@ function fitN3Question(){
  }
 }
 window.addEventListener('resize',()=>{if($('question')?.classList.contains('n3-question'))requestAnimationFrame(fitN3Question)});
-function newQuestion(){if(count>0&&count%10===0)tenQuestionAttendance.clear();hideTenQuestionAwards();window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();clearCorrectAvatar();roundAnswers.length=0;stopSpeaking();const selectedSubjects=activeSubjects();const enabledN3=activeN3Skills();const filtered=bank.filter(q=>selectedSubjects.includes(q.category)&&(q.category!=='Tiếng Nhật N3'||enabledN3.includes(q.n3Skill)));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);const weighted=filtered.flatMap(q=>q.n3Hard?[q,q]:[q]);let candidate=weighted[Math.floor(Math.random()*weighted.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const isWordOrder=current.category==='Sắp xếp từ';
+function newQuestion(){endTenSongBreak(false);if(count>0&&count%10===0)tenQuestionAttendance.clear();hideTenQuestionAwards();window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();clearCorrectAvatar();roundAnswers.length=0;stopSpeaking();const selectedSubjects=activeSubjects();const enabledN3=activeN3Skills();const filtered=bank.filter(q=>selectedSubjects.includes(q.category)&&(q.category!=='Tiếng Nhật N3'||enabledN3.includes(q.n3Skill)));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);const weighted=filtered.flatMap(q=>q.n3Hard?[q,q]:[q]);let candidate=weighted[Math.floor(Math.random()*weighted.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const isWordOrder=current.category==='Sắp xếp từ';
 const distractors=isWordOrder?[]:quizDistractors(current,bank);
 if(!isWordOrder&&!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
 options=isWordOrder?[]:shuffle([current.answer,...distractors]);$('topic').textContent='';document.querySelectorAll('.subject-chip').forEach(c=>c.classList.toggle('is-current',c.dataset.category===current.category));
@@ -3391,17 +3508,19 @@ function finishAnswer(index=-1){if(locked)return;if(tick&&seconds>0){status('Đa
     if(voiceEnabled){
       say(answerLine,()=>sayVietnamese(honorsLine,()=>{
         if(awardSpeech)sayVietnamese(awardSpeech,()=>{
-          honorSpeechActive=false;setTimeout(goNext,2400);
+          honorSpeechActive=false;startTenSongBreak(goNext);
         });else goNext();
       }));
     }else if(awardSpeech){
-      clearTimeout(nextTimer);nextTimer=setTimeout(goNext,10000);
+      clearTimeout(nextTimer);nextTimer=setTimeout(()=>startTenSongBreak(goNext),10000);
     }else goNext();
   }else if(voiceEnabled){
     say(answerLine,()=>sayVietnamese(honorsLine,()=>{
-      if(awardSpeech)sayVietnamese(awardSpeech,()=>{honorSpeechActive=false});
+      if(awardSpeech)sayVietnamese(awardSpeech,()=>{honorSpeechActive=false;startTenSongBreak(null)});
       else honorSpeechActive=false;
     }));
+  }else if(awardSpeech){
+    tenSongDelayTimer=setTimeout(()=>startTenSongBreak(null),10000);
   }
 }function selectAnswer(i){if(!current||locked)return;selected=i;finishAnswer(i)}function countdown(){
  if(!current||locked)return;
