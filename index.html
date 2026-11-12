@@ -2392,6 +2392,16 @@ function spokenQuizValue(value){
 }
 function fullQuestionNarration(){
   if(!current)return '';
+  // For Kanji reading questions, NEVER speak the target kanji or the kana
+  // answer choices. Japanese TTS would pronounce the correct answer aloud
+  // before the quiz timer starts, making the live question meaningless.
+  // Keep the Japanese text visible on the board for viewers to read silently.
+  const blindKanjiReading=current.category==='Tiếng Nhật N3'&&
+    (current.n3Skill==='kanji'||/cách đọc|読み方/i.test(current.question));
+  if(blindKanjiReading){
+    return 'Câu số '+count+'. Hãy nhìn chữ Hán trên bảng và chọn cách đọc đúng. '+
+      'Các đáp án A, B, C, D đang hiển thị trên bảng. Chọn đáp án khi đồng hồ bắt đầu đếm nhé!';
+  }
   if(current.category==='Sắp xếp từ'){
     const hint=spokenQuizValue(current.question);
     const mixed=(current.scrambledWords||[]).map(spokenQuizValue).join(', ');
