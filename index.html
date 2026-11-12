@@ -943,8 +943,14 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 #tenQuestionMusic{position:absolute;inset:4% 4% auto;z-index:95;max-width:460px;max-height:92%;overflow-y:auto;margin:auto;padding:10px 12px;text-align:center;border:3px solid #fff2c8;border-radius:20px;background:linear-gradient(150deg,#50306e,#a53378 65%,#ec7d7c);color:#fff;box-shadow:0 12px 40px #1e1639ba;overflow-wrap:anywhere}
 #tenQuestionMusic .music-emoji{font-size:clamp(36px,9vw,58px)}
 #tenSongYoutubeWrap[hidden]{display:none!important}
-#tenSongYoutubeWrap{width:100%;aspect-ratio:16/9;min-height:165px;background:#171425;border-radius:12px;overflow:hidden;margin:10px auto}
+#tenSongYoutubeWrap{position:relative;width:100%;aspect-ratio:16/9;min-height:165px;background:#171425;border-radius:12px;overflow:hidden;margin:10px auto}
 #tenSongYoutubeWrap iframe{display:block;width:100%;height:100%;border:0}
+#tenSongYoutubeWrap .music-lite-preview{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;background:linear-gradient(#140f2888,#140f28cc),url("https://i.ytimg.com/vi/KNnSoRrDb5g/hqdefault.jpg") center/cover no-repeat;color:#fff}
+#tenSongYoutubeWrap .music-lite-preview b{font-size:clamp(12px,3.2vw,19px);text-shadow:0 2px 5px #000}
+#tenSongYoutubeWrap .music-lite-preview button{padding:10px 18px;background:#ec2147;color:white;border:2px solid #fff;border-radius:99px;cursor:pointer;font-size:clamp(12px,3.5vw,18px);font-weight:900;box-shadow:0 4px 14px #0008}
+#stage.music-break-active .teacher,#stage.music-break-active .students *,
+#stage.music-break-active .confetti,#stage.music-break-active .ref-blossoms,
+#stage.music-break-active .ref-books{animation-play-state:paused!important}
 #tenQuestionMusic .music-original{display:block;margin:7px 0;font-size:11px}
 #tenQuestionMusic .music-original a{color:#fff4d5;text-decoration:underline}
 #tenQuestionMusic h3{margin:6px 0;font-size:clamp(17px,4.5vw,24px);line-height:1.3}
@@ -2947,7 +2953,9 @@ let lastTenQuestionAward=0,awardHideTimer=null;
 const TEN_SONG_URL_KEY='classroom_12a_ten_song_url';
 const TEN_SONG_ENABLED_KEY='classroom_12a_ten_song_enabled';
 const TEN_SONG_SECONDS_KEY='classroom_12a_ten_song_seconds';
+
 let tenSongFileUrl='',tenSongOnFinish=null,tenSongTimer=null,tenSongDelayTimer=null,tenSongYoutubeFrame=null;
+let tenSongYoutubeStarted=false,tenSongLoadWatch=null;
 function tenSongYouTubeMessage(event){
  if(!tenSongYoutubeFrame||event.source!==tenSongYoutubeFrame.contentWindow||
     !['https://www.youtube.com','https://www.youtube-nocookie.com'].includes(event.origin))return;
@@ -2955,6 +2963,8 @@ function tenSongYouTubeMessage(event){
  if(msg?.event!=='onStateChange')return;
  if(msg.info===0){endTenSongBreak();return}
  if(msg.info===1){
+  tenSongYoutubeStarted=true;
+  clearTimeout(tenSongLoadWatch);tenSongLoadWatch=null;
   $('tenSongStatus').textContent='🎶 Đang phát MV chính thức của Nguyễn Vĩ.';
   const sec=Number($('tenSongSeconds').value)||0;
   clearTimeout(tenSongTimer);
@@ -2962,7 +2972,44 @@ function tenSongYouTubeMessage(event){
  }
 }
 window.addEventListener('message',tenSongYouTubeMessage);
-
+function showTenSongPoster(){
+ const wrap=$('tenSongYoutubeWrap');
+ if(!wrap)return;
+ wrap.replaceChildren();wrap.hidden=false;tenSongYoutubeFrame=null;
+ const poster=document.createElement('div');poster.className='music-lite-preview';
+ const title=document.createElement('b');title.textContent='Không môn đăng hộ đối · Nguyễn Vĩ';
+ const button=document.createElement('button');button.type='button';button.textContent='▶ PHÁT MV';
+ button.addEventListener('click',loadTenSongYouTube);
+ poster.append(title,button);wrap.append(poster);
+}
+function loadTenSongYouTube(){
+ if($('tenQuestionMusic').hidden)return;
+ const wrap=$('tenSongYoutubeWrap');
+ if(tenSongYoutubeFrame){playTenSongAudio();return}
+ wrap.replaceChildren();
+ const iframe=document.createElement('iframe');
+ iframe.title='Không môn đăng hộ đối – Nguyễn Vĩ (MV chính thức)';
+ iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+ iframe.referrerPolicy='strict-origin-when-cross-origin';
+ iframe.setAttribute('allowfullscreen','');
+ iframe.src='https://www.youtube-nocookie.com/embed/KNnSoRrDb5g?autoplay=1&playsinline=1&controls=1&rel=0&enablejsapi=1&origin='+encodeURIComponent(location.origin);
+ tenSongYoutubeFrame=iframe;tenSongYoutubeStarted=false;
+ wrap.append(iframe);
+ $('tenSongStatus').textContent='⏳ Đang mở YouTube… Nếu video xoay lâu, bấm Bỏ qua để tiếp tục học.';
+ iframe.addEventListener('load',()=>{
+  if(tenSongYoutubeFrame!==iframe)return;
+  try{iframe.contentWindow.postMessage(JSON.stringify({event:'listening',id:'tenSongYoutube'}),'https://www.youtube-nocookie.com')}catch(e){}
+  $('tenSongStatus').textContent='📱 Nếu chưa nghe, chạm ▶ trực tiếp trong video YouTube.';
+ });
+ clearTimeout(tenSongTimer);
+ tenSongTimer=setTimeout(()=>{if(!tenSongYoutubeStarted)endTenSongBreak()},40000);
+ clearTimeout(tenSongLoadWatch);
+ tenSongLoadWatch=setTimeout(()=>{
+  if(tenSongYoutubeFrame===iframe&&!tenSongYoutubeStarted){
+   $('tenSongStatus').textContent='⚠️ Video YouTube tải chậm. Bạn có thể chạm ▶ trong video hoặc ⏭ Bỏ qua.';
+  }
+ },12000);
+}
 function configuredTenSongSource(){
  if(tenSongFileUrl)return tenSongFileUrl;
  const raw=String($('tenSongUrl')?.value||'').trim();
@@ -2982,6 +3029,9 @@ function endTenSongBreak(advance=true){
  const done=tenSongOnFinish;tenSongOnFinish=null;
  clearTimeout(tenSongTimer);tenSongTimer=null;
  clearTimeout(tenSongDelayTimer);tenSongDelayTimer=null;
+ clearTimeout(tenSongLoadWatch);tenSongLoadWatch=null;
+ tenSongYoutubeStarted=false;
+ $('stage')?.classList.remove('music-break-active');
  const audio=$('tenSongAudio');
  if(audio){audio.pause();audio.onended=null;audio.onerror=null;audio.removeAttribute('src');audio.load()}
  const wrap=$('tenSongYoutubeWrap');
@@ -2992,9 +3042,10 @@ function endTenSongBreak(advance=true){
  if(advance&&typeof done==='function')done();
 }
 function playTenSongAudio(){
- if(tenSongYoutubeFrame){
+ if($('tenSongYoutubeWrap')&&!$('tenSongYoutubeWrap').hidden){
+  if(!tenSongYoutubeFrame){loadTenSongYouTube();return}
   try{tenSongYoutubeFrame.contentWindow.postMessage(JSON.stringify({event:'command',func:'playVideo',args:[]}), 'https://www.youtube-nocookie.com')}catch(e){}
-  $('tenSongStatus').textContent='📱 Nếu chưa nghe được, chạm ▶ trực tiếp trên video YouTube.';
+  $('tenSongStatus').textContent='📱 Nếu chưa nghe được, chạm ▶ trực tiếp trong video YouTube.';
   return;
  }
  const audio=$('tenSongAudio');if(!audio?.getAttribute('src'))return;
@@ -3019,6 +3070,7 @@ function startTenSongBreak(after){
  honorSpeechActive=true;
  const source=configuredTenSongSource(),audio=$('tenSongAudio');
  $('tenQuestionMusic').hidden=false;
+ $('stage')?.classList.add('music-break-active');
  if(source){
   audio.src=source;audio.volume=0.9;
   audio.onended=()=>endTenSongBreak();
@@ -3029,27 +3081,14 @@ function startTenSongBreak(after){
   $('tenSongStatus').textContent='🎵 Ca khúc: Không môn đăng hộ đối';
   playTenSongAudio();
  }else{
-  // Official YouTube embed. No copied/downloaded music, and no YouTube-to-MP3 service.
-  const wrap=$('tenSongYoutubeWrap');
-  wrap.hidden=false;
-  const iframe=document.createElement('iframe');
-  iframe.title='Không môn đăng hộ đối – Nguyễn Vĩ (MV chính thức)';
-  iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
-  iframe.referrerPolicy='strict-origin-when-cross-origin';
-  iframe.setAttribute('allowfullscreen','');
-  iframe.src='https://www.youtube-nocookie.com/embed/KNnSoRrDb5g?autoplay=1&playsinline=1&controls=1&rel=0&enablejsapi=1&origin='+encodeURIComponent(location.origin);
-  wrap.append(iframe);
-  tenSongYoutubeFrame=iframe;
-  $('tenSongStatus').textContent='🎵 MV chính thức – Nguyễn Vĩ. Trên iPhone, chạm ▶ nếu chưa tự phát.';
-  iframe.addEventListener('load',()=>{
-   if(tenSongYoutubeFrame!==iframe)return;
-   try{iframe.contentWindow.postMessage(JSON.stringify({event:'listening',id:'tenSongYoutube'}),'https://www.youtube-nocookie.com')}catch(e){}
-   playTenSongAudio();
-  });
-  const sec=Number($('tenSongSeconds').value)||0;
-  // Timed fallback also ensures the game never gets stuck if mobile autoplay is blocked.
+  // On mobile LIVE, loading a YouTube iframe automatically creates a second
+  // heavy video decoder and often stalls. Keep a lightweight preview until
+  // the viewer taps play, then load the licensed YouTube embed.
+  showTenSongPoster();
+  $('tenSongStatus').textContent='🎵 Đã sẵn sàng. Chạm ▶ PHÁT MV để nghe (tránh lag khi LIVE).';
+  // Never block the game forever if no one presses play.
   clearTimeout(tenSongTimer);
-  tenSongTimer=setTimeout(()=>endTenSongBreak(),sec>0?sec*1000:6*60*1000);
+  tenSongTimer=setTimeout(()=>endTenSongBreak(),25000);
  }
  liveLog('🎶','Giải lao âm nhạc sau '+count+' câu hỏi.');
  return true;
