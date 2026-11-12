@@ -401,6 +401,21 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
  background:linear-gradient(90deg,#0c5b45,#0b5442,#0b4b3d);color:#ffe5ab;border:0;
  text-shadow:0 .15cqw #153d32;font-size:clamp(14px,3.55cqw,39px);font-weight:950;text-align:center;
  display:flex;align-items:center;justify-content:center;overflow:auto;border-radius:.5cqw;padding:.4cqw .7cqw}
+/* Compact Japanese N3 text: reserve the full area above answer cards. */
+#stage.stage-exact .question.n3-question{
+ top:6%;height:38%;max-height:none;min-height:0;
+ font-size:clamp(10px,2.65cqw,26px);line-height:1.12;
+ overflow:hidden;padding:.25cqw .7cqw;
+ overflow-wrap:anywhere;word-break:normal;
+}
+#stage .question.n3-question{
+ font-size:clamp(11px,2.55cqw,26px);
+ line-height:1.14;overflow-wrap:anywhere;word-break:normal;
+}
+#stage.stage-exact .question.n3-question{
+ font-size:clamp(10px,2.65cqw,26px);
+}
+#stage .question.n3-question>span{display:block;width:100%;max-width:100%}
 #stage.stage-exact .options{position:absolute;top:45.6%;left:5%;right:5%;height:31.4%;display:grid;
  grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:.8cqw 1.2cqw}
 #stage.stage-exact .option{display:flex;gap:.6cqw;align-items:center;padding:.2cqw .65cqw;
@@ -1562,76 +1577,76 @@ Số đếm 「きゅう」 là số mấy?|9|10|2|5
 Số đếm 「じゅう」 là số mấy?|10|1|3|6`,
 // N3 practice questions are original, inspired by Sou Matome's skill areas,
 // not taken or reproduced from the copyrighted textbook.
-'Tiếng Nhật N3':`[Từ vựng N3] 「予定」 có nghĩa là gì?|Dự định, kế hoạch|Kết quả|Tai nạn|Mức lương
-[Từ vựng N3] 「延期」 có nghĩa là gì?|Hoãn sang thời điểm khác|Xác nhận lịch|Kết thúc ngay|Bắt đầu sớm
-[Từ vựng N3] 「中止」 có nghĩa là gì?|Hủy, ngừng thực hiện|Tiếp tục thực hiện|Đặt chỗ trước|Điểm danh
-[Từ vựng N3] 「変更」 có nghĩa là gì?|Thay đổi|Bảo quản|Kiểm tra|Vận chuyển
-[Từ vựng N3] 「混雑」 có nghĩa là gì?|Đông đúc, chen chúc|Vắng vẻ|Yên tĩnh|Sạch sẽ
-[Từ vựng N3] 「周辺」 có nghĩa là gì?|Khu vực xung quanh|Bên trong căn phòng|Phía dưới mặt đất|Điểm cuối cùng
-[Từ vựng N3] 「到着」 có nghĩa là gì?|Đến nơi|Xuất phát|Đi lạc|Trở về nhà
-[Từ vựng N3] 「出発」 có nghĩa là gì?|Xuất phát, khởi hành|Đến đích|Đứng chờ|Trễ chuyến
-[Từ vựng N3] 「確認」 có nghĩa là gì?|Xác nhận, kiểm tra lại|Từ chối|Bỏ quên|Báo nghỉ
-[Từ vựng N3] 「提出」 có nghĩa là gì?|Nộp tài liệu, bài làm|Mượn đồ|In lại tài liệu|Giấu đồ
-[Từ vựng N3] 「準備」 có nghĩa là gì?|Chuẩn bị|Làm hỏng|Tránh né|Hoàn tiền
-[Từ vựng N3] 「予約」 có nghĩa là gì?|Đặt trước|Hủy bỏ|Nhận hàng|Thanh toán nợ
-[Từ vựng N3] 「解決」 có nghĩa là gì?|Giải quyết vấn đề|Tăng chi phí|Đăng ký tham gia|Chuyển nhà
-[Từ vựng N3] 「連絡」 có nghĩa là gì?|Liên lạc, báo tin|Giải thích chi tiết|Đăng ký khóa học|Đo khoảng cách
-[Từ vựng N3] 「相談」 có nghĩa là gì?|Trao đổi, xin ý kiến|Tranh cãi dữ dội|Đặt hàng|Đoán mò
-[Từ vựng N3] 「見学」 có nghĩa là gì?|Tham quan để tìm hiểu|Đi mua sắm|Đi khám bệnh|Thi viết
-[Từ vựng N3] 「間に合う」 có nghĩa là gì?|Kịp giờ|Bị lỡ giờ|Nhầm đường|Không cần thiết
-[Từ vựng N3] 「慣れる」 có nghĩa là gì?|Trở nên quen với|Bỗng quên mất|Từ bỏ hoàn toàn|Bị đau
-[Từ vựng N3] 「増える」 có nghĩa là gì?|Tăng lên|Giảm xuống|Giữ nguyên|Biến mất
-[Từ vựng N3] 「減る」 có nghĩa là gì?|Giảm xuống|Tăng lên|Xuất hiện|Chuyển hướng
-[Từ vựng N3] 「比べる」 có nghĩa là gì?|So sánh|Chia đều|Thay thế|Giấu đi
-[Từ vựng N3] 「選ぶ」 có nghĩa là gì?|Lựa chọn|Sửa chữa|Đánh rơi|Dọn dẹp
-[Từ vựng N3] 「運ぶ」 có nghĩa là gì?|Mang, vận chuyển|Vẽ tranh|Tính toán|Đọc thầm
-[Từ vựng N3] 「壊れる」 có nghĩa là gì?|Bị hỏng|Được hoàn thành|Trở nên nổi tiếng|Bắt đầu mọc
-[Từ vựng N3] 「直す」 có nghĩa là gì?|Sửa cho đúng, sửa chữa|Làm cho rơi|Bán tháo|Dự đoán
-[Từ vựng N3] 「支払う」 có nghĩa là gì?|Chi trả tiền|Vay mượn sách|Mời vào nhà|Giữ bí mật
-[Từ vựng N3] 「招待」 có nghĩa là gì?|Mời tham dự|Trừng phạt|Báo cáo|Đưa đón
-[Từ vựng N3] 「目的」 có nghĩa là gì?|Mục đích|Hậu quả|Trạng thái|Địa chỉ
-[Từ vựng N3] 「原因」 có nghĩa là gì?|Nguyên nhân|Giải pháp|Kết luận|Thời hạn
-[Từ vựng N3] 「結果」 có nghĩa là gì?|Kết quả|Nguyên nhân|Dự tính|Cảnh báo
-[Từ vựng N3] 「状況」 có nghĩa là gì?|Tình hình, trạng thái|Phương hướng|Mẫu đơn|Tốc độ
-[Từ vựng N3] 「必要」 có nghĩa là gì?|Cần thiết|Nguy hiểm|Nổi tiếng|Chính xác
-[Từ vựng N3] 「途中」 có nghĩa là gì?|Giữa chừng, dọc đường|Ở đích cuối|Trước khi bắt đầu|Ngoài trời
-[Từ vựng N3] 「そろそろ」 có nghĩa là gì?|Sắp đến lúc|Đột nhiên|Mãi mãi|Ngày hôm qua
-[Từ vựng N3] 「しばらく」 có nghĩa là gì?|Một lúc, một thời gian|Ngay lập tức|Không bao giờ|Mỗi sáng
-[Từ vựng N3] 「とうとう」 có nghĩa là gì?|Cuối cùng rồi cũng|Vẫn chưa bao giờ|Thường xuyên|Hình như
-[Từ vựng N3] 「すっかり」 có nghĩa là gì?|Hoàn toàn, hết hẳn|Một chút thôi|Một cách bí mật|Ngẫu nhiên
-[Từ vựng N3] 「なるべく」 có nghĩa là gì?|Cố gắng hết mức có thể|Tuyệt đối cấm|Thỉnh thoảng|Vừa mới
-[Từ vựng N3] 「せっかく」 có nghĩa là gì?|Đã cất công, khó khăn mới có|Chưa từng làm|Vô tình gặp|Làm ngay lập tức
-[Từ vựng N3] 「たいてい」 có nghĩa là gì?|Thường, phần lớn trường hợp|Không bao giờ|Chỉ một lần|Bất chợt
-[Kanji N3] Cách đọc của 「経験」 là gì?|けいけん|けんけい|きょうけん|けいげん
-[Kanji N3] Cách đọc của 「連絡」 là gì?|れんらく|れいらく|れんがく|れんやく
-[Kanji N3] Cách đọc của 「地震」 là gì?|じしん|ちしん|じじん|ちじん
-[Kanji N3] Cách đọc của 「事故」 là gì?|じこ|しこ|じこう|しご
-[Kanji N3] Cách đọc của 「約束」 là gì?|やくそく|やくぞく|ようそく|やくしょく
-[Kanji N3] Cách đọc của 「安全」 là gì?|あんぜん|あんせん|やすぜん|あんねん
-[Kanji N3] Cách đọc của 「危険」 là gì?|きけん|きげん|あぶけん|きかん
-[Kanji N3] Cách đọc của 「便利」 là gì?|べんり|びんり|べりん|べんじ
-[Kanji N3] Cách đọc của 「不便」 là gì?|ふべん|ふびん|ぶべん|ふへん
-[Kanji N3] Cách đọc của 「説明」 là gì?|せつめい|せつみょう|ぜつめい|せっめい
-[Kanji N3] Cách đọc của 「参加」 là gì?|さんか|ざんか|さんが|さんけ
-[Kanji N3] Cách đọc của 「運転」 là gì?|うんてん|うんでん|うんせん|うんたん
-[Kanji N3] Cách đọc của 「交通」 là gì?|こうつう|こうとう|こうどう|こつう
-[Kanji N3] Cách đọc của 「遅刻」 là gì?|ちこく|じこく|ちこう|じこう
-[Kanji N3] Cách đọc của 「忘れ物」 là gì?|わすれもの|わすれぶつ|ぼうれもの|わするもの
-[Kanji N3] Cách đọc của 「書類」 là gì?|しょるい|しゅるい|しょうるい|しょれい
-[Kanji N3] Cách đọc của 「計画」 là gì?|けいかく|けいがく|けっかく|けいこう
-[Kanji N3] Cách đọc của 「研究」 là gì?|けんきゅう|けんきょう|げんきゅう|けんくう
-[Kanji N3] Cách đọc của 「環境」 là gì?|かんきょう|かんけい|かんきゅう|かんじょう
-[Kanji N3] Cách đọc của 「住所」 là gì?|じゅうしょ|じゅしょう|じょうしょ|じゅうじょ
-[Kanji N3] Cách đọc của 「受付」 là gì?|うけつけ|うけづけ|うけつき|じゅつけ
-[Kanji N3] Cách đọc của 「修理」 là gì?|しゅうり|しゅり|しょうり|しゅうじ
-[Kanji N3] Cách đọc của 「予習」 là gì?|よしゅう|よしょう|よじゅう|よならい
-[Kanji N3] Cách đọc của 「復習」 là gì?|ふくしゅう|ふくしょう|ふうしゅう|ふくじゅう
-[Kanji N3] Cách đọc của 「募集」 là gì?|ぼしゅう|もじゅう|ぼしょう|もじょう
-[Kanji N3] Cách đọc của 「確認」 là gì?|かくにん|かくじん|かきにん|かくねん
-[Kanji N3] Cách đọc của 「変更」 là gì?|へんこう|へんごう|べんこう|へいこう
-[Kanji N3] Cách đọc của 「対象」 là gì?|たいしょう|だいしょう|たいそう|たいじょう
-[Kanji N3] Cách đọc của 「検査」 là gì?|けんさ|けんしゃ|げんさ|けんざ
-[Kanji N3] Cách đọc của 「条件」 là gì?|じょうけん|じょけん|しょうけん|じょうげん
+'Tiếng Nhật N3':`「予定」 có nghĩa là gì?|Dự định, kế hoạch|Kết quả|Tai nạn|Mức lương
+「延期」 có nghĩa là gì?|Hoãn sang thời điểm khác|Xác nhận lịch|Kết thúc ngay|Bắt đầu sớm
+「中止」 có nghĩa là gì?|Hủy, ngừng thực hiện|Tiếp tục thực hiện|Đặt chỗ trước|Điểm danh
+「変更」 có nghĩa là gì?|Thay đổi|Bảo quản|Kiểm tra|Vận chuyển
+「混雑」 có nghĩa là gì?|Đông đúc, chen chúc|Vắng vẻ|Yên tĩnh|Sạch sẽ
+「周辺」 có nghĩa là gì?|Khu vực xung quanh|Bên trong căn phòng|Phía dưới mặt đất|Điểm cuối cùng
+「到着」 có nghĩa là gì?|Đến nơi|Xuất phát|Đi lạc|Trở về nhà
+「出発」 có nghĩa là gì?|Xuất phát, khởi hành|Đến đích|Đứng chờ|Trễ chuyến
+「確認」 có nghĩa là gì?|Xác nhận, kiểm tra lại|Từ chối|Bỏ quên|Báo nghỉ
+「提出」 có nghĩa là gì?|Nộp tài liệu, bài làm|Mượn đồ|In lại tài liệu|Giấu đồ
+「準備」 có nghĩa là gì?|Chuẩn bị|Làm hỏng|Tránh né|Hoàn tiền
+「予約」 có nghĩa là gì?|Đặt trước|Hủy bỏ|Nhận hàng|Thanh toán nợ
+「解決」 có nghĩa là gì?|Giải quyết vấn đề|Tăng chi phí|Đăng ký tham gia|Chuyển nhà
+「連絡」 có nghĩa là gì?|Liên lạc, báo tin|Giải thích chi tiết|Đăng ký khóa học|Đo khoảng cách
+「相談」 có nghĩa là gì?|Trao đổi, xin ý kiến|Tranh cãi dữ dội|Đặt hàng|Đoán mò
+「見学」 có nghĩa là gì?|Tham quan để tìm hiểu|Đi mua sắm|Đi khám bệnh|Thi viết
+「間に合う」 có nghĩa là gì?|Kịp giờ|Bị lỡ giờ|Nhầm đường|Không cần thiết
+「慣れる」 có nghĩa là gì?|Trở nên quen với|Bỗng quên mất|Từ bỏ hoàn toàn|Bị đau
+「増える」 có nghĩa là gì?|Tăng lên|Giảm xuống|Giữ nguyên|Biến mất
+「減る」 có nghĩa là gì?|Giảm xuống|Tăng lên|Xuất hiện|Chuyển hướng
+「比べる」 có nghĩa là gì?|So sánh|Chia đều|Thay thế|Giấu đi
+「選ぶ」 có nghĩa là gì?|Lựa chọn|Sửa chữa|Đánh rơi|Dọn dẹp
+「運ぶ」 có nghĩa là gì?|Mang, vận chuyển|Vẽ tranh|Tính toán|Đọc thầm
+「壊れる」 có nghĩa là gì?|Bị hỏng|Được hoàn thành|Trở nên nổi tiếng|Bắt đầu mọc
+「直す」 có nghĩa là gì?|Sửa cho đúng, sửa chữa|Làm cho rơi|Bán tháo|Dự đoán
+「支払う」 có nghĩa là gì?|Chi trả tiền|Vay mượn sách|Mời vào nhà|Giữ bí mật
+「招待」 có nghĩa là gì?|Mời tham dự|Trừng phạt|Báo cáo|Đưa đón
+「目的」 có nghĩa là gì?|Mục đích|Hậu quả|Trạng thái|Địa chỉ
+「原因」 có nghĩa là gì?|Nguyên nhân|Giải pháp|Kết luận|Thời hạn
+「結果」 có nghĩa là gì?|Kết quả|Nguyên nhân|Dự tính|Cảnh báo
+「状況」 có nghĩa là gì?|Tình hình, trạng thái|Phương hướng|Mẫu đơn|Tốc độ
+「必要」 có nghĩa là gì?|Cần thiết|Nguy hiểm|Nổi tiếng|Chính xác
+「途中」 có nghĩa là gì?|Giữa chừng, dọc đường|Ở đích cuối|Trước khi bắt đầu|Ngoài trời
+「そろそろ」 có nghĩa là gì?|Sắp đến lúc|Đột nhiên|Mãi mãi|Ngày hôm qua
+「しばらく」 có nghĩa là gì?|Một lúc, một thời gian|Ngay lập tức|Không bao giờ|Mỗi sáng
+「とうとう」 có nghĩa là gì?|Cuối cùng rồi cũng|Vẫn chưa bao giờ|Thường xuyên|Hình như
+「すっかり」 có nghĩa là gì?|Hoàn toàn, hết hẳn|Một chút thôi|Một cách bí mật|Ngẫu nhiên
+「なるべく」 có nghĩa là gì?|Cố gắng hết mức có thể|Tuyệt đối cấm|Thỉnh thoảng|Vừa mới
+「せっかく」 có nghĩa là gì?|Đã cất công, khó khăn mới có|Chưa từng làm|Vô tình gặp|Làm ngay lập tức
+「たいてい」 có nghĩa là gì?|Thường, phần lớn trường hợp|Không bao giờ|Chỉ một lần|Bất chợt
+Cách đọc của 「経験」 là gì?|けいけん|けんけい|きょうけん|けいげん
+Cách đọc của 「連絡」 là gì?|れんらく|れいらく|れんがく|れんやく
+Cách đọc của 「地震」 là gì?|じしん|ちしん|じじん|ちじん
+Cách đọc của 「事故」 là gì?|じこ|しこ|じこう|しご
+Cách đọc của 「約束」 là gì?|やくそく|やくぞく|ようそく|やくしょく
+Cách đọc của 「安全」 là gì?|あんぜん|あんせん|やすぜん|あんねん
+Cách đọc của 「危険」 là gì?|きけん|きげん|あぶけん|きかん
+Cách đọc của 「便利」 là gì?|べんり|びんり|べりん|べんじ
+Cách đọc của 「不便」 là gì?|ふべん|ふびん|ぶべん|ふへん
+Cách đọc của 「説明」 là gì?|せつめい|せつみょう|ぜつめい|せっめい
+Cách đọc của 「参加」 là gì?|さんか|ざんか|さんが|さんけ
+Cách đọc của 「運転」 là gì?|うんてん|うんでん|うんせん|うんたん
+Cách đọc của 「交通」 là gì?|こうつう|こうとう|こうどう|こつう
+Cách đọc của 「遅刻」 là gì?|ちこく|じこく|ちこう|じこう
+Cách đọc của 「忘れ物」 là gì?|わすれもの|わすれぶつ|ぼうれもの|わするもの
+Cách đọc của 「書類」 là gì?|しょるい|しゅるい|しょうるい|しょれい
+Cách đọc của 「計画」 là gì?|けいかく|けいがく|けっかく|けいこう
+Cách đọc của 「研究」 là gì?|けんきゅう|けんきょう|げんきゅう|けんくう
+Cách đọc của 「環境」 là gì?|かんきょう|かんけい|かんきゅう|かんじょう
+Cách đọc của 「住所」 là gì?|じゅうしょ|じゅしょう|じょうしょ|じゅうじょ
+Cách đọc của 「受付」 là gì?|うけつけ|うけづけ|うけつき|じゅつけ
+Cách đọc của 「修理」 là gì?|しゅうり|しゅり|しょうり|しゅうじ
+Cách đọc của 「予習」 là gì?|よしゅう|よしょう|よじゅう|よならい
+Cách đọc của 「復習」 là gì?|ふくしゅう|ふくしょう|ふうしゅう|ふくじゅう
+Cách đọc của 「募集」 là gì?|ぼしゅう|もじゅう|ぼしょう|もじょう
+Cách đọc của 「確認」 là gì?|かくにん|かくじん|かきにん|かくねん
+Cách đọc của 「変更」 là gì?|へんこう|へんごう|べんこう|へいこう
+Cách đọc của 「対象」 là gì?|たいしょう|だいしょう|たいそう|たいじょう
+Cách đọc của 「検査」 là gì?|けんさ|けんしゃ|げんさ|けんざ
+Cách đọc của 「条件」 là gì?|じょうけん|じょけん|しょうけん|じょうげん
 「健康のために、毎朝走る（　）しています。」|ように|たびに|ところに|せいで
 「来月から日本語学校に通う（　）しました。」|ことに|ように|ために|ところに
 「会議は午後３時から始まる（　）なりました。」|ことに|つもりに|ために|たびに
@@ -1677,26 +1692,26 @@ Số đếm 「じゅう」 là số mấy?|10|1|3|6`,
 「彼は経験が豊富なので、きっと成功する（　）。」|に違いありません|ばかりです|ものです|最中です
 「この道は狭い（　）、交通量が多い。」|うえに|せいで|として|たびに
 「駅まで歩く（　）、バスで行ったほうが早いです。」|より|ために|ばかり|うちに
-[Đọc hiểu N3] 「図書館は月曜日が休みです。火曜日から日曜日まで開いています。」休みはいつですか。|月曜日|火曜日|土曜日|日曜日
-[Đọc hiểu N3] 「今日は雨のため、運動会は来週に延期されました。」運動会はいつ行いますか。|来週|今日|昨日|先月
-[Đọc hiểu N3] 「会議は９時から１０時半までです。」会議が終わるのは何時ですか。|１０時半|９時|９時半|１１時半
-[Đọc hiểu N3] 「この店では、日曜日だけ午後６時に閉まります。ほかの日は午後８時までです。」日曜日は何時に閉まりますか。|午後６時|午後８時|午前６時|午前８時
-[Đọc hiểu N3] 「田中さんは風邪をひいたので、今日は会社を休んでいます。」なぜ休んでいますか。|風邪をひいたから|旅行中だから|電車が遅れたから|仕事が終わったから
-[Đọc hiểu N3] 「バスが遅れていたので、駅まで歩きました。」駅へどうやって行きましたか。|歩いて|バスで|電車で|車で
-[Đọc hiểu N3] 「申込書は金曜日までに受付へ出してください。」申込書はどこへ出しますか。|受付|図書館|教室|郵便局
-[Đọc hiểu N3] 「商品に問題があれば、買ってから７日以内に連絡してください。」連絡する期限は？|７日以内|１か月以内|１年以内|当日だけ
-[Đọc hiểu N3] 「明日の遠足は朝８時に学校の前に集まります。」どこに集まりますか。|学校の前|駅の中|公園の入口|教室の中
-[Đọc hiểu N3] 「兄は去年から大阪に住んでいます。私は今も名古屋に住んでいます。」兄はどこに住んでいますか。|大阪|名古屋|東京|京都
-[Đọc hiểu N3] 「来週の試験は筆記だけです。面接は再来週に行います。」面接はいつですか。|再来週|来週|今週|昨日
-[Đọc hiểu N3] 「この道は工事中です。車は通れませんが、人は歩けます。」何が通れませんか。|車|歩く人|自転車を押す人|犬
-[Đọc hiểu N3] 「仕事が終わったら、まず部長に報告してから帰ってください。」最初にすることは何ですか。|部長に報告する|家に帰る|買い物する|電車に乗る
-[Đọc hiểu N3] 「昨日は残業で遅くなったため、友達との約束をキャンセルしました。」約束をやめた理由は何ですか。|残業で遅くなったから|風邪をひいたから|雨が降ったから|電車が止まったから
-[Đọc hiểu N3] 「冷蔵庫の牛乳は明日までです。開けたら今日中に飲んでください。」開けた牛乳はいつまでに飲みますか。|今日中|明日の夜|来週|来月
-[Đọc hiểu N3] 「この駐車場は午後１０時から午前６時まで使えません。」使えない時間はいつですか。|午後１０時から午前６時|午前６時から正午|正午から午後６時|午後６時から午後８時
-[Đọc hiểu N3] 「部屋を予約したい方は、名前と電話番号をメールで送ってください。」何を送りますか。|名前と電話番号|名前と住所|写真と住所|年齢と写真
-[Đọc hiểu N3] 「今月は電車の定期券を買ったので、先月より交通費が安くなりました。」何が安くなりましたか。|交通費|家賃|食費|電気代
-[Đọc hiểu N3] 「今週末は店が混雑する見込みなので、早めに予約してください。」何を勧めていますか。|早めに予約する|予約しない|週末に休む|閉店を待つ
-[Đọc hiểu N3] 「工場では安全のため、作業前に必ず機械を点検してください。」いつ点検しますか。|作業前|作業後だけ|昼休みだけ|休日だけ`,
+「図書館は月曜日が休みです。火曜日から日曜日まで開いています。」休みはいつですか。|月曜日|火曜日|土曜日|日曜日
+「今日は雨のため、運動会は来週に延期されました。」運動会はいつ行いますか。|来週|今日|昨日|先月
+「会議は９時から１０時半までです。」会議が終わるのは何時ですか。|１０時半|９時|９時半|１１時半
+「この店では、日曜日だけ午後６時に閉まります。ほかの日は午後８時までです。」日曜日は何時に閉まりますか。|午後６時|午後８時|午前６時|午前８時
+「田中さんは風邪をひいたので、今日は会社を休んでいます。」なぜ休んでいますか。|風邪をひいたから|旅行中だから|電車が遅れたから|仕事が終わったから
+「バスが遅れていたので、駅まで歩きました。」駅へどうやって行きましたか。|歩いて|バスで|電車で|車で
+「申込書は金曜日までに受付へ出してください。」申込書はどこへ出しますか。|受付|図書館|教室|郵便局
+「商品に問題があれば、買ってから７日以内に連絡してください。」連絡する期限は？|７日以内|１か月以内|１年以内|当日だけ
+「明日の遠足は朝８時に学校の前に集まります。」どこに集まりますか。|学校の前|駅の中|公園の入口|教室の中
+「兄は去年から大阪に住んでいます。私は今も名古屋に住んでいます。」兄はどこに住んでいますか。|大阪|名古屋|東京|京都
+「来週の試験は筆記だけです。面接は再来週に行います。」面接はいつですか。|再来週|来週|今週|昨日
+「この道は工事中です。車は通れませんが、人は歩けます。」何が通れませんか。|車|歩く人|自転車を押す人|犬
+「仕事が終わったら、まず部長に報告してから帰ってください。」最初にすることは何ですか。|部長に報告する|家に帰る|買い物する|電車に乗る
+「昨日は残業で遅くなったため、友達との約束をキャンセルしました。」約束をやめた理由は何ですか。|残業で遅くなったから|風邪をひいたから|雨が降ったから|電車が止まったから
+「冷蔵庫の牛乳は明日までです。開けたら今日中に飲んでください。」開けた牛乳はいつまでに飲みますか。|今日中|明日の夜|来週|来月
+「この駐車場は午後１０時から午前６時まで使えません。」使えない時間はいつですか。|午後１０時から午前６時|午前６時から正午|正午から午後６時|午後６時から午後８時
+「部屋を予約したい方は、名前と電話番号をメールで送ってください。」何を送りますか。|名前と電話番号|名前と住所|写真と住所|年齢と写真
+「今月は電車の定期券を買ったので、先月より交通費が安くなりました。」何が安くなりましたか。|交通費|家賃|食費|電気代
+「今週末は店が混雑する見込みなので、早めに予約してください。」何を勧めていますか。|早めに予約する|予約しない|週末に休む|閉店を待つ
+「工場では安全のため、作業前に必ず機械を点検してください。」いつ点検しますか。|作業前|作業後だけ|昼休みだけ|休日だけ`,
 'Đuổi hình bắt chữ':`🐃 🎻|Đàn gảy tai trâu|Chọi trâu|Trâu đi cày|Trâu ăn cỏ
 🐟 ➡️ 🐉|Cá chép hóa rồng|Cá vượt thác|Rồng phun lửa|Cá về biển
 🐸 🪣|Ếch ngồi đáy giếng|Ếch gọi mưa|Ếch nhảy cao|Ếch bắt sâu
@@ -3081,6 +3096,23 @@ function quizDistractors(q,records){
  if(unique.length<3)return null;return shuffle(unique).slice(0,3);
 }
 
+function fitN3Question(){
+ const el=document.getElementById('question');
+ const content=el?.firstElementChild;
+ if(!content||!el.classList.contains('n3-question'))return;
+ // Clear an older per-question size before calculating this question's size.
+ el.style.fontSize='';
+ const maxHeight=el.clientHeight-el.clientTop;
+ if(!maxHeight)return;
+ let size=Number.parseFloat(getComputedStyle(el).fontSize)||14;
+ // Gradually fit the complete Japanese passage without changing board layout.
+ for(let i=0;i<22&&(content.scrollHeight>maxHeight+1||content.scrollWidth>el.clientWidth+1);i++){
+   size=Math.max(9,size-1);
+   el.style.fontSize=size+'px';
+   if(size<=9)break;
+ }
+}
+window.addEventListener('resize',()=>{if($('question')?.classList.contains('n3-question'))requestAnimationFrame(fitN3Question)});
 function newQuestion(){if(count>0&&count%10===0)tenQuestionAttendance.clear();hideTenQuestionAwards();window.__liveQuestionStartedAt=0;window.__liveQuestionDeadline=0;clearClocks();clearCorrectAvatar();roundAnswers.length=0;stopSpeaking();const selectedSubjects=activeSubjects();const filtered=bank.filter(q=>selectedSubjects.includes(q.category));if(!filtered.length)return status('Không có câu hỏi cho chủ đề này',true);let candidate=filtered[Math.floor(Math.random()*filtered.length)];if(filtered.length>1&&current&&candidate.question===current.question)candidate=filtered[(filtered.indexOf(candidate)+1)%filtered.length];current=candidate;count++;locked=false;answeredThisQuestion.clear();correctTotalThisQuestion=0;fastestCorrectNames=[];showRoundCorrectCount();selected=-1;seconds=Number($('duration').value);const isWordOrder=current.category==='Sắp xếp từ';
 const distractors=isWordOrder?[]:quizDistractors(current,bank);
 if(!isWordOrder&&!distractors){status('Câu này chưa có đủ 4 đáp án cùng loại. Chọn câu khác nhé.',true);return newQuestion()}
@@ -3090,6 +3122,7 @@ options=isWordOrder?[]:shuffle([current.answer,...distractors]);$('topic').textC
  const questionEl=$('question');
  questionEl.classList.toggle('rebus-question',current.category==='Đuổi hình bắt chữ');
  questionEl.classList.toggle('word-order-question',isWordOrder);
+ questionEl.classList.toggle('n3-question',current.category==='Tiếng Nhật N3');
  questionEl.replaceChildren();
  if(isWordOrder){
    const heading=document.createElement('strong'),clue=document.createElement('span'),words=document.createElement('div');
@@ -3110,6 +3143,13 @@ options=isWordOrder?[]:shuffle([current.answer,...distractors]);$('topic').textC
    art.className='rebus-art';art.textContent=current.question;
    art.setAttribute('role','img');art.setAttribute('aria-label','Hình gợi ý: '+current.question);
    questionEl.append(hint,art);
+ }else if(current.category==='Tiếng Nhật N3'){
+   const n3Text=document.createElement('span');
+   n3Text.textContent=current.question;
+   questionEl.append(n3Text);
+   // In iPhone portrait LIVE mode a long Japanese reading question must
+   // stay entirely above the A/B/C/D options rather than become scrollable.
+   requestAnimationFrame(()=>fitN3Question());
  }else{questionEl.textContent=current.question}
  $('questionNo').textContent=count;
  $('boardHint').textContent=isWordOrder?'📣 Bình luận NGUYÊN CÂU đã sắp xếp đúng!':'📣 Bình luận A, B, C hoặc D để trả lời!';
