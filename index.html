@@ -236,6 +236,7 @@ body{background:linear-gradient(135deg,#ffe0ee 0%,#fce9ff 45%,#e6f3ff 100%);colo
 .subject-chip[data-category="Địa lý"]{background:linear-gradient(#62c575,#137c54)}
 .subject-chip[data-category="Toán học"]{background:linear-gradient(#f6ae50,#c86625)}
 .subject-chip[data-category="Tiếng Nhật"]{background:linear-gradient(#319a9e,#166f80)}
+.subject-chip[data-category="Tiếng Nhật N3"]{background:linear-gradient(#2879c9,#123f88)}
 .chalk-top:has(.subject-chip[data-category="Tiếng Nhật"]){gap:.16cqw;flex-wrap:nowrap}
 .chalk-top:has(.subject-chip[data-category="Tiếng Nhật"]) .subject-chip{font-size:clamp(6px,1.25cqw,15px);padding:.26cqw .33cqw;white-space:nowrap}
 .chalk-top:has(.subject-chip[data-category="Toán học"]){gap:.3cqw}
@@ -964,9 +965,10 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 <label><input class="category-check" type="checkbox" value="Địa lý" checked> Địa lý</label>
 <label><input class="category-check" type="checkbox" value="Toán học" checked> Toán học</label>
 <label><input class="category-check" type="checkbox" value="Tiếng Nhật" checked> Tiếng Nhật</label>
+<label><input class="category-check" type="checkbox" value="Tiếng Nhật N3" checked> 🇯🇵 Tiếng Nhật N3 · Sou Matome</label>
 <label><input class="category-check" type="checkbox" value="Đuổi hình bắt chữ" checked> 🧩 Đuổi hình bắt chữ</label>
 <label><input class="category-check" type="checkbox" value="Sắp xếp từ" checked> 🔀 Sắp xếp từ</label>
-</div><small id="categorySummary">Đang dùng tất cả 8 chủ đề</small></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
+</div><small id="categorySummary">Đang dùng tất cả 9 chủ đề</small></div><div class="field"><label for="duration">Đếm ngược</label><select id="duration"><option value="20">20 giây</option><option value="30">30 giây</option><option value="15">15 giây</option><option value="10">10 giây</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="autonext"> Tự chuyển câu</label></div><p class="status" id="status">Sẵn sàng! Chạm vào đáp án trên bảng để trả lời.</p></section>
 
 <section class="panel" id="realLivePanel">
   <h2>📡 Kết nối TikTok LIVE thật</h2>
@@ -997,7 +999,7 @@ body.live-safe #stage.stage-exact #miniLeaderboard{
 <section class="panel"><h2>📣 Tương tác lớp học (mô phỏng)</h2><div class="field"><label for="viewer">Tên hiển thị TikTok (mô phỏng)</label><input id="viewer" maxlength="25" placeholder="Ví dụ: Duyên Nguyễn"></div><div class="field"><label for="commentText">Bình luận</label><input id="commentText" maxlength="150" placeholder="Ví dụ: B hoặc chọn B"></div><div class="actions"><button class="secondary" id="joinBtn">👋 Vào lớp</button><button class="gold" id="giftBtn">🎁 Tặng quà</button><button id="commentBtn">💬 Bình luận</button><button class="secondary" id="removeBtn">🪑 Xóa học sinh cuối</button></div><p>Game đọc tên người vào lớp, người tặng quà và tên + nội dung bình luận. Quà cộng 10 điểm (không cộng số câu đúng). Chỉ bình luận đáp án đúng mới tăng số câu đúng trên bảng Top 10. Điểm: hạng nhất +10, nhì +5, ba +2, từ thứ tư +0; tặng quà +10; trả lời sai −1 điểm.</p><p class="voice-note"><strong>Chế độ mô phỏng:</strong> Các nút ở đây dùng để thử giọng đọc. GitHub Pages chưa tự nhận lượt vào LIVE, quà hoặc bình luận TikTok thật.</p><ul id="liveLog" class="live-log" aria-live="polite"></ul></section>
 <section class="panel"><h2>🏆 Top 10 học sinh theo điểm</h2><p>Xếp theo tổng điểm trả lời nhanh và quà tặng, trừ 1 điểm nếu trả lời sai. Mỗi người chỉ được tính một lượt cho mỗi câu. Bình luận thử bằng A, B, C, D hoặc “chọn B” trong lúc câu hỏi đang mở.</p><div id="correctLeaderboard" class="correct-leaderboard" aria-live="polite"><p>Chưa có ai trả lời đúng.</p></div><div class="actions" style="margin-top:12px"><button type="button" id="resetRankingBtn" class="secondary">↻ Reset bảng xếp hạng</button></div><p class="mini">Chỉ đặt lại điểm và số câu trả lời đúng; vẫn giữ học sinh, câu hỏi và chủ đề đã chọn.</p></section>
 <section class="panel"><h2>📝 Quản lý câu hỏi <span id="bankCount" class="count"></span></h2><p>Có sẵn hơn 100 câu lịch sử, văn học, khoa học, địa lý. Bạn có thể thêm câu hỏi riêng, dữ liệu được lưu trên trình duyệt này.</p><div class="actions"><button id="addBtn">＋ Thêm câu hỏi</button><button class="secondary" id="resetBtn">↻ Làm lại trò chơi</button></div></section><p class="footer">Classroom TikTok LIVE · Bản trò chơi độc lập cho iPhone · Không có kết nối TikTok API</p></div>
-<div id="addModal" class="modal hide"><article><h3>➕ Thêm câu hỏi</h3><div class="field"><label>Câu hỏi</label><textarea id="newQuestion" placeholder="Viết câu hỏi..."></textarea></div><div class="field"><label>Đáp án đúng</label><input id="newAnswer" placeholder="Ví dụ: Hà Nội"></div><div class="field"><label>Chủ đề</label><select id="newCategory"><option>Khoa học</option><option>Lịch sử</option><option>Văn học</option><option>Địa lý</option></select></div><p class="mini">Các lựa chọn sai sẽ được tự động lấy từ những câu hỏi cùng chủ đề.</p><div class="actions"><button id="saveQuestion">Lưu câu hỏi</button><button class="secondary" id="cancelQuestion">Hủy</button></div></article></div>
+<div id="addModal" class="modal hide"><article><h3>➕ Thêm câu hỏi</h3><div class="field"><label>Câu hỏi</label><textarea id="newQuestion" placeholder="Viết câu hỏi..."></textarea></div><div class="field"><label>Đáp án đúng</label><input id="newAnswer" placeholder="Ví dụ: Hà Nội"></div><div class="field"><label>Chủ đề</label><select id="newCategory"><option>Khoa học</option><option>Lịch sử</option><option>Văn học</option><option>Địa lý</option><option>Tiếng Nhật</option><option>Tiếng Nhật N3</option></select></div><p class="mini">Các lựa chọn sai sẽ được tự động lấy từ những câu hỏi cùng chủ đề.</p><div class="actions"><button id="saveQuestion">Lưu câu hỏi</button><button class="secondary" id="cancelQuestion">Hủy</button></div></article></div>
 <script>
 const DATA = {
 'Lịch sử':`Ai lãnh đạo chiến thắng Bạch Đằng năm 938?|Ngô Quyền
@@ -1558,6 +1560,143 @@ Số đếm 「なな」 là số mấy?|7|8|10|3
 Số đếm 「はち」 là số mấy?|8|9|1|4
 Số đếm 「きゅう」 là số mấy?|9|10|2|5
 Số đếm 「じゅう」 là số mấy?|10|1|3|6`,
+// N3 practice questions are original, inspired by Sou Matome's skill areas,
+// not taken or reproduced from the copyrighted textbook.
+'Tiếng Nhật N3':`[Từ vựng N3] 「予定」 có nghĩa là gì?|Dự định, kế hoạch|Kết quả|Tai nạn|Mức lương
+[Từ vựng N3] 「延期」 có nghĩa là gì?|Hoãn sang thời điểm khác|Xác nhận lịch|Kết thúc ngay|Bắt đầu sớm
+[Từ vựng N3] 「中止」 có nghĩa là gì?|Hủy, ngừng thực hiện|Tiếp tục thực hiện|Đặt chỗ trước|Điểm danh
+[Từ vựng N3] 「変更」 có nghĩa là gì?|Thay đổi|Bảo quản|Kiểm tra|Vận chuyển
+[Từ vựng N3] 「混雑」 có nghĩa là gì?|Đông đúc, chen chúc|Vắng vẻ|Yên tĩnh|Sạch sẽ
+[Từ vựng N3] 「周辺」 có nghĩa là gì?|Khu vực xung quanh|Bên trong căn phòng|Phía dưới mặt đất|Điểm cuối cùng
+[Từ vựng N3] 「到着」 có nghĩa là gì?|Đến nơi|Xuất phát|Đi lạc|Trở về nhà
+[Từ vựng N3] 「出発」 có nghĩa là gì?|Xuất phát, khởi hành|Đến đích|Đứng chờ|Trễ chuyến
+[Từ vựng N3] 「確認」 có nghĩa là gì?|Xác nhận, kiểm tra lại|Từ chối|Bỏ quên|Báo nghỉ
+[Từ vựng N3] 「提出」 có nghĩa là gì?|Nộp tài liệu, bài làm|Mượn đồ|In lại tài liệu|Giấu đồ
+[Từ vựng N3] 「準備」 có nghĩa là gì?|Chuẩn bị|Làm hỏng|Tránh né|Hoàn tiền
+[Từ vựng N3] 「予約」 có nghĩa là gì?|Đặt trước|Hủy bỏ|Nhận hàng|Thanh toán nợ
+[Từ vựng N3] 「解決」 có nghĩa là gì?|Giải quyết vấn đề|Tăng chi phí|Đăng ký tham gia|Chuyển nhà
+[Từ vựng N3] 「連絡」 có nghĩa là gì?|Liên lạc, báo tin|Giải thích chi tiết|Đăng ký khóa học|Đo khoảng cách
+[Từ vựng N3] 「相談」 có nghĩa là gì?|Trao đổi, xin ý kiến|Tranh cãi dữ dội|Đặt hàng|Đoán mò
+[Từ vựng N3] 「見学」 có nghĩa là gì?|Tham quan để tìm hiểu|Đi mua sắm|Đi khám bệnh|Thi viết
+[Từ vựng N3] 「間に合う」 có nghĩa là gì?|Kịp giờ|Bị lỡ giờ|Nhầm đường|Không cần thiết
+[Từ vựng N3] 「慣れる」 có nghĩa là gì?|Trở nên quen với|Bỗng quên mất|Từ bỏ hoàn toàn|Bị đau
+[Từ vựng N3] 「増える」 có nghĩa là gì?|Tăng lên|Giảm xuống|Giữ nguyên|Biến mất
+[Từ vựng N3] 「減る」 có nghĩa là gì?|Giảm xuống|Tăng lên|Xuất hiện|Chuyển hướng
+[Từ vựng N3] 「比べる」 có nghĩa là gì?|So sánh|Chia đều|Thay thế|Giấu đi
+[Từ vựng N3] 「選ぶ」 có nghĩa là gì?|Lựa chọn|Sửa chữa|Đánh rơi|Dọn dẹp
+[Từ vựng N3] 「運ぶ」 có nghĩa là gì?|Mang, vận chuyển|Vẽ tranh|Tính toán|Đọc thầm
+[Từ vựng N3] 「壊れる」 có nghĩa là gì?|Bị hỏng|Được hoàn thành|Trở nên nổi tiếng|Bắt đầu mọc
+[Từ vựng N3] 「直す」 có nghĩa là gì?|Sửa cho đúng, sửa chữa|Làm cho rơi|Bán tháo|Dự đoán
+[Từ vựng N3] 「支払う」 có nghĩa là gì?|Chi trả tiền|Vay mượn sách|Mời vào nhà|Giữ bí mật
+[Từ vựng N3] 「招待」 có nghĩa là gì?|Mời tham dự|Trừng phạt|Báo cáo|Đưa đón
+[Từ vựng N3] 「目的」 có nghĩa là gì?|Mục đích|Hậu quả|Trạng thái|Địa chỉ
+[Từ vựng N3] 「原因」 có nghĩa là gì?|Nguyên nhân|Giải pháp|Kết luận|Thời hạn
+[Từ vựng N3] 「結果」 có nghĩa là gì?|Kết quả|Nguyên nhân|Dự tính|Cảnh báo
+[Từ vựng N3] 「状況」 có nghĩa là gì?|Tình hình, trạng thái|Phương hướng|Mẫu đơn|Tốc độ
+[Từ vựng N3] 「必要」 có nghĩa là gì?|Cần thiết|Nguy hiểm|Nổi tiếng|Chính xác
+[Từ vựng N3] 「途中」 có nghĩa là gì?|Giữa chừng, dọc đường|Ở đích cuối|Trước khi bắt đầu|Ngoài trời
+[Từ vựng N3] 「そろそろ」 có nghĩa là gì?|Sắp đến lúc|Đột nhiên|Mãi mãi|Ngày hôm qua
+[Từ vựng N3] 「しばらく」 có nghĩa là gì?|Một lúc, một thời gian|Ngay lập tức|Không bao giờ|Mỗi sáng
+[Từ vựng N3] 「とうとう」 có nghĩa là gì?|Cuối cùng rồi cũng|Vẫn chưa bao giờ|Thường xuyên|Hình như
+[Từ vựng N3] 「すっかり」 có nghĩa là gì?|Hoàn toàn, hết hẳn|Một chút thôi|Một cách bí mật|Ngẫu nhiên
+[Từ vựng N3] 「なるべく」 có nghĩa là gì?|Cố gắng hết mức có thể|Tuyệt đối cấm|Thỉnh thoảng|Vừa mới
+[Từ vựng N3] 「せっかく」 có nghĩa là gì?|Đã cất công, khó khăn mới có|Chưa từng làm|Vô tình gặp|Làm ngay lập tức
+[Từ vựng N3] 「たいてい」 có nghĩa là gì?|Thường, phần lớn trường hợp|Không bao giờ|Chỉ một lần|Bất chợt
+[Kanji N3] Cách đọc của 「経験」 là gì?|けいけん|けんけい|きょうけん|けいげん
+[Kanji N3] Cách đọc của 「連絡」 là gì?|れんらく|れいらく|れんがく|れんやく
+[Kanji N3] Cách đọc của 「地震」 là gì?|じしん|ちしん|じじん|ちじん
+[Kanji N3] Cách đọc của 「事故」 là gì?|じこ|しこ|じこう|しご
+[Kanji N3] Cách đọc của 「約束」 là gì?|やくそく|やくぞく|ようそく|やくしょく
+[Kanji N3] Cách đọc của 「安全」 là gì?|あんぜん|あんせん|やすぜん|あんねん
+[Kanji N3] Cách đọc của 「危険」 là gì?|きけん|きげん|あぶけん|きかん
+[Kanji N3] Cách đọc của 「便利」 là gì?|べんり|びんり|べりん|べんじ
+[Kanji N3] Cách đọc của 「不便」 là gì?|ふべん|ふびん|ぶべん|ふへん
+[Kanji N3] Cách đọc của 「説明」 là gì?|せつめい|せつみょう|ぜつめい|せっめい
+[Kanji N3] Cách đọc của 「参加」 là gì?|さんか|ざんか|さんが|さんけ
+[Kanji N3] Cách đọc của 「運転」 là gì?|うんてん|うんでん|うんせん|うんたん
+[Kanji N3] Cách đọc của 「交通」 là gì?|こうつう|こうとう|こうどう|こつう
+[Kanji N3] Cách đọc của 「遅刻」 là gì?|ちこく|じこく|ちこう|じこう
+[Kanji N3] Cách đọc của 「忘れ物」 là gì?|わすれもの|わすれぶつ|ぼうれもの|わするもの
+[Kanji N3] Cách đọc của 「書類」 là gì?|しょるい|しゅるい|しょうるい|しょれい
+[Kanji N3] Cách đọc của 「計画」 là gì?|けいかく|けいがく|けっかく|けいこう
+[Kanji N3] Cách đọc của 「研究」 là gì?|けんきゅう|けんきょう|げんきゅう|けんくう
+[Kanji N3] Cách đọc của 「環境」 là gì?|かんきょう|かんけい|かんきゅう|かんじょう
+[Kanji N3] Cách đọc của 「住所」 là gì?|じゅうしょ|じゅしょう|じょうしょ|じゅうじょ
+[Kanji N3] Cách đọc của 「受付」 là gì?|うけつけ|うけづけ|うけつき|じゅつけ
+[Kanji N3] Cách đọc của 「修理」 là gì?|しゅうり|しゅり|しょうり|しゅうじ
+[Kanji N3] Cách đọc của 「予習」 là gì?|よしゅう|よしょう|よじゅう|よならい
+[Kanji N3] Cách đọc của 「復習」 là gì?|ふくしゅう|ふくしょう|ふうしゅう|ふくじゅう
+[Kanji N3] Cách đọc của 「募集」 là gì?|ぼしゅう|もじゅう|ぼしょう|もじょう
+[Kanji N3] Cách đọc của 「確認」 là gì?|かくにん|かくじん|かきにん|かくねん
+[Kanji N3] Cách đọc của 「変更」 là gì?|へんこう|へんごう|べんこう|へいこう
+[Kanji N3] Cách đọc của 「対象」 là gì?|たいしょう|だいしょう|たいそう|たいじょう
+[Kanji N3] Cách đọc của 「検査」 là gì?|けんさ|けんしゃ|げんさ|けんざ
+[Kanji N3] Cách đọc của 「条件」 là gì?|じょうけん|じょけん|しょうけん|じょうげん
+[Ngữ pháp N3] Điền chỗ trống: 「健康のために、毎朝走る（　）しています。」|ように|たびに|ところに|せいで
+[Ngữ pháp N3] Điền chỗ trống: 「来月から日本語学校に通う（　）しました。」|ことに|ように|ために|ところに
+[Ngữ pháp N3] Điền chỗ trống: 「会議は午後３時から始まる（　）なりました。」|ことに|つもりに|ために|たびに
+[Ngữ pháp N3] Điền chỗ trống: 「試験に合格する（　）、毎日勉強しています。」|ために|たびに|せいで|かわりに
+[Ngữ pháp N3] Điền chỗ trống: 「漢字が読める（　）、毎日練習しています。」|ように|たびに|として|ばかり
+[Ngữ pháp N3] Điền chỗ trống: 「昼ご飯を食べた（　）なのに、もうおなかがすいた。」|ばかり|つもり|おかげ|とおり
+[Ngữ pháp N3] Điền chỗ trống: 「この店は安い（　）、料理もおいしい。」|うえに|ために|かわりに|たびに
+[Ngữ pháp N3] Điền chỗ trống: 「窓を開けた（　）、鳥が入ってきた。」|とたんに|うちに|ほどに|かわりに
+[Ngữ pháp N3] Điền chỗ trống: 「音楽を聞き（　）、宿題をします。」|ながら|ために|ばかり|にして
+[Ngữ pháp N3] Điền chỗ trống: 「日本にいる（　）、京都へ行きたい。」|うちに|とおりに|ばかりに|によって
+[Ngữ pháp N3] Điền chỗ trống: 「出かけている（　）、荷物が届いた。」|間に|ように|ために|おかげで
+[Ngữ pháp N3] Điền chỗ trống: 「旅行する（　）、新しい発見があります。」|たびに|まま|とたん|ため
+[Ngữ pháp N3] Điền chỗ trống: 「薬を飲んだ（　）、熱が下がった。」|おかげで|せいで|ばかりで|つもりで
+[Ngữ pháp N3] Điền chỗ trống: 「雨が強かった（　）、試合が中止になった。」|せいで|おかげで|として|に対して
+[Ngữ pháp N3] Điền chỗ trống: 「ニュース（　）、明日は雪が降るそうです。」|によると|に対して|として|に比べて
+[Ngữ pháp N3] Điền chỗ trống: 「去年（　）、今年は暑い日が多い。」|に比べて|に対して|にとって|として
+[Ngữ pháp N3] Điền chỗ trống: 「彼は医者（　）、多くの人を助けています。」|として|に対して|によって|にとって
+[Ngữ pháp N3] Điền chỗ trống: 「この薬を飲めば、必ず治る（　）。」|わけではありません|ようにします|ためでした|ままでした
+[Ngữ pháp N3] Điền chỗ trống: 「田中さんはもう家に着いた（　）です。」|はず|つもり|せい|たび
+[Ngữ pháp N3] Điền chỗ trống: 「危険なので、ここで泳ぐ（　）。」|べきではありません|つもりではありません|たびではありません|おかげではありません
+[Ngữ pháp N3] Điền chỗ trống: 「もう締め切りを過ぎたので、申し込める（　）。」|わけがありません|ためにありません|おかげでありません|うちにありません
+[Ngữ pháp N3] Điền chỗ trống: 「彼は若い（　）、しっかりしています。」|わりに|せいで|ために|ままに
+[Ngữ pháp N3] Điền chỗ trống: 「時間がない（　）、手伝ってくれました。」|にもかかわらず|について|として|のために
+[Ngữ pháp N3] Điền chỗ trống: 「仕事は難しかった（　）、最後までやりとげた。」|ものの|ばかり|はず|せい
+[Ngữ pháp N3] Điền chỗ trống: 「人口が増える（　）、交通も混雑してきた。」|につれて|に対して|にとって|として
+[Ngữ pháp N3] Điền chỗ trống: 「先生が説明した（　）、やってください。」|とおりに|ために|らしい|らしく
+[Ngữ pháp N3] Điền chỗ trống: 「電気をつけた（　）、寝てしまった。」|まま|ために|はず|うちに
+[Ngữ pháp N3] Điền chỗ trống: 「朝ご飯を食べ（　）、学校へ行きました。」|ずに|ばかり|ほど|にして
+[Ngữ pháp N3] Điền chỗ trống: 「母の（　）、私が買い物に行きました。」|代わりに|ために|うちに|に比べて
+[Ngữ pháp N3] Điền chỗ trống: 「漢字は勉強すればする（　）、覚えやすくなります。」|ほど|ばかり|うち|きり
+[Ngữ pháp N3] Điền chỗ trống: 「試験の（　）、急におなかが痛くなった。」|最中に|うちに|おかげで|かわりに
+[Ngữ pháp N3] Điền chỗ trống: 「会議中は携帯電話を使わない（　）してください。」|ように|ために|ばかり|ほど
+[Ngữ pháp N3] Điền chỗ trống: 「最近、日本語の新聞が読める（　）。」|ようになりました|ことにしました|ものにしました|ようにしました
+[Ngữ pháp N3] Điền chỗ trống: 「もう遅いので、帰る（　）ありません。」|しか|ほど|せいで|うちに
+[Ngữ pháp N3] Điền chỗ trống: 「熱があるなら、無理して学校へ行く（　）。」|ことはありません|ばかりです|しかありません|うちです
+[Ngữ pháp N3] Điền chỗ trống: 「彼が知らない（　）。昨日説明したんです。」|はずがありません|ためにありません|おかげでありません|うちにありません
+[Ngữ pháp N3] Điền chỗ trống: 「明日の試験に（　）、今夜は早く寝ます。」|備えて|比べて|対して|よって
+[Ngữ pháp N3] Điền chỗ trống: 「外出中に地震が起きた（　）、ここへ避難してください。」|場合は|ばかり|ために|ように
+[Ngữ pháp N3] Điền chỗ trống: 「日本に来て（　）、毎日が忙しいです。」|以来|ために|うちに|ばかり
+[Ngữ pháp N3] Điền chỗ trống: 「この説明は子ども（　）、少し難しい。」|にとって|によって|に対して|として
+[Ngữ pháp N3] Điền chỗ trống: 「天気（　）、試合を中止することもあります。」|によっては|としては|にとっては|だけには
+[Ngữ pháp N3] Điền chỗ trống: 「この仕事を引き受けた（　）、最後まで責任を持ちます。」|からには|おかげで|せいで|ばかりに
+[Ngữ pháp N3] Điền chỗ trống: 「彼は経験が豊富なので、きっと成功する（　）。」|に違いありません|ばかりです|ものです|最中です
+[Ngữ pháp N3] Điền chỗ trống: 「この道は狭い（　）、交通量が多い。」|うえに|せいで|として|たびに
+[Ngữ pháp N3] Điền chỗ trống: 「駅まで歩く（　）、バスで行ったほうが早いです。」|より|ために|ばかり|うちに
+[Đọc hiểu N3] 「図書館は月曜日が休みです。火曜日から日曜日まで開いています。」休みはいつですか。|月曜日|火曜日|土曜日|日曜日
+[Đọc hiểu N3] 「今日は雨のため、運動会は来週に延期されました。」運動会はいつ行いますか。|来週|今日|昨日|先月
+[Đọc hiểu N3] 「会議は９時から１０時半までです。」会議が終わるのは何時ですか。|１０時半|９時|９時半|１１時半
+[Đọc hiểu N3] 「この店では、日曜日だけ午後６時に閉まります。ほかの日は午後８時までです。」日曜日は何時に閉まりますか。|午後６時|午後８時|午前６時|午前８時
+[Đọc hiểu N3] 「田中さんは風邪をひいたので、今日は会社を休んでいます。」なぜ休んでいますか。|風邪をひいたから|旅行中だから|電車が遅れたから|仕事が終わったから
+[Đọc hiểu N3] 「バスが遅れていたので、駅まで歩きました。」駅へどうやって行きましたか。|歩いて|バスで|電車で|車で
+[Đọc hiểu N3] 「申込書は金曜日までに受付へ出してください。」申込書はどこへ出しますか。|受付|図書館|教室|郵便局
+[Đọc hiểu N3] 「商品に問題があれば、買ってから７日以内に連絡してください。」連絡する期限は？|７日以内|１か月以内|１年以内|当日だけ
+[Đọc hiểu N3] 「明日の遠足は朝８時に学校の前に集まります。」どこに集まりますか。|学校の前|駅の中|公園の入口|教室の中
+[Đọc hiểu N3] 「兄は去年から大阪に住んでいます。私は今も名古屋に住んでいます。」兄はどこに住んでいますか。|大阪|名古屋|東京|京都
+[Đọc hiểu N3] 「来週の試験は筆記だけです。面接は再来週に行います。」面接はいつですか。|再来週|来週|今週|昨日
+[Đọc hiểu N3] 「この道は工事中です。車は通れませんが、人は歩けます。」何が通れませんか。|車|歩く人|自転車を押す人|犬
+[Đọc hiểu N3] 「仕事が終わったら、まず部長に報告してから帰ってください。」最初にすることは何ですか。|部長に報告する|家に帰る|買い物する|電車に乗る
+[Đọc hiểu N3] 「昨日は残業で遅くなったため、友達との約束をキャンセルしました。」約束をやめた理由は何ですか。|残業で遅くなったから|風邪をひいたから|雨が降ったから|電車が止まったから
+[Đọc hiểu N3] 「冷蔵庫の牛乳は明日までです。開けたら今日中に飲んでください。」開けた牛乳はいつまでに飲みますか。|今日中|明日の夜|来週|来月
+[Đọc hiểu N3] 「この駐車場は午後１０時から午前６時まで使えません。」使えない時間はいつですか。|午後１０時から午前６時|午前６時から正午|正午から午後６時|午後６時から午後８時
+[Đọc hiểu N3] 「部屋を予約したい方は、名前と電話番号をメールで送ってください。」何を送りますか。|名前と電話番号|名前と住所|写真と住所|年齢と写真
+[Đọc hiểu N3] 「今月は電車の定期券を買ったので、先月より交通費が安くなりました。」何が安くなりましたか。|交通費|家賃|食費|電気代
+[Đọc hiểu N3] 「今週末は店が混雑する見込みなので、早めに予約してください。」何を勧めていますか。|早めに予約する|予約しない|週末に休む|閉店を待つ
+[Đọc hiểu N3] 「工場では安全のため、作業前に必ず機械を点検してください。」いつ点検しますか。|作業前|作業後だけ|昼休みだけ|休日だけ`,
 'Đuổi hình bắt chữ':`🐃 🎻|Đàn gảy tai trâu|Chọi trâu|Trâu đi cày|Trâu ăn cỏ
 🐟 ➡️ 🐉|Cá chép hóa rồng|Cá vượt thác|Rồng phun lửa|Cá về biển
 🐸 🪣|Ếch ngồi đáy giếng|Ếch gọi mưa|Ếch nhảy cao|Ếch bắt sâu
@@ -2172,7 +2311,7 @@ function fullQuestionNarration(){
   const isRebus=current.category==='Đuổi hình bắt chữ';
   const question=isRebus?'Các em nhìn hình trên bảng và đoán cụm từ hoặc thành ngữ tương ứng.':spokenQuizValue(current.question);
   const punctuation=/[.!?]$/.test(question)?'':'?';
-  const jpOptions=current.category==='Tiếng Nhật'&&
+  const jpOptions=['Tiếng Nhật','Tiếng Nhật N3'].includes(current.category)&&
     options.every(a=>/[\u3040-\u30ff\u3400-\u9fff]/.test(String(a)));
   // Read all Japanese answer options in one native Japanese narration.
   // This prevents 8-10 tiny calls and avoids exceeding Render's rate limit.
@@ -2724,8 +2863,9 @@ try{const saved=JSON.parse(localStorage.getItem('classroom_correct_v5')||'[]');i
   person.correct=correct;person.points=Number.isFinite(Number(entry.points))&&entry.points!==undefined?
     Math.max(-100000000,Math.min(100000000,Number(entry.points))):correct*10;}}catch(e){}
 function saveCorrectRank(){try{localStorage.setItem('classroom_correct_v5',JSON.stringify(students.filter(s=>s.correct>0||s.points!==0).map(s=>({name:s.name,correct:s.correct,points:s.points,tiktokId:s.tiktokId||null}))))}catch(e){}}
-const ALL_SUBJECTS=['Lịch sử','Văn học','Khoa học','Địa lý','Toán học','Tiếng Nhật','Đuổi hình bắt chữ','Sắp xếp từ'];
-const OLD_ALL_SUBJECTS=ALL_SUBJECTS.filter(t=>t!=='Sắp xếp từ');
+const ALL_SUBJECTS=['Lịch sử','Văn học','Khoa học','Địa lý','Toán học','Tiếng Nhật','Tiếng Nhật N3','Đuổi hình bắt chữ','Sắp xếp từ'];
+const PREVIOUS_ALL_SUBJECTS=ALL_SUBJECTS.filter(t=>t!=='Tiếng Nhật N3');
+const OLD_ALL_SUBJECTS=PREVIOUS_ALL_SUBJECTS.filter(t=>t!=='Sắp xếp từ');
 const CATEGORY_STORE='classroom12a_checked_topics_v1';
 function activeSubjects(){return [...document.querySelectorAll('#categoryGroup .category-check:checked')].map(el=>el.value)}
 function saveCategoryChoices(){
@@ -2740,6 +2880,7 @@ function initCategoryChoices(){
  let selected=Array.isArray(saved)?saved.filter(v=>ALL_SUBJECTS.includes(v)):ALL_SUBJECTS;
  // Previous all-topics users automatically receive the new word-order topic.
  if(Array.isArray(saved)&&(
+    (saved.length===PREVIOUS_ALL_SUBJECTS.length&&PREVIOUS_ALL_SUBJECTS.every(subject=>saved.includes(subject)))||
     (saved.length===OLD_ALL_SUBJECTS.length&&OLD_ALL_SUBJECTS.every(subject=>saved.includes(subject)))||
     (saved.length===6&&['Lịch sử','Văn học','Khoa học','Địa lý','Toán học','Tiếng Nhật'].every(subject=>saved.includes(subject)))
   ))selected=ALL_SUBJECTS;
